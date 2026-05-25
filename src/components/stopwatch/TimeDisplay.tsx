@@ -24,10 +24,7 @@ export function TimeDisplay({ ms }: Props) {
       className="flex items-baseline justify-center font-mono tabular-nums text-foreground select-none"
     >
       <span className="text-[clamp(4rem,16vw,12rem)] leading-none font-medium tracking-tight">
-        {main}
-      </span>
-      <span className="text-[clamp(1.5rem,5vw,3.5rem)] leading-none font-medium text-muted-foreground ml-2">
-        :{hundredths}
+        {main}:{hundredths}
       </span>
       <span className="sr-only">
         {main} minutter og sekunder, {hundredths} hundrededele
