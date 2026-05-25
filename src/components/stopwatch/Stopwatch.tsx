@@ -137,12 +137,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
               <Square className="h-5 w-5" aria-hidden="true" />
               Afslut
             </button>
-            <button
-              type="button"
-              onClick={onResume}
-              className={primaryBtn}
-              style={{ background: "var(--brand-gradient)" }}
-            >
+            <button type="button" onClick={onResume} className={primaryBtn}>
               <FastForward className="h-5 w-5" aria-hidden="true" />
               Fortsæt
             </button>
