@@ -16,8 +16,16 @@ export function TopNav() {
     >
       <ul className="mx-auto flex max-w-6xl flex-wrap items-center gap-1 px-4 py-2">
         <li className="mr-4">
-          <span className="font-sans text-lg font-semibold tracking-tight">
-            pr<span style={{ background: "var(--brand-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>:</span>cisely
+          <span
+            className="font-sans text-lg font-semibold tracking-tight"
+            style={{
+              background: "var(--brand-gradient)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            pr:cisely
           </span>
         </li>
         {items.map(({ label, icon: Icon, active }) => (
