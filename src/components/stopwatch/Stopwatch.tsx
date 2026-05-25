@@ -47,7 +47,7 @@ function computeMs(state: State, now: number) {
 }
 
 const baseBtn =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex min-h-20 items-center justify-center gap-3 rounded-lg px-10 py-6 text-xl font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const startBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground hover:bg-destructive/90`;
@@ -104,11 +104,11 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
       <div
         role="group"
         aria-label="Stopur-kontroller"
-        className="flex flex-wrap items-center justify-center gap-4"
+        className="flex flex-wrap items-center justify-center gap-6"
       >
         {state.status === "idle" && (
           <button type="button" onClick={onStart} className={startBtn}>
-            <Play className="h-5 w-5" aria-hidden="true" />
+            <Play className="h-7 w-7" aria-hidden="true" />
             Start
           </button>
         )}
@@ -116,15 +116,15 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
         {state.status === "running" && (
           <>
             <button type="button" onClick={onReset} className={resetBtn}>
-              <RotateCcw className="h-5 w-5" aria-hidden="true" />
+              <RotateCcw className="h-7 w-7" aria-hidden="true" />
               Nulstil
             </button>
             <button type="button" onClick={onFinish} className={finishBtn}>
-              <Square className="h-5 w-5" aria-hidden="true" />
+              <Square className="h-7 w-7" aria-hidden="true" />
               Afslut
             </button>
             <button type="button" onClick={onPause} className={pauseBtn}>
-              <Pause className="h-5 w-5" aria-hidden="true" />
+              <Pause className="h-7 w-7" aria-hidden="true" />
               Pause
             </button>
           </>
@@ -133,15 +133,15 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
         {state.status === "paused" && (
           <>
             <button type="button" onClick={onReset} className={resetBtn}>
-              <RotateCcw className="h-5 w-5" aria-hidden="true" />
+              <RotateCcw className="h-7 w-7" aria-hidden="true" />
               Nulstil
             </button>
             <button type="button" onClick={onFinish} className={finishBtn}>
-              <Square className="h-5 w-5" aria-hidden="true" />
+              <Square className="h-7 w-7" aria-hidden="true" />
               Afslut
             </button>
             <button type="button" onClick={onResume} className={resumeBtn}>
-              <FastForward className="h-5 w-5" aria-hidden="true" />
+              <FastForward className="h-7 w-7" aria-hidden="true" />
               Fortsæt
             </button>
           </>
