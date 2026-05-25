@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Stopwatch } from "@/components/stopwatch/Stopwatch";
 import { TopNav } from "@/components/stopwatch/TopNav";
+import { MeasurementsList } from "@/components/stopwatch/MeasurementsList";
+import { useMeasurements } from "@/hooks/use-measurements";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { measurements, add, clear } = useMeasurements();
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <a
@@ -31,8 +34,12 @@ function Index() {
         Spring til hovedindhold
       </a>
       <TopNav />
-      <main id="stopur-main" className="flex flex-1 items-center justify-center">
-        <Stopwatch />
+      <main
+        id="stopur-main"
+        className="flex flex-1 flex-col items-center justify-center"
+      >
+        <Stopwatch onSaveMeasurement={add} />
+        <MeasurementsList measurements={measurements} onClear={clear} />
       </main>
     </div>
   );
