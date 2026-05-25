@@ -30,6 +30,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand-primary);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
