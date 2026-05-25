@@ -46,11 +46,14 @@ function computeMs(state: State, now: number) {
   return state.elapsed;
 }
 
-const primaryBtn =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const baseBtn =
+  "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6 py-3 text-base font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-const secondaryBtn =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const startBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
+const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground hover:bg-destructive/90`;
+const pauseBtn = `${baseBtn} bg-warning text-warning-foreground hover:bg-warning/90`;
+const resetBtn = `${baseBtn} bg-info text-info-foreground hover:bg-info/90`;
+const resumeBtn = `${baseBtn} bg-primary text-primary-foreground hover:bg-primary/90`;
 
 type Props = {
   onSaveMeasurement: (ms: number) => void;
