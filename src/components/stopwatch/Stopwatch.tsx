@@ -107,7 +107,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
         className="flex flex-wrap items-center justify-center gap-4"
       >
         {state.status === "idle" && (
-          <button type="button" onClick={onStart} className={primaryBtn}>
+          <button type="button" onClick={onStart} className={startBtn}>
             <Play className="h-5 w-5" aria-hidden="true" />
             Start
           </button>
@@ -115,15 +115,15 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
 
         {state.status === "running" && (
           <>
-            <button type="button" onClick={onReset} className={secondaryBtn}>
+            <button type="button" onClick={onReset} className={resetBtn}>
               <RotateCcw className="h-5 w-5" aria-hidden="true" />
               Nulstil
             </button>
-            <button type="button" onClick={onFinish} className={primaryBtn}>
+            <button type="button" onClick={onFinish} className={finishBtn}>
               <Square className="h-5 w-5" aria-hidden="true" />
               Afslut
             </button>
-            <button type="button" onClick={onPause} className={secondaryBtn}>
+            <button type="button" onClick={onPause} className={pauseBtn}>
               <Pause className="h-5 w-5" aria-hidden="true" />
               Pause
             </button>
@@ -132,15 +132,15 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
 
         {state.status === "paused" && (
           <>
-            <button type="button" onClick={onReset} className={secondaryBtn}>
+            <button type="button" onClick={onReset} className={resetBtn}>
               <RotateCcw className="h-5 w-5" aria-hidden="true" />
               Nulstil
             </button>
-            <button type="button" onClick={onFinish} className={secondaryBtn}>
+            <button type="button" onClick={onFinish} className={finishBtn}>
               <Square className="h-5 w-5" aria-hidden="true" />
               Afslut
             </button>
-            <button type="button" onClick={onResume} className={primaryBtn}>
+            <button type="button" onClick={onResume} className={resumeBtn}>
               <FastForward className="h-5 w-5" aria-hidden="true" />
               Fortsæt
             </button>
