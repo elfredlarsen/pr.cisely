@@ -121,10 +121,6 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
               <RotateCcw className="h-5 w-5" aria-hidden="true" />
               Nulstil
             </button>
-            <button type="button" onClick={onPause} className={secondaryBtn}>
-              <Pause className="h-5 w-5" aria-hidden="true" />
-              Pause
-            </button>
             <button
               type="button"
               onClick={onFinish}
@@ -133,6 +129,10 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
             >
               <Square className="h-5 w-5" aria-hidden="true" />
               Afslut
+            </button>
+            <button type="button" onClick={onPause} className={secondaryBtn}>
+              <Pause className="h-5 w-5" aria-hidden="true" />
+              Pause
             </button>
           </>
         )}
