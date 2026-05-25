@@ -53,7 +53,7 @@ const startBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground hover:bg-destructive/90`;
 const pauseBtn = `${baseBtn} bg-warning text-warning-foreground hover:bg-warning/90`;
 const resetBtn = `${baseBtn} bg-info text-info-foreground hover:bg-info/90`;
-const resumeBtn = `${baseBtn} bg-[--brand-primary] text-white hover:opacity-90`;
+const resumeBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
 
 type Props = {
   onSaveMeasurement: (ms: number) => void;
