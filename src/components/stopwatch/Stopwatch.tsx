@@ -6,9 +6,7 @@ type Status = "idle" | "running" | "paused";
 
 type State = {
   status: Status;
-  // accumulated elapsed ms across previous run segments
   elapsed: number;
-  // timestamp (performance.now()) when current run started; null if not running
   startedAt: number | null;
 };
 
@@ -54,7 +52,11 @@ const primaryBtn =
 const secondaryBtn =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-export function Stopwatch() {
+type Props = {
+  onSaveMeasurement: (ms: number) => void;
+};
+
+export function Stopwatch({ onSaveMeasurement }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -78,6 +80,12 @@ export function Stopwatch() {
   const onPause = () => dispatch({ type: "PAUSE", now: performance.now() });
   const onResume = () => dispatch({ type: "RESUME", now: performance.now() });
   const onReset = () => dispatch({ type: "RESET" });
+  const onFinish = () => {
+    const now = performance.now();
+    const finalMs = computeMs(state, now);
+    if (finalMs > 0) onSaveMeasurement(finalMs);
+    dispatch({ type: "RESET" });
+  };
 
   return (
     <section
@@ -113,14 +121,18 @@ export function Stopwatch() {
               <RotateCcw className="h-5 w-5" aria-hidden="true" />
               Nulstil
             </button>
+            <button type="button" onClick={onPause} className={secondaryBtn}>
+              <Pause className="h-5 w-5" aria-hidden="true" />
+              Pause
+            </button>
             <button
               type="button"
-              onClick={onPause}
+              onClick={onFinish}
               className={primaryBtn}
               style={{ background: "var(--brand-gradient)" }}
             >
-              <Pause className="h-5 w-5" aria-hidden="true" />
-              Pause
+              <Square className="h-5 w-5" aria-hidden="true" />
+              Afslut
             </button>
           </>
         )}
@@ -128,6 +140,10 @@ export function Stopwatch() {
         {state.status === "paused" && (
           <>
             <button type="button" onClick={onReset} className={secondaryBtn}>
+              <RotateCcw className="h-5 w-5" aria-hidden="true" />
+              Nulstil
+            </button>
+            <button type="button" onClick={onFinish} className={secondaryBtn}>
               <Square className="h-5 w-5" aria-hidden="true" />
               Afslut
             </button>
