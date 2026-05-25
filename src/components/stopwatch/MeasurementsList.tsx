@@ -64,14 +64,34 @@ export function MeasurementsList({ measurements, onClear }: Props) {
           );
         })}
       </ol>
-      <button
-        type="button"
-        onClick={handleClear}
-        className="mt-3 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-        Ryd historik
-      </button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button
+            type="button"
+            className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+            Ryd historik
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Slet alle målinger?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Denne handling kan ikke fortrydes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={onClear}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Slet
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }
