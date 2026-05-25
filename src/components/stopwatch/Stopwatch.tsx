@@ -104,12 +104,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
         className="flex flex-wrap items-center justify-center gap-4"
       >
         {state.status === "idle" && (
-          <button
-            type="button"
-            onClick={onStart}
-            className={primaryBtn}
-            style={{ background: "var(--brand-gradient)" }}
-          >
+          <button type="button" onClick={onStart} className={primaryBtn}>
             <Play className="h-5 w-5" aria-hidden="true" />
             Start
           </button>
