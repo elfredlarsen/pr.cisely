@@ -1,6 +1,17 @@
 import { Trash2 } from "lucide-react";
 import type { Measurement } from "@/hooks/use-measurements";
 import { formatTime } from "./TimeDisplay";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Props = {
   measurements: Measurement[];
@@ -22,12 +33,6 @@ function relativeTime(iso: string): string {
 export function MeasurementsList({ measurements, onClear }: Props) {
   if (measurements.length === 0) return null;
   const visible = measurements.slice(0, 5);
-
-  const handleClear = () => {
-    if (typeof window !== "undefined" && window.confirm("Slet alle målinger?")) {
-      onClear();
-    }
-  };
 
   return (
     <section
