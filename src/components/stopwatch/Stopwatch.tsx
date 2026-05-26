@@ -100,9 +100,10 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
   finishOpen?: boolean;
+  resetKey?: number;
 };
 
-export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
+export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -140,15 +141,14 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
     onRequestFinish(startedAt, endedAt);
   };
 
-  // External reset (after dialog save/cancel) handled by parent via key change is overkill;
-  // instead we expose a useEffect: when finishOpen turns from true -> false, reset.
-  const prevFinishOpenRef = useRef(finishOpen);
+  // Reset only when parent explicitly signals (e.g. after save), not on cancel.
+  const prevResetKeyRef = useRef(resetKey);
   useEffect(() => {
-    if (prevFinishOpenRef.current && !finishOpen) {
+    if (prevResetKeyRef.current !== resetKey) {
       dispatch({ type: "RESET" });
+      prevResetKeyRef.current = resetKey;
     }
-    prevFinishOpenRef.current = finishOpen;
-  }, [finishOpen]);
+  }, [resetKey]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -192,7 +192,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   return (
     <section
       aria-labelledby="stopur-overskrift"
-      className="flex w-full flex-col items-center justify-center gap-12 px-6 py-12"
+      aria-hidden={finishOpen || undefined}
+      className={`flex w-full flex-col items-center justify-center gap-12 px-6 py-12 transition-opacity duration-200 ${finishOpen ? "pointer-events-none opacity-40" : "opacity-100"}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur

@@ -29,6 +29,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { visibleToday, add, update, hide, unhide, hideAllToday } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
+  const [resetKey, setResetKey] = useState(0);
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
     setPending({ startedAt, endedAt });
@@ -37,6 +38,7 @@ function Index() {
   const handleSave = (draft: MeasurementDraft) => {
     add(draft);
     setPending(null);
+    setResetKey((k) => k + 1);
     toast.success("Registrering gemt");
   };
 
@@ -61,6 +63,7 @@ function Index() {
           <Stopwatch
             onRequestFinish={handleRequestFinish}
             finishOpen={pending !== null}
+            resetKey={resetKey}
           />
           {pending && (
             <div className="pointer-events-none absolute inset-x-0 top-full z-20 flex justify-center">
