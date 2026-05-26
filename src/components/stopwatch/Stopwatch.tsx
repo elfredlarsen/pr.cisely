@@ -1,6 +1,12 @@
-import { useEffect, useReducer, useRef, useState, useCallback } from "react";
+import { useEffect, useReducer, useRef, useState, useCallback, type ReactNode } from "react";
 import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
 import { TimeDisplay } from "./TimeDisplay";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Status = "idle" | "running" | "paused";
 
@@ -46,14 +52,35 @@ function computeMs(state: State, now: number) {
   return state.elapsed;
 }
 
-const baseBtn =
-  "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-const startBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
-const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground hover:bg-destructive/90`;
-const pauseBtn = `${baseBtn} bg-warning text-warning-foreground hover:bg-warning/90`;
-const resetBtn = `${baseBtn} bg-info text-info-foreground hover:bg-info/90`;
-const resumeBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
+const baseBtn =
+  "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const startBtn = `${baseBtn} bg-success text-success-foreground`;
+const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
+const pauseBtn = `${baseBtn} bg-warning text-warning-foreground`;
+const resetBtn = `${baseBtn} bg-info text-info-foreground`;
+const resumeBtn = `${baseBtn} bg-success text-success-foreground`;
+
+type ShortcutTooltipProps = {
+  label: string;
+  shortcut: string;
+  children: ReactNode;
+};
+
+function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="bottom" className="flex items-center gap-2">
+        <span>{label}</span>
+        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+          {shortcut}
+        </kbd>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 type Props = {
   onSaveMeasurement: (ms: number) => void;
@@ -135,52 +162,103 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
 
       <TimeDisplay ms={displayMs} />
 
-      <div
-        role="group"
-        aria-label="Stopur-kontroller"
-        className="flex flex-wrap items-center justify-center gap-6"
-      >
-        {state.status === "idle" && (
-          <button type="button" onClick={onStart} className={startBtn}>
-            <Play className="h-7 w-7" aria-hidden="true" />
-            Start
-          </button>
-        )}
+      <TooltipProvider delayDuration={200}>
+        <div
+          role="group"
+          aria-label="Stopur-kontroller"
+          className="flex flex-wrap items-center justify-center gap-6"
+        >
+          {state.status === "idle" && (
+            <ShortcutTooltip label="Start" shortcut="Mellemrum">
+              <button
+                type="button"
+                onClick={onStart}
+                className={startBtn}
+                aria-keyshortcuts=" "
+              >
+                <Play className="h-7 w-7" aria-hidden="true" />
+                Start
+              </button>
+            </ShortcutTooltip>
+          )}
 
-        {state.status === "running" && (
-          <>
-            <button type="button" onClick={onReset} className={resetBtn}>
-              <RotateCcw className="h-7 w-7" aria-hidden="true" />
-              Nulstil
-            </button>
-            <button type="button" onClick={onFinish} className={finishBtn}>
-              <Square className="h-7 w-7" aria-hidden="true" />
-              Afslut
-            </button>
-            <button type="button" onClick={onPause} className={pauseBtn}>
-              <Pause className="h-7 w-7" aria-hidden="true" />
-              Pause
-            </button>
-          </>
-        )}
+          {state.status === "running" && (
+            <>
+              <ShortcutTooltip label="Nulstil" shortcut="N">
+                <button
+                  type="button"
+                  onClick={onReset}
+                  className={resetBtn}
+                  aria-keyshortcuts="N"
+                >
+                  <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                  Nulstil
+                </button>
+              </ShortcutTooltip>
+              <ShortcutTooltip label="Afslut" shortcut="A">
+                <button
+                  type="button"
+                  onClick={onFinish}
+                  className={finishBtn}
+                  aria-keyshortcuts="A"
+                >
+                  <Square className="h-7 w-7" aria-hidden="true" />
+                  Afslut
+                </button>
+              </ShortcutTooltip>
+              <ShortcutTooltip label="Pause" shortcut="Mellemrum">
+                <button
+                  type="button"
+                  onClick={onPause}
+                  className={pauseBtn}
+                  aria-keyshortcuts=" "
+                >
+                  <Pause className="h-7 w-7" aria-hidden="true" />
+                  Pause
+                </button>
+              </ShortcutTooltip>
+            </>
+          )}
 
-        {state.status === "paused" && (
-          <>
-            <button type="button" onClick={onReset} className={resetBtn}>
-              <RotateCcw className="h-7 w-7" aria-hidden="true" />
-              Nulstil
-            </button>
-            <button type="button" onClick={onFinish} className={finishBtn}>
-              <Square className="h-7 w-7" aria-hidden="true" />
-              Afslut
-            </button>
-            <button type="button" onClick={onResume} className={resumeBtn}>
-              <FastForward className="h-7 w-7" aria-hidden="true" />
-              Fortsæt
-            </button>
-          </>
-        )}
-      </div>
+          {state.status === "paused" && (
+            <>
+              <ShortcutTooltip label="Nulstil" shortcut="N">
+                <button
+                  type="button"
+                  onClick={onReset}
+                  className={resetBtn}
+                  aria-keyshortcuts="N"
+                >
+                  <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                  Nulstil
+                </button>
+              </ShortcutTooltip>
+              <ShortcutTooltip label="Afslut" shortcut="A">
+                <button
+                  type="button"
+                  onClick={onFinish}
+                  className={finishBtn}
+                  aria-keyshortcuts="A"
+                >
+                  <Square className="h-7 w-7" aria-hidden="true" />
+                  Afslut
+                </button>
+              </ShortcutTooltip>
+              <ShortcutTooltip label="Fortsæt" shortcut="Mellemrum">
+                <button
+                  type="button"
+                  onClick={onResume}
+                  className={resumeBtn}
+                  aria-keyshortcuts=" "
+                >
+                  <FastForward className="h-7 w-7" aria-hidden="true" />
+                  Fortsæt
+                </button>
+              </ShortcutTooltip>
+            </>
+          )}
+        </div>
+      </TooltipProvider>
     </section>
   );
 }
