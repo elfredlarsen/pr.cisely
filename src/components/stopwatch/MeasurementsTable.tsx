@@ -350,8 +350,10 @@ export function MeasurementsTable({
                       </Select>
                     </TableCell>
                     <TableCell className="py-1 text-right">
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => {
                           onHide(m.id);
                           toast("Skjult — findes i arkivet", {
@@ -362,10 +364,10 @@ export function MeasurementsTable({
                           });
                         }}
                         aria-label="Skjul registrering"
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="h-11 w-11 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
                       >
                         <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      </button>
+                      </Button>
                     </TableCell>
                   </TableRow>
                   );
