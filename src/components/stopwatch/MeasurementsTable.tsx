@@ -292,7 +292,7 @@ export function MeasurementsTable({
               Ingen registreringer endnu i dag.
             </p>
           ) : (
-            <Table>
+            <Table className="w-full table-fixed">
               <TableHeader className="sticky top-0 bg-background">
                 <TableRow
                   className="border-border/50"
@@ -303,8 +303,8 @@ export function MeasurementsTable({
                   <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
                   <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
                   <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
-                  <TableHead className="h-8 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
-                  <TableHead className="h-8 py-1 text-right">
+                  <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
+                  <TableHead className="h-8 w-36 py-1 text-right">
                     <div className="flex justify-end">{clearHistoryButton}</div>
                   </TableHead>
                 </TableRow>
@@ -332,10 +332,10 @@ export function MeasurementsTable({
                         onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                       >
                         <SelectTrigger
-                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
+                          className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
                           aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                         >
-                          <SelectValue />
+                          <SelectValue className="truncate" />
                         </SelectTrigger>
                         <SelectContent>
                           {CATEGORIES.map((c) => (
