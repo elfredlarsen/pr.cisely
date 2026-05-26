@@ -182,11 +182,14 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
+          type="time"
+          step={1}
           value={draft}
+          aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -197,6 +200,28 @@ export function MeasurementsTable({
         className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {value}
+      </button>
+    );
+  };
+
+  const renderDurationCell = (m: Measurement) => {
+    if (isEditing(m, "duration")) {
+      return (
+        <DurationInput
+          value={draft}
+          onChange={setDraft}
+          onCommit={() => commit(m)}
+          onCancel={() => setEditing(null)}
+        />
+      );
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => beginEdit(m, "duration")}
+        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {fmtDuration(m.ms)}
       </button>
     );
   };
