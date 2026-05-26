@@ -6,28 +6,48 @@ function pad(n: number, w = 2) {
 
 export function formatTime(ms: number) {
   const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  const hundredths = Math.floor((ms % 1000) / 10);
   return {
-    main: `${pad(minutes)}:${pad(seconds)}`,
-    hundredths: pad(hundredths),
+    hours: pad(hours),
+    minutes: pad(minutes),
+    seconds: pad(seconds),
   };
 }
 
+const digitClass =
+  "text-[clamp(4rem,16vw,12rem)] leading-none tracking-tight";
+const labelClass =
+  "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
+
 export function TimeDisplay({ ms }: Props) {
-  const { main, hundredths } = formatTime(ms);
+  const { hours, minutes, seconds } = formatTime(ms);
   return (
     <div
       aria-live="polite"
       aria-atomic="true"
-      className="flex items-baseline justify-center font-mono tabular-nums text-foreground select-none"
+      className="flex flex-col items-center select-none text-foreground"
+      style={{ fontFamily: "'Poppins', sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
-      <span className="text-[clamp(4rem,16vw,12rem)] leading-none font-medium tracking-tight">
-        {main}:{hundredths}
-      </span>
+      <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{hours}</span>
+          <span className={`${labelClass} mt-2`}>Timer</span>
+        </div>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{minutes}</span>
+          <span className={`${labelClass} mt-2`}>Minutter</span>
+        </div>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{seconds}</span>
+          <span className={`${labelClass} mt-2`}>Sekunder</span>
+        </div>
+      </div>
       <span className="sr-only">
-        {main} minutter og sekunder, {hundredths} hundrededele
+        {hours} timer, {minutes} minutter, {seconds} sekunder
       </span>
     </div>
   );

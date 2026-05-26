@@ -1,64 +1,53 @@
 ## Mål
+Alle knapper i appen skal følge samme "state-sprog" som vist i Figma-referencen:
 
-Bring `pr:cisely` i fuld overensstemmelse med `DESING.md`.
+- **Default**: grundfarve, fuld opacitet, evt. border
+- **Hover**: subtilt farveskift / let shadow-lift
+- **Active (pressed)**: mørkere fill + scale 0.98
+- **Focus-visible**: tydelig 3px ring med offset
+- **Disabled**: dæmpet fill, lav kontrast, `cursor: not-allowed`
 
----
+I dag har hver knap sin egen ad-hoc kombination (forskellig focus-ring, ingen aktiv-state, ingen scale-feedback, inkonsistent disabled). Vi ensretter dem.
 
-## A. Knapper: fjern gradient, brug solid lilla
+## Berørte filer
+- `src/components/ui/button.tsx` (shadcn-base)
+- `src/components/stopwatch/Stopwatch.tsx` (Start/Pause/Fortsæt/Nulstil/Afslut — `baseBtn`)
+- `src/components/stopwatch/FinishPanel.tsx` (Annuller, Gem)
+- `src/components/stopwatch/MeasurementsTable.tsx` (Ryd historik, skjul-ikon, in-line redigerings-knapper)
+- `src/components/stopwatch/TopNav.tsx` (verificeres og opdateres hvis nødvendigt)
 
-DESING.md: "Gradienten må ikke bruges til almindelige knapper eller baggrunde." I dag bruger `Start`, `Afslut` og `Fortsæt` `var(--brand-gradient)`.
+## Ændringer
 
-**`src/components/stopwatch/Stopwatch.tsx`:**
-- Fjern `style={{ background: "var(--brand-gradient)" }}` fra alle primære knapper.
-- `primaryBtn` får `bg-primary` + `hover:bg-primary/90` (solid lilla #c471ed).
-- Sekundære knapper er allerede compliant.
+### 1. Fælles "interaction"-klasse i `button.tsx`
+Tilføj til `buttonVariants` base-classes så ALLE shadcn-knapper får:
+- `active:scale-[0.98] active:brightness-95` (pressed feedback)
+- `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background` (erstatter nuværende `ring-1` uden offset)
+- `disabled:cursor-not-allowed disabled:opacity-60` (allerede `disabled:opacity-50` — strammes til 60% + cursor)
+- `transition-all duration-150` så hover/active føles ensartet
 
----
+### 2. Stopwatch hovedknapper (`baseBtn`)
+Opdatér `baseBtn` så den matcher reference-sproget:
+- Behold størrelse/farver pr. variant (success/destructive/warning/info)
+- Hover: `hover:brightness-110 hover:shadow-md` (allerede tæt på)
+- Active: tilføj `active:scale-[0.98] active:brightness-90`
+- Focus: harmoniser til `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`
+- Disabled-klasser (selv om knapperne sjældent disables)
 
-## B. Slet-bekræftelse: AlertDialog i stedet for window.confirm()
+### 3. FinishPanel "Annuller" + "Gem"
+- Erstat de håndskrevne klasser med `<Button variant="outline">` og `<Button>` (default/primary) fra shadcn — så de automatisk arver det nye state-sprog.
+- Bevarer dansk tekst og `min-h-11` for touch-target via `size` eller ekstra className.
 
-DESING.md: "Alle slet-handlinger bekræftes i en dialogboks med tydelige knapper: 'Annuller' og 'Slet' (rød)."
+### 4. MeasurementsTable
+- **"Ryd historik"**: erstat custom-knap med `<Button variant="ghost" size="sm">` + Trash-ikon, beholder `whitespace-nowrap`.
+- **Skjul-øje (rækken)**: erstat med `<Button variant="ghost" size="icon">`.
+- **In-line tids/varigheds-knapper (blyant-hover)**: behold custom layout (de er bevidst usynlige indtil hover), men tilføj `active:scale-[0.98]` og samme focus-ring som resten.
 
-**`src/components/stopwatch/MeasurementsList.tsx`:**
-- Importér `AlertDialog`-komponenterne (`@/components/ui/alert-dialog` findes allerede).
-- Erstat `window.confirm(...)` med dialog:
-  - Titel: "Slet alle målinger?"
-  - Beskrivelse: "Denne handling kan ikke fortrydes."
-  - `AlertDialogCancel`: "Annuller"
-  - `AlertDialogAction`: "Slet" (rød via `bg-destructive`)
+### 5. TopNav
+Gennemgå evt. knapper og brug `<Button>` variants i stedet for ad-hoc, hvis ikke allerede.
 
----
+## Resultat
+Hver knap i appen — uanset variant — opfører sig forudsigeligt: samme hover-løft, samme "tryk-ned" feedback, samme synlige fokus-ring, samme disabled-look. Den primære farve/størrelse er stadig fri pr. variant, men interaktions-laget er ét fælles sprog.
 
-## C. Design-tokens matcher DESING.md hex-værdier
-
-**`src/styles.css`:**
-- `--background`: `#fafafa`
-- `--foreground`: `#1a1a1a`
-- `--muted-foreground`: `#666666`
-- `--primary`: `#c471ed`
-- `--destructive`: `#f64f59`
-- `--card` / `--popover`: `#ffffff`
-- Tilføj `--success: #2a9d4a` + map i `@theme inline`.
-- Behold `--brand-gradient`, Poppins, JetBrains Mono.
-
----
-
-## D. Logo som signaturmoment
-
-**`src/components/stopwatch/TopNav.tsx`:**
-- `pr:cisely`-wordmark får gradient-tekst (`background-clip: text`). Eneste sted gradienten bruges.
-
----
-
-## Out of scope
-
-State-maskine, målings-logik, layout og typografi er uændret.
-
----
-
-## Filer der ændres
-
-- `src/styles.css`
-- `src/components/stopwatch/Stopwatch.tsx`
-- `src/components/stopwatch/MeasurementsList.tsx`
-- `src/components/stopwatch/TopNav.tsx`
+## Ikke i scope
+- Ingen ændringer af farve-palette eller layout
+- Ingen funktionelle ændringer (klik-handlers, state, data)
