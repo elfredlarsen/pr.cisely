@@ -338,12 +338,12 @@ export function MeasurementsTable({
           )}
         </div>
       </section>
-      {tip && (
+      {tipPos && (
         <div
           role="tooltip"
           aria-hidden="true"
-          style={{ left: tip.x + 14, top: tip.y + 14 }}
-          className="pointer-events-none fixed z-50 rounded border border-[#c471ed]/25 bg-[#c471ed]/10 px-2 py-0.5 text-[11px] text-muted-foreground/90 shadow-none backdrop-blur-sm"
+          style={{ left: tipPos.x + 14, top: tipPos.y + 14 }}
+          className={`pointer-events-none fixed z-50 rounded border border-[#c471ed]/25 bg-[#c471ed]/10 px-2 py-0.5 text-[11px] text-muted-foreground/90 shadow-none backdrop-blur-sm transition-opacity duration-200 ${tipVisible ? "opacity-100" : "opacity-0"}`}
         >
           Seneste registreringer
         </div>
