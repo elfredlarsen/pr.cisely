@@ -226,29 +226,7 @@ export function MeasurementsTable({
     );
   };
 
-  const renderDurationCell = (m: Measurement) => {
-    if (isEditing(m, "duration")) {
-      return (
-        <input
-          autoFocus
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => commit(m)}
-          onKeyDown={(e) => handleKey(e, m)}
-          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-      );
-    }
-    return (
-      <button
-        type="button"
-        onClick={() => beginEdit(m, "duration")}
-        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        {fmtDuration(m.ms)}
-      </button>
-    );
-  };
+
 
   const clearHistoryButton = (
     <AlertDialog>
