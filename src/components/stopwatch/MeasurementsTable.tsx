@@ -333,7 +333,7 @@ export function MeasurementsTable({
                     className={
                       rowEditing
                         ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                        : "border-border/40 hover:bg-[#c471ed]/10"
+                        : "border-border/40 hover:bg-muted/30"
                     }
                   >
 
@@ -346,7 +346,7 @@ export function MeasurementsTable({
                         onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                       >
                         <SelectTrigger
-                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground/80 hover:border-input"
+                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
                           aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                         >
                           <SelectValue />
@@ -373,7 +373,7 @@ export function MeasurementsTable({
                           });
                         }}
                         aria-label="Skjul registrering"
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <EyeOff className="h-4 w-4" aria-hidden="true" />
                       </button>
