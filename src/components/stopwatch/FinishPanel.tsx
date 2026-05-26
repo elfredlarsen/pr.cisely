@@ -120,9 +120,23 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
     }
   };
 
+  const maskDuration = (input: string): string => {
+    const digits = input.replace(/\D/g, "").slice(0, 7);
+    if (digits.length === 0) return "";
+    const h = digits.slice(0, Math.max(1, digits.length - 4));
+    const rest = digits.slice(h.length);
+    const m = rest.slice(0, 2);
+    const s = rest.slice(2, 4);
+    let result = h;
+    if (rest.length > 0) result += ":" + m;
+    if (rest.length > 2) result += ":" + s;
+    return result;
+  };
+
   const handleDurationChange = (value: string) => {
-    setDuration(value);
-    const ms = parseDuration(value);
+    const masked = maskDuration(value);
+    setDuration(masked);
+    const ms = parseDuration(masked);
     const s = parseHms(start);
     if (ms !== null && s !== null) {
       const newEndSec = s + Math.floor(ms / 1000);
@@ -135,6 +149,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
       }
     }
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,8 +199,8 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             <input
               ref={firstRef}
               id="finish-start"
-              type="text"
-              inputMode="numeric"
+              type="time"
+              step={1}
               value={start}
               onChange={(e) => handleStartChange(e.target.value)}
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -197,8 +212,8 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             </label>
             <input
               id="finish-end"
-              type="text"
-              inputMode="numeric"
+              type="time"
+              step={1}
               value={end}
               onChange={(e) => handleEndChange(e.target.value)}
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -214,9 +229,11 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               inputMode="numeric"
               value={duration}
               onChange={(e) => handleDurationChange(e.target.value)}
+              placeholder="0:00:00"
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
+
         </div>
 
         <div className="flex flex-col gap-1">
