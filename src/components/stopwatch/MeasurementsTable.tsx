@@ -27,6 +27,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import type { Measurement } from "@/hooks/use-measurements";
 
