@@ -16,30 +16,35 @@ export function formatTime(ms: number) {
   };
 }
 
+const digitClass =
+  "text-[clamp(4rem,16vw,12rem)] leading-none tracking-tight";
+const labelClass =
+  "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
+
 export function TimeDisplay({ ms }: Props) {
   const { hours, minutes, seconds } = formatTime(ms);
   return (
     <div
       aria-live="polite"
       aria-atomic="true"
-      className="flex flex-col items-center select-none"
+      className="flex flex-col items-center select-none text-foreground"
       style={{ fontFamily: "'Poppins', sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
-      <div className="flex items-baseline justify-center text-foreground">
-        <span
-          className="text-[clamp(4rem,16vw,12rem)] leading-none tracking-tight"
-          style={{ fontWeight: 500 }}
-        >
-          {hours}:{minutes}:{seconds}
-        </span>
-      </div>
-      <div
-        className="mt-3 flex justify-center gap-[clamp(2rem,8vw,6rem)] text-xs uppercase tracking-[0.2em] text-muted-foreground"
-        aria-hidden="true"
-      >
-        <span>Timer</span>
-        <span>Minutter</span>
-        <span>Sekunder</span>
+      <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{hours}</span>
+          <span className={`${labelClass} mt-2`}>Timer</span>
+        </div>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{minutes}</span>
+          <span className={`${labelClass} mt-2`}>Minutter</span>
+        </div>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <div className="flex flex-col items-center">
+          <span className={digitClass}>{seconds}</span>
+          <span className={`${labelClass} mt-2`}>Sekunder</span>
+        </div>
       </div>
       <span className="sr-only">
         {hours} timer, {minutes} minutter, {seconds} sekunder

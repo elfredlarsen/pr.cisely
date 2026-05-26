@@ -203,7 +203,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               step={1}
               value={start}
               onChange={(e) => handleStartChange(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -216,7 +216,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               step={1}
               value={end}
               onChange={(e) => handleEndChange(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -230,7 +230,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               value={duration}
               onChange={(e) => handleDurationChange(e.target.value)}
               placeholder="0:00:00"
-              className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
 
