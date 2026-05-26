@@ -199,7 +199,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
         Stopur
       </h1>
 
-      <div className={`transition-opacity duration-200 ${finishOpen ? "opacity-30" : "opacity-100"}`}>
+      <div className={`transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
         <TimeDisplay ms={displayMs} />
       </div>
 
