@@ -1,22 +1,20 @@
-## Neutral bekræftelsestoast + luk-kryds i højre side
+# Ensret tekst- og ikonfarver på knapper
 
-### Baggrund
-Bekræftelsestoasten ("Registrering gemt") blev grøn pga. sonners standard `success`-stil. Luk-krydset skal placeres i højre side af meddelelsen.
+## Mål
+Gøre tekst- og ikonfarver ensartede på alle stopur-knapper ved at vælge én farve, der passer til alle knapper.
 
-### Ændringer
+## Løsning
+Skift `success-foreground`, `warning-foreground` og `info-foreground` fra mørk tekst (`#1a1a1a`) til hvid (`#ffffff`).
 
-**1. `src/components/ui/sonner.tsx`**
-Tilføj `success` i `toastOptions.classNames` som overskriver sonners grønne success-stil med neutrale farver (`bg-background`, `text-foreground`, `border-border`), så bekræftelsestoasten ser ud som en almindelig toast.
+Hvid tekst og ikoner giver et rent, ensartet udtryk på alle farvede knapper og matcher allerede den eksisterende `destructive`-knap (Afslut), som allerede har hvid tekst.
 
-**2. `src/styles.css`**
-Tilføj en global CSS-regel der overskriver sonners interne placering af luk-knappen:
-```css
-[data-sonner-toast] [data-close-button] {
-  right: 8px !important;
-  left: auto !important;
-}
-```
+## Ændring
+Fil: `src/styles.css`
 
-### Verifikation
-- Kald `toast.success("Registrering gemt")` → toast vises uden grøn accent/ikon.
-- Luk-krydset (X) sidder i højre side af toasten.
+| Token                  | Før        | Efter      |
+|------------------------|------------|------------|
+| `--success-foreground` | `#1a1a1a`  | `#ffffff`  |
+| `--warning-foreground` | `#1a1a1a`  | `#ffffff`  |
+| `--info-foreground`    | `#1a1a1a`  | `#ffffff`  |
+
+Der kræves ingen ændringer i komponenter – knapperne bruger allerede tokens som `text-success-foreground`, `text-warning-foreground` osv.
