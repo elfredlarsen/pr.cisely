@@ -141,15 +141,14 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     onRequestFinish(startedAt, endedAt);
   };
 
-  // External reset (after dialog save/cancel) handled by parent via key change is overkill;
-  // instead we expose a useEffect: when finishOpen turns from true -> false, reset.
-  const prevFinishOpenRef = useRef(finishOpen);
+  // Reset only when parent explicitly signals (e.g. after save), not on cancel.
+  const prevResetKeyRef = useRef(resetKey);
   useEffect(() => {
-    if (prevFinishOpenRef.current && !finishOpen) {
+    if (prevResetKeyRef.current !== resetKey) {
       dispatch({ type: "RESET" });
+      prevResetKeyRef.current = resetKey;
     }
-    prevFinishOpenRef.current = finishOpen;
-  }, [finishOpen]);
+  }, [resetKey]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
