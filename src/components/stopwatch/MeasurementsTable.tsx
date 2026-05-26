@@ -77,6 +77,124 @@ function parseDuration(value: string): number | null {
   return (h * 3600 + mi * 60 + s) * 1000;
 }
 
+function DurationInput({
+  value,
+  onChange,
+  onCommit,
+  onCancel,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onCommit: () => void;
+  onCancel: () => void;
+}) {
+  const parts = value.match(/^(\d{1,3}):(\d{2}):(\d{2})$/);
+  const initH = parts ? parts[1].padStart(2, "0") : "00";
+  const initM = parts ? parts[2] : "00";
+  const initS = parts ? parts[3] : "00";
+
+  const hRef = useRef<HTMLInputElement>(null);
+  const mRef = useRef<HTMLInputElement>(null);
+  const sRef = useRef<HTMLInputElement>(null);
+  const [h, setH] = useState(initH);
+  const [mm, setMm] = useState(initM);
+  const [ss, setSs] = useState(initS);
+
+  const sync = (hv: string, mv: string, sv: string) => {
+    onChange(`${hv.padStart(2, "0")}:${mv.padStart(2, "0")}:${sv.padStart(2, "0")}`);
+  };
+
+  const handle = (
+    raw: string,
+    setter: (v: string) => void,
+    next: React.RefObject<HTMLInputElement>,
+    max: number,
+    other: [string, string],
+    pos: "h" | "m" | "s",
+  ) => {
+    const digits = raw.replace(/\D/g, "").slice(0, pos === "h" ? 3 : 2);
+    setter(digits);
+    const [a, b] = other;
+    if (pos === "h") sync(digits, a, b);
+    else if (pos === "m") sync(a, digits, b);
+    else sync(a, b, digits);
+    if (digits.length === 2 && next.current) next.current.focus();
+    void max;
+  };
+
+  const onBlurClamp = (v: string, setter: (v: string) => void, max: number, pos: "h" | "m" | "s") => {
+    let n = Number(v || "0");
+    if (Number.isNaN(n)) n = 0;
+    if (n > max) n = max;
+    const padded = n.toString().padStart(2, "0");
+    setter(padded);
+    if (pos === "h") sync(padded, mm, ss);
+    else if (pos === "m") sync(h, padded, ss);
+    else sync(h, mm, padded);
+  };
+
+  const onKey = (e: React.KeyboardEvent<HTMLInputElement>, current: string, prev: React.RefObject<HTMLInputElement> | null) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onCommit();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      onCancel();
+    } else if (e.key === "Backspace" && current === "" && prev?.current) {
+      prev.current.focus();
+    }
+  };
+
+  const fieldCls =
+    "w-7 bg-transparent text-center font-mono text-sm tabular-nums focus:outline-none";
+
+  return (
+    <span
+      className="inline-flex h-8 items-center rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-within:ring-2 focus-within:ring-ring"
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) onCommit();
+      }}
+    >
+      <input
+        ref={hRef}
+        autoFocus
+        inputMode="numeric"
+        aria-label="Varighed timer"
+        className={fieldCls}
+        value={h}
+        maxLength={3}
+        onChange={(e) => handle(e.target.value, setH, mRef, 999, [mm, ss], "h")}
+        onBlur={() => onBlurClamp(h, setH, 999, "h")}
+        onKeyDown={(e) => onKey(e, h, null)}
+      />
+      <span aria-hidden="true">:</span>
+      <input
+        ref={mRef}
+        inputMode="numeric"
+        aria-label="Varighed minutter"
+        className={fieldCls}
+        value={mm}
+        maxLength={2}
+        onChange={(e) => handle(e.target.value, setMm, sRef, 59, [h, ss], "m")}
+        onBlur={() => onBlurClamp(mm, setMm, 59, "m")}
+        onKeyDown={(e) => onKey(e, mm, hRef)}
+      />
+      <span aria-hidden="true">:</span>
+      <input
+        ref={sRef}
+        inputMode="numeric"
+        aria-label="Varighed sekunder"
+        className={fieldCls}
+        value={ss}
+        maxLength={2}
+        onChange={(e) => handle(e.target.value, setSs, sRef, 59, [h, mm], "s")}
+        onBlur={() => onBlurClamp(ss, setSs, 59, "s")}
+        onKeyDown={(e) => onKey(e, ss, mRef)}
+      />
+    </span>
+  );
+}
+
 type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
 
 export function MeasurementsTable({
