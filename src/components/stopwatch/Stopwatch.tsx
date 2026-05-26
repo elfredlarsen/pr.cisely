@@ -103,12 +103,12 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
           else if (state.status === "running") onPause();
           else if (state.status === "paused") onResume();
           break;
-        case "r":
-        case "R":
+        case "n":
+        case "N":
           if (state.status === "running" || state.status === "paused") onReset();
           break;
-        case "f":
-        case "F":
+        case "a":
+        case "A":
           if (state.status === "running" || state.status === "paused") onFinish();
           break;
         case "Escape":
