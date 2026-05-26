@@ -90,6 +90,40 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
     dispatch({ type: "RESET" });
   };
 
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      switch (e.key) {
+        case " ":
+        case "Spacebar":
+          e.preventDefault();
+          if (state.status === "idle") onStart();
+          else if (state.status === "running") onPause();
+          else if (state.status === "paused") onResume();
+          break;
+        case "r":
+        case "R":
+          if (state.status === "running" || state.status === "paused") onReset();
+          break;
+        case "f":
+        case "F":
+          if (state.status === "running" || state.status === "paused") onFinish();
+          break;
+        case "Escape":
+          if (state.status === "running" || state.status === "paused") onReset();
+          break;
+      }
+    },
+    [state.status, onStart, onPause, onResume, onReset, onFinish]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
     <section
       aria-labelledby="stopur-overskrift"
