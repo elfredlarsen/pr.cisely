@@ -78,7 +78,7 @@ function Index() {
             </div>
           )}
         </div>
-        <div className="min-h-0 flex-1">
+        <div className="min-h-0 flex-1 pt-12">
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}
