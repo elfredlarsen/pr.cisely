@@ -300,8 +300,8 @@ export function MeasurementsTable({
                   onMouseMove={handleHeaderMove}
                   onMouseLeave={handleHeaderLeave}
                 >
-                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
-                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
+                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
                   <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
                   <TableHead className="h-8 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
                   <TableHead className="h-8 py-1 text-right">
