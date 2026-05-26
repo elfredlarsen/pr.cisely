@@ -258,13 +258,13 @@ export function MeasurementsTable({
                       <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
                       <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                       <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
-                      <TableCell>
+                      <TableCell className="py-1 text-xs">
                         <Select
                           value={m.category}
                           onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                         >
                           <SelectTrigger
-                            className="h-8 w-full border-transparent bg-transparent text-muted-foreground hover:border-input"
+                            className="h-7 w-full border-transparent bg-transparent text-xs text-muted-foreground/80 hover:border-input"
                             aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                           >
                             <SelectValue />
@@ -278,7 +278,7 @@ export function MeasurementsTable({
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="py-1 text-right">
                         <button
                           type="button"
                           onClick={() => {
