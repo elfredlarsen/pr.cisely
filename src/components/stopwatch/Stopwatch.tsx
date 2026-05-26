@@ -166,7 +166,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
 
       <TimeDisplay ms={displayMs} />
 
-      <TooltipProvider delayDuration={200}>
+      <TooltipProvider delayDuration={300}>
         <div
           role="group"
           aria-label="Stopur-kontroller"
