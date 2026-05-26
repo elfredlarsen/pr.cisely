@@ -304,7 +304,13 @@ export function MeasurementsTable({
           </div>
         </section>
       </TooltipTrigger>
-      <TooltipContent side="top">Seneste registreringer</TooltipContent>
+      <TooltipContent
+        side="top"
+        sideOffset={6}
+        className="rounded border border-border/30 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground/80 shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
+      >
+        Seneste registreringer
+      </TooltipContent>
     </Tooltip>
     </TooltipProvider>
   );
