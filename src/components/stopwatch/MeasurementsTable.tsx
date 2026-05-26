@@ -88,10 +88,13 @@ export function MeasurementsTable({
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
+  const [hovered, setHovered] = useState(false);
   const [tipPos, setTipPos] = useState<{ x: number; y: number } | null>(null);
   const [tipVisible, setTipVisible] = useState(false);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const inForeground = hovered || editing !== null;
 
   const clearShowTimer = () => {
     if (showTimerRef.current) {
