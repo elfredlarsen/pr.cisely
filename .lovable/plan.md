@@ -1,78 +1,33 @@
 ## Mål
+1. Tydeligere hover-tilstand på alle stopur-knapper.
+2. Tooltip på hver knap med navn + tastaturgenvej.
 
-Giv stopur-knapperne distinkte, semantiske farver — afstemt med brandidentiteten (signaturgradientens korall→lilla→cyan-akse), ikke rå standardfarver.
+## Tooltips
+Bruger eksisterende `Tooltip` (Radix) fra `src/components/ui/tooltip.tsx`. Pakker knap-rækken i `Stopwatch.tsx` i én `TooltipProvider` og hver knap i `Tooltip`/`TooltipTrigger asChild`/`TooltipContent`.
 
----
+Tooltip-indhold matcher de faktisk implementerede genveje (ikke "P"):
 
-## Farve-mapping
+| Knap     | Tooltip               |
+|----------|-----------------------|
+| Start    | Start · `Mellemrum`   |
+| Pause    | Pause · `Mellemrum`   |
+| Fortsæt  | Fortsæt · `Mellemrum` |
+| Nulstil  | Nulstil · `N`         |
+| Afslut   | Afslut · `A`          |
 
-| Knap     | Rolle        | Farve (brand-justeret)        | Token            |
-|----------|--------------|-------------------------------|------------------|
-| Start    | Bekræftende  | Brand-grøn `#3ec98a`          | `--success`      |
-| Afslut   | Afsluttende  | Brand-korall `#ff5a7a`        | `--destructive`  |
-| Pause    | Pause        | Brand-gul `#ffd23a`           | `--warning` (ny) |
-| Nulstil  | Neutral/info | Brand-cyan `#12c2e9` (fra gradient) | `--info` (ny) |
-| Fortsæt  | Genoptag     | Brand-lilla `#c471ed` (fra gradient) | `--primary`  |
+Genvejen vises som lille `<kbd>`-chip i tooltippen for læsbarhed. Tilføjer desuden `aria-keyshortcuts` på hver knap (` `, `N`, `A`) så skærmlæsere kender genvejen uden hover. Tooltip-tekst er på dansk og respekterer den eksisterende tone.
 
-### Hvorfor disse hex?
+## Tydeligere hover
+Opdaterer `baseBtn` + varianterne i `Stopwatch.tsx`:
 
-Signaturgradienten er korall `#f64f59` → lilla `#c471ed` → cyan `#12c2e9`. De fire knapper trækkes ind i samme farvefamilie:
+- Stærkere farveskift via `hover:brightness-110` (mørke knapper bliver tydeligt lysere; outline-knapper får `hover:bg-muted` + `hover:border-foreground/40`)
+- `hover:shadow-md` for løft i dybden
+- Let fysisk respons: `motion-safe:hover:-translate-y-0.5` + `motion-safe:active:translate-y-0` med `transition-all duration-150`
+- Tydeligere kant: `hover:ring-2 hover:ring-foreground/15 ring-offset-2 ring-offset-background`
+- Bevarer eksisterende `focus-visible:ring-2` (tastaturfokus uændret)
+- `motion-safe:`-prefix sikrer at `prefers-reduced-motion` deaktiverer transform
 
-- **Grøn `#3ec98a`** — lysere, lidt cyan-trukket grøn der harmonerer med gradientens cyan-ende (i stedet for den mere skovgrønne `#2a9d4a`). Bevarer "bekræft"-betydning.
-- **Korall `#ff5a7a`** — lidt varmere/pinkere end DESING's `#f64f59` så den læner mod gradientens korall-til-lilla overgang i stedet for at virke som et alarm-rødt skilt.
-- **Cyan `#12c2e9`** — direkte fra gradienten.
-- **Lilla `#c471ed`** — direkte fra gradienten (Fortsæt = primær).
-- **Gul `#ffd23a`** — varm accent som komplement; ikke i gradienten, men nødvendig for "pause"-distinktion. Holdes blød (ikke neon).
+## Filer
+- `src/components/stopwatch/Stopwatch.tsx` — wrap knapper i Tooltip, tilføj `aria-keyshortcuts`, opdater knapklasser.
 
-DESING.md's `--destructive` (varsel/fejl) bevares som `#f64f59` til ikke-knap-kontekster (slet-dialog osv.); kun Afslut-knappen får den blødere brand-korall. Implementeringsmæssigt: vi opdaterer `--destructive` til `#ff5a7a` så Afslut og slet-dialog er konsistente — det er den mere brand-tro tolkning.
-
----
-
-## Ændringer
-
-### `src/styles.css`
-- Opdatér i `:root`:
-  - `--success: #3ec98a` (var `#2a9d4a`)
-  - `--destructive: #ff5a7a` (var `#f64f59`)
-- Tilføj:
-  - `--warning: #ffd23a`
-  - `--warning-foreground: #1a1a1a`
-  - `--info: #12c2e9`
-  - `--info-foreground: #1a1a1a` (mørk tekst — hvid på cyan fejler WCAG)
-- Map i `@theme inline`: `--color-warning`, `--color-warning-foreground`, `--color-info`, `--color-info-foreground`.
-
-### `src/components/stopwatch/Stopwatch.tsx`
-- Refaktorér til én `baseBtn` med fælles klasser (min-h-12, rounded-lg, semibold, focus-ring, shadow-sm, transition-colors) + fem farve-varianter:
-  - `startBtn`: `bg-success text-success-foreground hover:bg-success/90`
-  - `finishBtn`: `bg-destructive text-destructive-foreground hover:bg-destructive/90`
-  - `pauseBtn`: `bg-warning text-warning-foreground hover:bg-warning/90`
-  - `resetBtn`: `bg-info text-info-foreground hover:bg-info/90`
-  - `resumeBtn`: `bg-primary text-primary-foreground hover:bg-primary/90`
-- Erstat de eksisterende `primaryBtn`/`secondaryBtn`-brug i de tre status-grene.
-
----
-
-## Tilgængelighed (WCAG AA)
-
-Kontrast med kort-baggrund og tekstfarve:
-- Grøn `#3ec98a` + hvid ≈ 2.4:1 ✗ → brug `--success-foreground: #1a1a1a` ≈ 7.5:1 ✓
-- Korall `#ff5a7a` + hvid ≈ 3.3:1 — large text (16px semibold = ≥ 14px bold) OK ved 3:1-grænse ✓
-- Gul `#ffd23a` + `#1a1a1a` ≈ 13:1 ✓
-- Cyan `#12c2e9` + `#1a1a1a` ≈ 9.6:1 ✓
-- Lilla `#c471ed` + hvid ≈ 3.2:1 — large text OK ✓
-
-Farve er ikke eneste signal: hver knap har stadig sit eget ikon og dansk tekstlabel.
-
----
-
-## Out of scope
-
-- Layout, rækkefølge, ikoner, tekstlabels.
-- `MeasurementsList`, `TopNav`, `TimeDisplay`.
-
----
-
-## Filer der ændres
-
-- `src/styles.css`
-- `src/components/stopwatch/Stopwatch.tsx`
+Ingen ændringer i logik, genvejs-handlere, datalag eller andre filer.
