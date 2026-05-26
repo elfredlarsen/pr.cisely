@@ -306,5 +306,6 @@ export function MeasurementsTable({
       </TooltipTrigger>
       <TooltipContent side="top">Seneste registreringer</TooltipContent>
     </Tooltip>
+    </TooltipProvider>
   );
 }
