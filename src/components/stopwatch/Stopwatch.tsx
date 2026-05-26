@@ -52,8 +52,6 @@ function computeMs(state: State, now: number) {
   return state.elapsed;
 }
 
-const baseBtn =
-  "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const baseBtn =
   "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
