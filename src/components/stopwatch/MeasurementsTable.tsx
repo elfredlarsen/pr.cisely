@@ -205,12 +205,13 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
-          type="time"
-          step={1}
+          type="text"
+          inputMode="numeric"
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => setDraft(maskTime(e.target.value))}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
+          placeholder="00:00:00"
           aria-label={field === "start" ? "Starttidspunkt (timer:minutter:sekunder)" : "Sluttidspunkt (timer:minutter:sekunder)"}
           className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
@@ -220,10 +221,10 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-between rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <span>{value}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
+        <span>{value}</span>
       </button>
     );
   };
