@@ -1,32 +1,33 @@
-## Ændringer i `src/components/stopwatch/MeasurementsTable.tsx`
+## 1. TimeDisplay: labels centreret under cifre i samme stil som tabelhoveder
 
-### 1. Blyant-ikon til venstre, ingen baggrundsændring ved hover
-For både `renderTimeCell` og `renderDurationCell`:
-- Flyt `<Pencil />` så den står før `<span>` i knappen.
-- Fjern `hover:bg-accent` fra knappens className.
-- Behold `group` + `opacity-0 group-hover:opacity-60` så kun ikonet ændrer sig ved hover.
-- Juster layout til `justify-start gap-1.5` så blyanten ligger tæt til venstre for tallene.
+I `src/components/stopwatch/TimeDisplay.tsx` opdeles tiden i tre kolonner (Timer, Minutter, Sekunder) med koloner imellem, så hver label kan placeres præcist under sit ciffer-par:
 
-### 2. Fast bredde på start-/sluttid uden uret
-Problemet er at `<input type="time">` viser et indbygget ur/picker-ikon i browseren, som spiser plads og får layoutet til at hoppe. Løsning: erstat den med et tekst-input med samme masking-tilgang som varighed:
+```
+   00      :      00      :      00
+ TIMER          MINUTTER       SEKUNDER
+```
 
-- Tilføj en `maskTime(input)`-hjælper der formaterer cifre som `HH:MM:SS` (svarende til `maskDuration`, men med max 6 cifre og time-grænse 23).
-- I `renderTimeCell` udskift `<input type="time" step={1} ...>` med:
-  ```
-  <input
-    type="text"
-    inputMode="numeric"
-    placeholder="00:00:00"
-    value={draft}
-    onChange={(e) => setDraft(maskTime(e.target.value))}
-    ...
-    className="h-8 w-28 ..."  // samme bredde som knap
-  />
-  ```
-- Behold `parseTime` til commit — den accepterer allerede `HH:MM:SS`.
+- Hver gruppe wrapper cifre + label i en `flex flex-col items-center`.
+- Kolonerne (`:`) ligger som separate spans uden label under sig, så de ikke skubber til centreringen.
+- Labels får samme diskrete stil som tabelhovederne: `text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70`.
+- `sr-only`-tekst bevares for skærmlæsere.
 
-Resultat: ingen native ur-ikon, samme bredde (`w-28`) i både visnings- og redigeringstilstand, så layoutet er stabilt.
+## 2. Ensartet font for alle tidsvisninger
 
-### Bevares uændret
-- Bredderne: Start/Slut `w-28`, Varighed `w-24`.
-- Alle andre stilarter, opaciteter og kategori-cellen.
+Alle tidsvisninger skifter fra `font-mono` (JetBrains Mono) til Poppins med `tabular-nums`, så tallene matcher og står på linje.
+
+- **`TimeDisplay.tsx`** — bruger allerede Poppins; bekræft `font-variant-numeric: tabular-nums` på alle tal-spans.
+- **`MeasurementsTable.tsx`** — fjern `font-mono` på:
+  - Start/Slut-input (linje 216)
+  - Start/Slut-knap (linje 224)
+  - Varighed-input (linje 244)
+  - Varighed-knap (linje 252)
+  
+  Erstat med `tabular-nums` (Poppins arves fra body). Tabel-headerne "Start", "Slut", "Varighed", "Kategori" rører vi ikke.
+
+- **`FinishPanel.tsx`** — fjern `font-mono` på de tre tidsfelter (linje 206, 219, 233), behold `tabular-nums`.
+
+## Bevares uændret
+- Layout, bredder, opaciteter og farver i tabellen.
+- Logik for redigering, parsing og masking.
+- Stopurets størrelse og knapper.

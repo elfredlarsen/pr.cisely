@@ -213,7 +213,7 @@ export function MeasurementsTable({
           onKeyDown={(e) => handleKey(e, m)}
           placeholder="00:00:00"
           aria-label={field === "start" ? "Starttidspunkt (timer:minutter:sekunder)" : "Sluttidspunkt (timer:minutter:sekunder)"}
-          className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-28 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -221,7 +221,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
         <span>{value}</span>
@@ -241,7 +241,7 @@ export function MeasurementsTable({
           onKeyDown={(e) => handleKey(e, m)}
           placeholder="0:00:00"
           aria-label="Varighed (timer:minutter:sekunder)"
-          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-24 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -249,7 +249,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
         <span>{fmtDuration(m.ms)}</span>
