@@ -186,6 +186,19 @@ export function MeasurementsTable({
     return result;
   };
 
+  const maskTime = (input: string): string => {
+    const digits = input.replace(/\D/g, "").slice(0, 6);
+    if (digits.length === 0) return "";
+    const h = digits.slice(0, 2);
+    const m = digits.slice(2, 4);
+    const s = digits.slice(4, 6);
+    let result = h;
+    if (digits.length > 2) result += ":" + m;
+    if (digits.length > 4) result += ":" + s;
+    return result;
+  };
+
+
   const renderTimeCell = (m: Measurement, field: "start" | "end") => {
     const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
     if (isEditing(m, field)) {
