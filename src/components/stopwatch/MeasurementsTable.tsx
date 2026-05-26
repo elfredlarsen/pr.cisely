@@ -288,8 +288,19 @@ export function MeasurementsTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {measurements.map((m) => (
-                  <TableRow key={m.id} className="border-border/40">
+                {measurements.map((m) => {
+                  const rowEditing = editing?.id === m.id;
+                  return (
+                  <TableRow
+                    key={m.id}
+                    data-state={rowEditing ? "selected" : undefined}
+                    className={
+                      rowEditing
+                        ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
+                        : "border-border/40 hover:bg-[#c471ed]/10"
+                    }
+                  >
+
                     <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
                     <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                     <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
