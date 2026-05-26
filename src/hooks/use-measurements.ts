@@ -18,6 +18,7 @@ export type MeasurementDraft = {
 };
 
 const STORAGE_KEY = "precisely.measurements";
+const SEED_KEY = "precisely.measurements.seeded";
 
 function newId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -45,10 +46,49 @@ function migrate(raw: unknown): Measurement[] {
     .filter((x): x is Measurement => x !== null);
 }
 
+function buildSeed(): Measurement[] {
+  const today = new Date();
+  const make = (
+    startH: number,
+    startM: number,
+    durMin: number,
+    category: Category,
+  ): Measurement => {
+    const start = new Date(today);
+    start.setHours(startH, startM, 0, 0);
+    const ms = durMin * 60 * 1000;
+    const end = new Date(start.getTime() + ms);
+    return {
+      id: newId(),
+      startedAt: start.toISOString(),
+      endedAt: end.toISOString(),
+      ms,
+      category,
+      hidden: false,
+    };
+  };
+  return [
+    make(8, 30, 45, "straksafgoerelse"),
+    make(9, 20, 60, "straksafgoerelse"),
+    make(13, 0, 45, "straksafgoerelse"),
+    make(10, 30, 30, "biometri"),
+    make(14, 0, 45, "biometri"),
+    make(11, 15, 30, "eu_ansoegning"),
+    make(15, 0, 30, "eu_ansoegning"),
+  ];
+}
+
 function read(): Measurement[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
+    const seeded = window.localStorage.getItem(SEED_KEY);
+    if (!raw && !seeded) {
+      const seed = buildSeed();
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+      window.localStorage.setItem(SEED_KEY, "1");
+      return seed;
+    }
     if (!raw) return [];
     return migrate(JSON.parse(raw));
   } catch {
@@ -113,6 +153,13 @@ export function useMeasurements() {
     [persist],
   );
 
+  const remove = useCallback(
+    (id: string) => {
+      persist((prev) => prev.filter((m) => m.id !== id));
+    },
+    [persist],
+  );
+
   const hide = useCallback(
     (id: string) => {
       persist((prev) => prev.map((m) => (m.id === id ? { ...m, hidden: true } : m)));
@@ -152,8 +199,11 @@ export function useMeasurements() {
     hiddenAll,
     add,
     update,
+    remove,
     hide,
     unhide,
     hideAllToday,
   };
 }
+
+export { isSameLocalDay };
