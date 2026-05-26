@@ -343,7 +343,9 @@ export function MeasurementsTable({
                       </button>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
+
               </TableBody>
             </Table>
           )}
