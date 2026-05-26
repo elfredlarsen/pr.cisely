@@ -173,17 +173,33 @@ export function MeasurementsTable({
   const isEditing = (m: Measurement, field: NonNullable<EditingCell>["field"]) =>
     editing?.id === m.id && editing.field === field;
 
+  const maskDuration = (input: string): string => {
+    const digits = input.replace(/\D/g, "").slice(0, 7);
+    if (digits.length === 0) return "";
+    const h = digits.slice(0, Math.max(1, digits.length - 4));
+    const rest = digits.slice(h.length);
+    const m = rest.slice(0, 2);
+    const s = rest.slice(2, 4);
+    let result = h;
+    if (rest.length > 0) result += ":" + m;
+    if (rest.length > 2) result += ":" + s;
+    return result;
+  };
+
   const renderTimeCell = (m: Measurement, field: "start" | "end") => {
     const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
     if (isEditing(m, field)) {
       return (
         <input
           autoFocus
+          type="time"
+          step={1}
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={field === "start" ? "Starttidspunkt (timer:minutter:sekunder)" : "Sluttidspunkt (timer:minutter:sekunder)"}
+          className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -203,10 +219,13 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
+          inputMode="numeric"
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => setDraft(maskDuration(e.target.value))}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
+          placeholder="0:00:00"
+          aria-label="Varighed (timer:minutter:sekunder)"
           className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
@@ -221,6 +240,7 @@ export function MeasurementsTable({
       </button>
     );
   };
+
 
   const clearHistoryButton = (
     <AlertDialog>
