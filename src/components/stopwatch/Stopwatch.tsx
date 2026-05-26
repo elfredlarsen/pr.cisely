@@ -84,7 +84,7 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
-        side="bottom"
+        side="top"
         sideOffset={6}
         className="flex items-center gap-1.5 rounded border border-border/30 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground/80 shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
       >
