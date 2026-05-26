@@ -248,13 +248,15 @@ export function MeasurementsTable({
   const clearHistoryButton = (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button
+        <Button
           type="button"
-          className="inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          variant="ghost"
+          size="sm"
+          className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
           Ryd historik
-        </button>
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
