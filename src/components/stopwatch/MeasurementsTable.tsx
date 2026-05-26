@@ -30,6 +30,7 @@ import {
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
