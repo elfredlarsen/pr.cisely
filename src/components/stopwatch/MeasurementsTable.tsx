@@ -1,5 +1,5 @@
 import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
-import { Clock, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { EyeOff, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -186,33 +186,19 @@ export function MeasurementsTable({
     return result;
   };
 
-  const maskTime = (input: string): string => {
-    const digits = input.replace(/\D/g, "").slice(0, 6);
-    if (digits.length === 0) return "";
-    const h = digits.slice(0, 2);
-    const m = digits.slice(2, 4);
-    const s = digits.slice(4, 6);
-    let result = h;
-    if (digits.length > 2) result += ":" + m;
-    if (digits.length > 4) result += ":" + s;
-    return result;
-  };
-
-
   const renderTimeCell = (m: Measurement, field: "start" | "end") => {
     const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
     if (isEditing(m, field)) {
       return (
         <input
           autoFocus
-          type="text"
-          inputMode="numeric"
+          type="time"
+          step={1}
           value={draft}
-          onChange={(e) => setDraft(maskTime(e.target.value))}
+          onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          placeholder="00:00:00"
-          aria-label={field === "start" ? "Starttidspunkt (timer:minutter:sekunder)" : "Sluttidspunkt (timer:minutter:sekunder)"}
+          aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
           className="h-8 w-28 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
@@ -223,7 +209,6 @@ export function MeasurementsTable({
         onClick={() => beginEdit(m, field)}
         className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <Clock className="h-3 w-3 text-muted-foreground/60" aria-hidden="true" />
         <span>{value}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
       </button>
