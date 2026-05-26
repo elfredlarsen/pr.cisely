@@ -227,6 +227,7 @@ export function MeasurementsTable({
   );
 
   return (
+    <TooltipProvider delayDuration={1000}>
     <Tooltip>
       <TooltipTrigger asChild>
         <section
