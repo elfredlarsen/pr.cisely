@@ -55,11 +55,34 @@ function computeMs(state: State, now: number) {
 const baseBtn =
   "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-const startBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
-const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground hover:bg-destructive/90`;
-const pauseBtn = `${baseBtn} bg-warning text-warning-foreground hover:bg-warning/90`;
-const resetBtn = `${baseBtn} bg-info text-info-foreground hover:bg-info/90`;
-const resumeBtn = `${baseBtn} bg-success text-success-foreground hover:bg-success/90`;
+const baseBtn =
+  "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-0 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const startBtn = `${baseBtn} bg-success text-success-foreground`;
+const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
+const pauseBtn = `${baseBtn} bg-warning text-warning-foreground`;
+const resetBtn = `${baseBtn} bg-info text-info-foreground`;
+const resumeBtn = `${baseBtn} bg-success text-success-foreground`;
+
+type ShortcutTooltipProps = {
+  label: string;
+  shortcut: string;
+  children: ReactNode;
+};
+
+function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="bottom" className="flex items-center gap-2">
+        <span>{label}</span>
+        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+          {shortcut}
+        </kbd>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 type Props = {
   onSaveMeasurement: (ms: number) => void;
