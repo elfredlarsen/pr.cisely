@@ -1,5 +1,9 @@
-Tre mindre justeringer af tooltips i Stopwatch-komponenten:
+## Ændringer
 
-1. `sideOffset` i ShortcutTooltip: ændr fra `2` til `6` px for lidt mere luft mellem knap og tooltip.
-2. `TooltipContent`: gør tooltip endnu mere diskret ved at justere opacity (f.eks. `bg-background/60` i stedet for `/80`), og reducere skygge/padding en anelse.
-3. `delayDuration` i TooltipProvider: ændr fra `300` til `1500` ms så tooltips først vises efter 1,5 sekunders hover.
+### 1. Tooltip-forsinkelse
+- **Fil:** `src/components/stopwatch/Stopwatch.tsx`
+- **Linje 169:** Ændr `delayDuration` fra `1500` til `1000` ms.
+
+### 2. Fjern hop fra knap-hover
+- **Fil:** `src/components/stopwatch/Stopwatch.tsx`
+- **Linje 57:** Fjern `motion-safe:hover:-translate-y-0.5` og `motion-safe:active:translate-y-0` fra `baseBtn`. Bevar øvrige hover-effekter (skygge, ring, brightness).
