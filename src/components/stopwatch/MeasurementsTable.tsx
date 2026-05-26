@@ -300,7 +300,7 @@ export function MeasurementsTable({
         aria-label="Seneste registreringer"
         className="flex h-full w-full flex-col opacity-75"
       >
-        <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
+        <div className="scrollbar-purple mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
           {measurements.length === 0 ? (
             <p className="py-6 text-center text-xs text-muted-foreground/80">
               Ingen registreringer endnu i dag.
