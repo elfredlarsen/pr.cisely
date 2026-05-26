@@ -333,7 +333,7 @@ export function MeasurementsTable({
                     className={
                       rowEditing
                         ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                        : "border-border/40 hover:bg-muted/30"
+                        : "border-border/40 hover:bg-[#c471ed]/10"
                     }
                   >
 
