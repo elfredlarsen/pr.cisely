@@ -63,6 +63,7 @@ function Index() {
           <Stopwatch
             onRequestFinish={handleRequestFinish}
             finishOpen={pending !== null}
+            resetKey={resetKey}
           />
           {pending && (
             <div className="pointer-events-none absolute inset-x-0 top-full z-20 flex justify-center">
