@@ -88,6 +88,12 @@ export function MeasurementsTable({
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
+  const [tip, setTip] = useState<{ x: number; y: number } | null>(null);
+
+  const handleTipMove = (e: ReactMouseEvent<HTMLElement>) => {
+    setTip({ x: e.clientX, y: e.clientY });
+  };
+  const handleTipLeave = () => setTip(null);
 
   const beginEdit = (m: Measurement, field: NonNullable<EditingCell>["field"]) => {
     setEditing({ id: m.id, field });
@@ -221,91 +227,93 @@ export function MeasurementsTable({
   );
 
   return (
-    <TooltipProvider delayDuration={1000}>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <section
-          aria-label="Seneste registreringer"
-          className="flex h-full w-full flex-col opacity-75"
-        >
-          <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
-            {measurements.length === 0 ? (
-              <p className="py-6 text-center text-xs text-muted-foreground/80">
-                Ingen registreringer endnu i dag.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader className="sticky top-0 bg-background">
-                  <TableRow className="border-border/50">
-                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
-                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
-                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
-                    <TableHead className="h-8 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
-                    <TableHead className="h-8 py-1 text-right">
-                      <div className="flex justify-end">{clearHistoryButton}</div>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {measurements.map((m) => (
-                    <TableRow key={m.id} className="border-border/40">
-                      <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
-                      <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
-                      <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
-                      <TableCell className="py-1 text-xs">
-                        <Select
-                          value={m.category}
-                          onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
-                        >
-                          <SelectTrigger
-                            className="h-7 w-full border-transparent bg-transparent text-xs text-muted-foreground/80 hover:border-input"
-                            aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
-                          >
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {CATEGORIES.map((c) => (
-                              <SelectItem key={c.value} value={c.value}>
-                                {c.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="py-1 text-right">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onHide(m.id);
-                            toast("Skjult — findes i arkivet", {
-                              action: {
-                                label: "Fortryd",
-                                onClick: () => onUnhide(m.id),
-                              },
-                            });
-                          }}
-                          aria-label="Skjul registrering"
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          <EyeOff className="h-4 w-4" aria-hidden="true" />
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </section>
-      </TooltipTrigger>
-      <TooltipContent
-        side="top"
-        sideOffset={6}
-        className="rounded border border-border/30 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground/80 shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
+    <>
+      <section
+        aria-label="Seneste registreringer"
+        onMouseEnter={handleTipMove}
+        onMouseMove={handleTipMove}
+        onMouseLeave={handleTipLeave}
+        className="flex h-full w-full flex-col opacity-75"
       >
-        Seneste registreringer
-      </TooltipContent>
-    </Tooltip>
-    </TooltipProvider>
+        <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
+          {measurements.length === 0 ? (
+            <p className="py-6 text-center text-xs text-muted-foreground/80">
+              Ingen registreringer endnu i dag.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader className="sticky top-0 bg-background">
+                <TableRow className="border-border/50">
+                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
+                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
+                  <TableHead className="h-8 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
+                  <TableHead className="h-8 py-1 text-right">
+                    <div className="flex justify-end">{clearHistoryButton}</div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {measurements.map((m) => (
+                  <TableRow key={m.id} className="border-border/40">
+                    <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
+                    <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
+                    <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
+                    <TableCell className="py-1 text-xs">
+                      <Select
+                        value={m.category}
+                        onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
+                      >
+                        <SelectTrigger
+                          className="h-7 w-full border-transparent bg-transparent text-xs text-muted-foreground/80 hover:border-input"
+                          aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map((c) => (
+                            <SelectItem key={c.value} value={c.value}>
+                              {c.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell className="py-1 text-right">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onHide(m.id);
+                          toast("Skjult — findes i arkivet", {
+                            action: {
+                              label: "Fortryd",
+                              onClick: () => onUnhide(m.id),
+                            },
+                          });
+                        }}
+                        aria-label="Skjul registrering"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+      </section>
+      {tip && (
+        <div
+          role="tooltip"
+          aria-hidden="true"
+          style={{ left: tip.x + 14, top: tip.y + 14 }}
+          className="pointer-events-none fixed z-50 rounded border border-[#c471ed]/25 bg-[#c471ed]/10 px-2 py-0.5 text-[11px] text-muted-foreground/90 shadow-none backdrop-blur-sm"
+        >
+          Seneste registreringer
+        </div>
+      )}
+    </>
   );
 }
