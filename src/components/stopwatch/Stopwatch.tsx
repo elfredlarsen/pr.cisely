@@ -193,113 +193,115 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     <section
       aria-labelledby="stopur-overskrift"
       aria-hidden={finishOpen || undefined}
-      className={`flex w-full flex-col items-center justify-center gap-12 px-6 py-12 ${finishOpen ? "pointer-events-none" : ""}`}
+      className={`flex w-full flex-col items-center justify-center px-6 py-12 ${finishOpen ? "pointer-events-none" : ""}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
       </h1>
 
-      <div className={`transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
-        <TimeDisplay ms={displayMs} />
-      </div>
-
-      <TooltipProvider delayDuration={1000}>
-        <div
-          role="group"
-          aria-label="Stopur-kontroller"
-          className="flex flex-wrap items-center justify-center gap-6"
-        >
-          {state.status === "idle" && (
-            <ShortcutTooltip label="Start" shortcut="Mellemrum">
-              <button
-                type="button"
-                onClick={onStart}
-                className={startBtn}
-                aria-keyshortcuts=" "
-              >
-                <Play className="h-7 w-7" aria-hidden="true" />
-                Start
-              </button>
-            </ShortcutTooltip>
-          )}
-
-          {state.status === "running" && (
-            <>
-              <ShortcutTooltip label="Nulstil" shortcut="N">
-                <button
-                  type="button"
-                  onClick={onReset}
-                  className={resetBtn}
-                  aria-keyshortcuts="N"
-                >
-                  <RotateCcw className="h-7 w-7" aria-hidden="true" />
-                  Nulstil
-                </button>
-              </ShortcutTooltip>
-              <ShortcutTooltip label="Afslut" shortcut="A">
-                <button
-                  type="button"
-                  onClick={onFinish}
-                  className={finishBtn}
-                  aria-keyshortcuts="A"
-                >
-                  <Square className="h-7 w-7" aria-hidden="true" />
-                  Afslut
-                </button>
-              </ShortcutTooltip>
-              <ShortcutTooltip label="Pause" shortcut="Mellemrum">
-                <button
-                  type="button"
-                  onClick={onPause}
-                  className={pauseBtn}
-                  aria-keyshortcuts=" "
-                >
-                  <Pause className="h-7 w-7" aria-hidden="true" />
-                  Pause
-                </button>
-              </ShortcutTooltip>
-            </>
-          )}
-
-          {state.status === "paused" && (
-            <>
-              <ShortcutTooltip label="Nulstil" shortcut="N">
-                <button
-                  type="button"
-                  onClick={onReset}
-                  className={resetBtn}
-                  aria-keyshortcuts="N"
-                >
-                  <RotateCcw className="h-7 w-7" aria-hidden="true" />
-                  Nulstil
-                </button>
-              </ShortcutTooltip>
-              <ShortcutTooltip label="Afslut" shortcut="A">
-                <button
-                  type="button"
-                  onClick={onFinish}
-                  className={finishBtn}
-                  aria-keyshortcuts="A"
-                >
-                  <Square className="h-7 w-7" aria-hidden="true" />
-                  Afslut
-                </button>
-              </ShortcutTooltip>
-              <ShortcutTooltip label="Fortsæt" shortcut="Mellemrum">
-                <button
-                  type="button"
-                  onClick={onResume}
-                  className={resumeBtn}
-                  aria-keyshortcuts=" "
-                >
-                  <FastForward className="h-7 w-7" aria-hidden="true" />
-                  Fortsæt
-                </button>
-              </ShortcutTooltip>
-            </>
-          )}
+      <div className="flex w-[36rem] max-w-full flex-col items-stretch gap-12">
+        <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
+          <TimeDisplay ms={displayMs} />
         </div>
-      </TooltipProvider>
+
+        <TooltipProvider delayDuration={1000}>
+          <div
+            role="group"
+            aria-label="Stopur-kontroller"
+            className={`flex w-full flex-wrap items-center gap-6 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
+          >
+            {state.status === "idle" && (
+              <ShortcutTooltip label="Start" shortcut="Mellemrum">
+                <button
+                  type="button"
+                  onClick={onStart}
+                  className={startBtn}
+                  aria-keyshortcuts=" "
+                >
+                  <Play className="h-7 w-7" aria-hidden="true" />
+                  Start
+                </button>
+              </ShortcutTooltip>
+            )}
+
+            {state.status === "running" && (
+              <>
+                <ShortcutTooltip label="Nulstil" shortcut="N">
+                  <button
+                    type="button"
+                    onClick={onReset}
+                    className={resetBtn}
+                    aria-keyshortcuts="N"
+                  >
+                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                    Nulstil
+                  </button>
+                </ShortcutTooltip>
+                <ShortcutTooltip label="Afslut" shortcut="A">
+                  <button
+                    type="button"
+                    onClick={onFinish}
+                    className={finishBtn}
+                    aria-keyshortcuts="A"
+                  >
+                    <Square className="h-7 w-7" aria-hidden="true" />
+                    Afslut
+                  </button>
+                </ShortcutTooltip>
+                <ShortcutTooltip label="Pause" shortcut="Mellemrum">
+                  <button
+                    type="button"
+                    onClick={onPause}
+                    className={pauseBtn}
+                    aria-keyshortcuts=" "
+                  >
+                    <Pause className="h-7 w-7" aria-hidden="true" />
+                    Pause
+                  </button>
+                </ShortcutTooltip>
+              </>
+            )}
+
+            {state.status === "paused" && (
+              <>
+                <ShortcutTooltip label="Nulstil" shortcut="N">
+                  <button
+                    type="button"
+                    onClick={onReset}
+                    className={resetBtn}
+                    aria-keyshortcuts="N"
+                  >
+                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                    Nulstil
+                  </button>
+                </ShortcutTooltip>
+                <ShortcutTooltip label="Afslut" shortcut="A">
+                  <button
+                    type="button"
+                    onClick={onFinish}
+                    className={finishBtn}
+                    aria-keyshortcuts="A"
+                  >
+                    <Square className="h-7 w-7" aria-hidden="true" />
+                    Afslut
+                  </button>
+                </ShortcutTooltip>
+                <ShortcutTooltip label="Fortsæt" shortcut="Mellemrum">
+                  <button
+                    type="button"
+                    onClick={onResume}
+                    className={resumeBtn}
+                    aria-keyshortcuts=" "
+                  >
+                    <FastForward className="h-7 w-7" aria-hidden="true" />
+                    Fortsæt
+                  </button>
+                </ShortcutTooltip>
+              </>
+            )}
+          </div>
+        </TooltipProvider>
+      </div>
     </section>
   );
 }
