@@ -1,29 +1,26 @@
-## Ændringer
+## Musefølgende tooltip for "Seneste registreringer"
 
-### 1. Toast "Registrering gemt" — kompakt + manuel luk
-Fil: `src/routes/__root.tsx` (eller hvor `<Toaster />` er monteret) og `src/components/ui/sonner.tsx`.
+### Fil
+`src/components/stopwatch/MeasurementsTable.tsx`
 
-- Sæt `position="top-right"` og smallere bredde (`width: 280px` via `style`) på `<Toaster />`, så den ikke overlapper "Gem registrering"-dialogen (der ligger under stopuret).
-- Aktivér luk-kryds via `closeButton` prop på `<Toaster />` (Sonner viser et indbygget × i hjørnet).
-- Reducer padding/font-størrelse i `toastOptions.classNames.toast` så den fremstår mere kompakt (`p-2 text-xs`).
+### Ændring
+Erstat den nuværende Radix-baserede `<Tooltip>` omkring tabel-sektionen med en custom musefølgende tooltip. Radix Tooltip kan ikke følge musen — derfor en simpel React-implementering.
 
-### 2. Knapperne "Annuller" og "Gem" — tydelige hover/fokus
-Fil: `src/components/stopwatch/FinishPanel.tsx`.
+### Implementering
+1. Fjern `<TooltipProvider>`, `<Tooltip>`, `<TooltipTrigger>` og `<TooltipContent>` omkring `<section>`.
+2. Tilføj lokal state: `const [tip, setTip] = useState<{ x: number; y: number } | null>(null)`.
+3. På `<section>`:
+   - `onMouseEnter` / `onMouseMove`: `setTip({ x: e.clientX, y: e.clientY })`
+   - `onMouseLeave`: `setTip(null)`
+4. Render et `position: fixed` div når `tip !== null`, ved `left: tip.x + 14`, `top: tip.y + 14`:
+   - Baggrund: `bg-[#c471ed]/10` (meget let lilla, ca. 10 % opacity)
+   - Kant: `border border-[#c471ed]/25`
+   - Tekst: `text-[11px] text-muted-foreground/90`
+   - `rounded px-2 py-0.5 backdrop-blur-sm shadow-none`
+   - `pointer-events-none z-50`
+   - Indhold: "Seneste registreringer"
 
-- **Annuller**: hover skifter baggrund fra `bg-background` til `bg-muted` (mørkere, ikke bare ring). Fokus: `focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2` (mørk #1a1a1a ring, ikke lilla).
-- **Gem**: hover skifter til `hover:bg-primary/80` (tydeligt mørkere lilla, ikke kun lysere). Fokus: `focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2` (mørk ring i kontrast til lilla baggrund).
-
-### 3. Tabellen "Seneste registreringer" — træd i baggrunden
-Fil: `src/routes/index.tsx` og `src/components/stopwatch/MeasurementsTable.tsx`.
-
-- Større luft mellem stopur og tabel: tilføj `mt-12` (eller `pt-12`) på tabel-containeren i `index.tsx`.
-- Mere kompakt tabel:
-  - Reducer `px-6 pb-6 pt-4` → `px-4 pb-3 pt-2` på tabel-wrapperen.
-  - Sæt mindre række-højde via Tailwind på `<TableRow>` / celler (`py-1`, `text-xs`).
-  - Reducer header-tekst til `text-[11px]` med `text-muted-foreground/70`.
-- Dæmp visuelt:
-  - Tilføj `opacity-80` på hele `<section>` i `MeasurementsTable`.
-  - Brug `text-muted-foreground/80` på celleknapper i stedet for fuld `text-muted-foreground`.
-
-## Ingen ændringer i forretningslogik
-Kun Tailwind-klasser og Sonner-konfiguration. Ingen ændring af hooks, data eller routing.
+### Ingen ændringer
+- Tabellens indhold, kompakte styling og dæmpning (opacity-75) er uændret.
+- Tooltips på stopur-knapperne bevares som de er.
+- Ingen logik-ændringer.
