@@ -1,5 +1,5 @@
 import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
-import { EyeOff, Trash2 } from "lucide-react";
+import { EyeOff, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -199,7 +199,7 @@ export function MeasurementsTable({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label={field === "start" ? "Starttidspunkt (timer:minutter:sekunder)" : "Sluttidspunkt (timer:minutter:sekunder)"}
-          className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-7 w-[92px] rounded border border-input bg-background px-1.5 font-mono text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -207,9 +207,10 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-7 w-[92px] items-center justify-between rounded px-1.5 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        {value}
+        <span>{value}</span>
+        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
       </button>
     );
   };
@@ -226,7 +227,7 @@ export function MeasurementsTable({
           onKeyDown={(e) => handleKey(e, m)}
           placeholder="0:00:00"
           aria-label="Varighed (timer:minutter:sekunder)"
-          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-7 w-[92px] rounded border border-input bg-background px-1.5 font-mono text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -234,9 +235,10 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-7 w-[92px] items-center justify-between rounded px-1.5 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        {fmtDuration(m.ms)}
+        <span>{fmtDuration(m.ms)}</span>
+        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
       </button>
     );
   };
