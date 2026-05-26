@@ -1,17 +1,22 @@
-## Konsekvent tidsindtastning i "Gem registrering"
+## Neutral bekræftelsestoast + luk-kryds i højre side
 
 ### Baggrund
-Auto-genberegningen findes allerede i `FinishPanel.tsx` (handleStartChange/handleEndChange/handleDurationChange). Det der mangler er at indtastningsfelterne tvinger formatet HH:MM:SS, ligesom i tabellen.
+Bekræftelsestoasten ("Registrering gemt") blev grøn pga. sonners standard `success`-stil. Luk-krydset skal placeres i højre side af meddelelsen.
 
-### Ændringer i `src/components/stopwatch/FinishPanel.tsx`
+### Ændringer
 
-1. **Starttid og Sluttid**: Skift fra `type="text"` til `type="time" step={1}`. Browseren tvinger HH:MM:SS-strukturen; brugeren kan kun ændre tallene.
+**1. `src/components/ui/sonner.tsx`**
+Tilføj `success` i `toastOptions.classNames` som overskriver sonners grønne success-stil med neutrale farver (`bg-background`, `text-foreground`, `border-border`), så bekræftelsestoasten ser ud som en almindelig toast.
 
-2. **Varighed**: Behold `type="text"` men tilføj samme `maskDuration`-hjælper som i MeasurementsTable. Den indsætter automatisk koloner og tillader kun cifre. Kald den i `handleDurationChange` før `setDuration`.
-
-3. **Bevar al eksisterende logik**: parse-funktioner, schema-validering, auto-genberegning, submit-flow er uændret.
+**2. `src/styles.css`**
+Tilføj en global CSS-regel der overskriver sonners interne placering af luk-knappen:
+```css
+[data-sonner-toast] [data-close-button] {
+  right: 8px !important;
+  left: auto !important;
+}
+```
 
 ### Verifikation
-Manuel test af de samme scenarier:
-- Start 08:00 + Slut 08:30 → Varighed opdateres til 00:30:00
-- Ændr Varighed til 00:45 → Slut opdateres til 08:45, Start uændret
+- Kald `toast.success("Registrering gemt")` → toast vises uden grøn accent/ikon.
+- Luk-krydset (X) sidder i højre side af toasten.
