@@ -192,7 +192,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
   return (
     <section
       aria-labelledby="stopur-overskrift"
-      className="flex w-full flex-col items-center justify-center gap-12 px-6 py-12"
+      aria-hidden={finishOpen || undefined}
+      className={`flex w-full flex-col items-center justify-center gap-12 px-6 py-12 transition-opacity duration-200 ${finishOpen ? "pointer-events-none opacity-40" : "opacity-100"}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
