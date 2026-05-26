@@ -221,9 +221,9 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground ring-1 ring-transparent transition-colors hover:bg-[#c471ed]/25 hover:text-foreground hover:ring-[#c471ed]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
+        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
         <span>{value}</span>
       </button>
     );
@@ -249,9 +249,9 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground ring-1 ring-transparent transition-colors hover:bg-[#c471ed]/25 hover:text-foreground hover:ring-[#c471ed]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-60" aria-hidden="true" />
+        <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
         <span>{fmtDuration(m.ms)}</span>
       </button>
     );
@@ -333,7 +333,7 @@ export function MeasurementsTable({
                     className={
                       rowEditing
                         ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                        : "border-border/40 hover:bg-[#c471ed]/10"
+                        : "border-border/40 hover:bg-muted/30"
                     }
                   >
 
@@ -346,7 +346,7 @@ export function MeasurementsTable({
                         onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                       >
                         <SelectTrigger
-                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground/80 hover:border-input"
+                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
                           aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                         >
                           <SelectValue />
@@ -373,7 +373,7 @@ export function MeasurementsTable({
                           });
                         }}
                         aria-label="Skjul registrering"
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <EyeOff className="h-4 w-4" aria-hidden="true" />
                       </button>
