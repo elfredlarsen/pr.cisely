@@ -65,7 +65,7 @@ function computeMs(state: State, now: number) {
 }
 
 const baseBtn =
-  "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex h-14 w-44 items-center justify-center gap-3 rounded-lg px-6 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const startBtn = `${baseBtn} bg-success text-success-foreground`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
