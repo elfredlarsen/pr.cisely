@@ -1,26 +1,24 @@
-## Musefølgende tooltip for "Seneste registreringer"
+## Tabelrække-fremhævning
 
-### Fil
-`src/components/stopwatch/MeasurementsTable.tsx`
+### Baggrund
+Brugeren ønsker bedre visuel feedback i målingstabellen:
+1. Tydelig hover-fremhævning af rækker (i stedet for den nuværende neutrale `hover:bg-muted/50`).
+2. Hele rækken skal markeres visuelt når brugeren redigerer et felt i den.
 
-### Ændring
-Erstat den nuværende Radix-baserede `<Tooltip>` omkring tabel-sektionen med en custom musefølgende tooltip. Radix Tooltip kan ikke følge musen — derfor en simpel React-implementering.
+### Ændringer
 
-### Implementering
-1. Fjern `<TooltipProvider>`, `<Tooltip>`, `<TooltipTrigger>` og `<TooltipContent>` omkring `<section>`.
-2. Tilføj lokal state: `const [tip, setTip] = useState<{ x: number; y: number } | null>(null)`.
-3. På `<section>`:
-   - `onMouseEnter` / `onMouseMove`: `setTip({ x: e.clientX, y: e.clientY })`
-   - `onMouseLeave`: `setTip(null)`
-4. Render et `position: fixed` div når `tip !== null`, ved `left: tip.x + 14`, `top: tip.y + 14`:
-   - Baggrund: `bg-[#c471ed]/10` (meget let lilla, ca. 10 % opacity)
-   - Kant: `border border-[#c471ed]/25`
-   - Tekst: `text-[11px] text-muted-foreground/90`
-   - `rounded px-2 py-0.5 backdrop-blur-sm shadow-none`
-   - `pointer-events-none z-50`
-   - Indhold: "Seneste registreringer"
+**Fil: `src/components/stopwatch/MeasurementsTable.tsx`**
 
-### Ingen ændringer
-- Tabellens indhold, kompakte styling og dæmpning (opacity-75) er uændret.
-- Tooltips på stopur-knapperne bevares som de er.
-- Ingen logik-ændringer.
+1. **Hover-fremhævning på datarækker**
+   - På hver `<TableRow>` i `measurements.map()` tilføjes `hover:bg-[#c471ed]/10` til `className`. Dette erstatter/overskriver den neutrale `hover:bg-muted/50` fra `ui/table.tsx`.
+   - Bevarer `transition-colors` for blød overgang.
+
+2. **Aktiv markering under redigering**
+   - Tilføj hjælperfunktion `isRowEditing(m: Measurement)` der returnerer `true` hvis `editing?.id === m.id`.
+   - Når en række er aktiv (redigering pågår), tilføjes `bg-[#c471ed]/15` til rækken — en anelse stærkere end hover, så den er tydelig selv uden musen over.
+   - Hover-stil og aktiv-stil kombineres med `cn()`: når aktiv vises kun den stærkere baggrund; ellers den lette hover.
+
+3. **Ingen ændringer**
+   - Header-rækken (`TableHeader`) beholdes uændret.
+   - Tooltips, knapper, logik, og øvrig tabelfunktionalitet påvirkes ikke.
+   - `ui/table.tsx` ændres ikke — overskrivningen sker via `className` prop på de enkelte rækker.
