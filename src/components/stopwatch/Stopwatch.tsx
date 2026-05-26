@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
 import { TimeDisplay } from "./TimeDisplay";
 
