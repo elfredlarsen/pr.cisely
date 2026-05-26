@@ -243,10 +243,10 @@ export function MeasurementsTable({
               <Table>
                 <TableHeader className="sticky top-0 bg-background">
                   <TableRow>
-                    <TableHead className="w-24">Start</TableHead>
-                    <TableHead className="w-24">Slut</TableHead>
-                    <TableHead className="w-24">Varighed</TableHead>
-                    <TableHead>Kategori</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Start</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Slut</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Varighed</TableHead>
+                    <TableHead className="text-muted-foreground">Kategori</TableHead>
                     <TableHead className="text-right">
                       <div className="flex justify-end">{clearHistoryButton}</div>
                     </TableHead>
