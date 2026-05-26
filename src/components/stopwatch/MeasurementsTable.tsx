@@ -159,7 +159,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="rounded px-1 py-0.5 font-mono tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {value}
       </button>
@@ -183,7 +183,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="rounded px-1 py-0.5 font-mono tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded px-1 py-0.5 font-mono tabular-nums text-muted-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {fmtDuration(m.ms)}
       </button>
@@ -243,10 +243,10 @@ export function MeasurementsTable({
               <Table>
                 <TableHeader className="sticky top-0 bg-background">
                   <TableRow>
-                    <TableHead className="w-24">Start</TableHead>
-                    <TableHead className="w-24">Slut</TableHead>
-                    <TableHead className="w-24">Varighed</TableHead>
-                    <TableHead>Kategori</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Start</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Slut</TableHead>
+                    <TableHead className="w-24 text-muted-foreground">Varighed</TableHead>
+                    <TableHead className="text-muted-foreground">Kategori</TableHead>
                     <TableHead className="text-right">
                       <div className="flex justify-end">{clearHistoryButton}</div>
                     </TableHead>
@@ -264,7 +264,7 @@ export function MeasurementsTable({
                           onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                         >
                           <SelectTrigger
-                            className="h-8 w-full border-transparent bg-transparent hover:border-input"
+                            className="h-8 w-full border-transparent bg-transparent text-muted-foreground hover:border-input"
                             aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                           >
                             <SelectValue />
