@@ -221,7 +221,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground ring-1 ring-transparent transition-colors hover:bg-[#c471ed]/25 hover:text-foreground hover:ring-[#c471ed]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
         <span>{value}</span>
@@ -249,7 +249,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground ring-1 ring-transparent transition-colors hover:bg-[#c471ed]/25 hover:text-foreground hover:ring-[#c471ed]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
         <span>{fmtDuration(m.ms)}</span>
@@ -263,7 +263,7 @@ export function MeasurementsTable({
       <AlertDialogTrigger asChild>
         <button
           type="button"
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
           Ryd historik
@@ -333,7 +333,7 @@ export function MeasurementsTable({
                     className={
                       rowEditing
                         ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                        : "border-border/40 hover:bg-muted/30"
+                        : "border-border/40 hover:bg-[#c471ed]/10"
                     }
                   >
 
