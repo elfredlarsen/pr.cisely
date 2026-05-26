@@ -232,32 +232,32 @@ export function MeasurementsTable({
       <TooltipTrigger asChild>
         <section
           aria-label="Seneste registreringer"
-          className="flex h-full w-full flex-col"
+          className="flex h-full w-full flex-col opacity-75"
         >
-          <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-6 pb-6 pt-4">
+          <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
             {measurements.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-6 text-center text-xs text-muted-foreground/80">
                 Ingen registreringer endnu i dag.
               </p>
             ) : (
               <Table>
                 <TableHeader className="sticky top-0 bg-background">
-                  <TableRow>
-                    <TableHead className="w-24 text-muted-foreground">Start</TableHead>
-                    <TableHead className="w-24 text-muted-foreground">Slut</TableHead>
-                    <TableHead className="w-24 text-muted-foreground">Varighed</TableHead>
-                    <TableHead className="text-muted-foreground">Kategori</TableHead>
-                    <TableHead className="text-right">
+                  <TableRow className="border-border/50">
+                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
+                    <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
+                    <TableHead className="h-8 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
+                    <TableHead className="h-8 py-1 text-right">
                       <div className="flex justify-end">{clearHistoryButton}</div>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {measurements.map((m) => (
-                    <TableRow key={m.id}>
-                      <TableCell>{renderTimeCell(m, "start")}</TableCell>
-                      <TableCell>{renderTimeCell(m, "end")}</TableCell>
-                      <TableCell>{renderDurationCell(m)}</TableCell>
+                    <TableRow key={m.id} className="border-border/40">
+                      <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
+                      <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
+                      <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
                       <TableCell>
                         <Select
                           value={m.category}
