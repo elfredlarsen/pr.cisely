@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import type { Measurement } from "@/hooks/use-measurements";
 
@@ -207,7 +208,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{value}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
@@ -235,7 +236,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{fmtDuration(m.ms)}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
@@ -247,13 +248,15 @@ export function MeasurementsTable({
   const clearHistoryButton = (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button
+        <Button
           type="button"
-          className="inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          variant="ghost"
+          size="sm"
+          className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
           Ryd historik
-        </button>
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -347,8 +350,10 @@ export function MeasurementsTable({
                       </Select>
                     </TableCell>
                     <TableCell className="py-1 text-right">
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => {
                           onHide(m.id);
                           toast("Skjult — findes i arkivet", {
@@ -359,10 +364,10 @@ export function MeasurementsTable({
                           });
                         }}
                         aria-label="Skjul registrering"
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="h-11 w-11 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
                       >
                         <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      </button>
+                      </Button>
                     </TableCell>
                   </TableRow>
                   );
