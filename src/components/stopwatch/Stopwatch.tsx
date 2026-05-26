@@ -74,11 +74,11 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent
         side="bottom"
-        sideOffset={2}
-        className="flex items-center gap-1.5 rounded border border-border/50 bg-background/80 px-2 py-1 text-[11px] text-muted-foreground shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
+        sideOffset={6}
+        className="flex items-center gap-1.5 rounded border border-border/30 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground/80 shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
       >
         <span>{label}</span>
-        <kbd className="rounded border border-border/40 bg-muted/50 px-1 py-0 font-mono text-[10px] text-muted-foreground/80">
+        <kbd className="rounded border border-border/30 bg-muted/40 px-1 py-0 font-mono text-[10px] text-muted-foreground/70">
           {shortcut}
         </kbd>
       </TooltipContent>
@@ -166,7 +166,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
 
       <TimeDisplay ms={displayMs} />
 
-      <TooltipProvider delayDuration={300}>
+      <TooltipProvider delayDuration={1500}>
         <div
           role="group"
           aria-label="Stopur-kontroller"
