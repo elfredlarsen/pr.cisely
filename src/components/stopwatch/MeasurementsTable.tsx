@@ -330,7 +330,7 @@ export function MeasurementsTable({
                         onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                       >
                         <SelectTrigger
-                          className="h-7 w-full border-transparent bg-transparent text-xs text-muted-foreground/80 hover:border-input"
+                          className="h-7 w-full border-transparent bg-transparent text-xs font-medium text-foreground hover:border-input"
                           aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                         >
                           <SelectValue />
