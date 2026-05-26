@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import type { Measurement } from "@/hooks/use-measurements";
 
