@@ -263,7 +263,7 @@ export function MeasurementsTable({
       <AlertDialogTrigger asChild>
         <button
           type="button"
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 py-1 text-xs font-normal normal-case tracking-normal text-muted-foreground transition-colors hover:bg-[#c471ed]/25 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
           Ryd historik
