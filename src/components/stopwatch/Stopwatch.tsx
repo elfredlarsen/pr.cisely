@@ -100,9 +100,10 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
   finishOpen?: boolean;
+  resetKey?: number;
 };
 
-export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
+export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
