@@ -107,7 +107,7 @@ function DurationInput({
   const handle = (
     raw: string,
     setter: (v: string) => void,
-    next: React.RefObject<HTMLInputElement>,
+    next: React.RefObject<HTMLInputElement | null>,
     max: number,
     other: [string, string],
     pos: "h" | "m" | "s",
@@ -133,7 +133,7 @@ function DurationInput({
     else sync(h, mm, padded);
   };
 
-  const onKey = (e: React.KeyboardEvent<HTMLInputElement>, current: string, prev: React.RefObject<HTMLInputElement> | null) => {
+  const onKey = (e: React.KeyboardEvent<HTMLInputElement>, current: string, prev: React.RefObject<HTMLInputElement | null> | null) => {
     if (e.key === "Enter") {
       e.preventDefault();
       onCommit();
