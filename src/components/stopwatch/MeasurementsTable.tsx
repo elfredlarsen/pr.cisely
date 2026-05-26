@@ -30,6 +30,7 @@ import {
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
@@ -226,6 +227,7 @@ export function MeasurementsTable({
   );
 
   return (
+    <TooltipProvider delayDuration={1000}>
     <Tooltip>
       <TooltipTrigger asChild>
         <section
@@ -304,5 +306,6 @@ export function MeasurementsTable({
       </TooltipTrigger>
       <TooltipContent side="top">Seneste registreringer</TooltipContent>
     </Tooltip>
+    </TooltipProvider>
   );
 }
