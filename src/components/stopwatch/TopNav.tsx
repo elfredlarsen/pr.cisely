@@ -1,11 +1,12 @@
-import { Timer, LayoutGrid, Settings, HelpCircle, LogOut } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Timer, Archive, Settings, HelpCircle, LogOut } from "lucide-react";
 
 const items = [
-  { label: "Stopur", icon: Timer, active: true },
-  { label: "Oversigt", icon: LayoutGrid },
-  { label: "Indstillinger", icon: Settings },
-  { label: "Hjælp", icon: HelpCircle },
-  { label: "Log ud", icon: LogOut },
+  { label: "Stopur", icon: Timer, to: "/" as const },
+  { label: "Arkiv", icon: Archive, to: "/arkiv" as const },
+  { label: "Indstillinger", icon: Settings, to: null },
+  { label: "Hjælp", icon: HelpCircle, to: null },
+  { label: "Log ud", icon: LogOut, to: null },
 ];
 
 export function TopNav() {
@@ -28,24 +29,33 @@ export function TopNav() {
             pr:cisely
           </span>
         </li>
-        {items.map(({ label, icon: Icon, active }) => (
-          <li key={label}>
-            <button
-              type="button"
-              aria-current={active ? "page" : undefined}
-              className={[
-                "inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                active
-                  ? "bg-secondary text-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-              ].join(" ")}
-            >
-              <Icon className="h-4 w-4" aria-hidden="true" />
-              {label}
-            </button>
-          </li>
-        ))}
+        {items.map(({ label, icon: Icon, to }) => {
+          const className = [
+            "inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            "text-muted-foreground hover:bg-secondary hover:text-foreground",
+          ].join(" ");
+          return (
+            <li key={label}>
+              {to ? (
+                <Link
+                  to={to}
+                  className={className}
+                  activeProps={{ className: `${className} bg-secondary text-foreground` }}
+                  activeOptions={{ exact: true }}
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  {label}
+                </Link>
+              ) : (
+                <button type="button" className={className}>
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  {label}
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
