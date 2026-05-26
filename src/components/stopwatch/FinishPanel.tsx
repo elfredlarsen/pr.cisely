@@ -199,8 +199,8 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             <input
               ref={firstRef}
               id="finish-start"
-              type="text"
-              inputMode="numeric"
+              type="time"
+              step={1}
               value={start}
               onChange={(e) => handleStartChange(e.target.value)}
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -212,8 +212,8 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             </label>
             <input
               id="finish-end"
-              type="text"
-              inputMode="numeric"
+              type="time"
+              step={1}
               value={end}
               onChange={(e) => handleEndChange(e.target.value)}
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -229,9 +229,11 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               inputMode="numeric"
               value={duration}
               onChange={(e) => handleDurationChange(e.target.value)}
+              placeholder="0:00:00"
               className="h-10 rounded-md border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
+
         </div>
 
         <div className="flex flex-col gap-1">
