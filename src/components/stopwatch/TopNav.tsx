@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Timer, Archive, Settings, HelpCircle, LogOut } from "lucide-react";
+import { Timer, CalendarDays, Settings, HelpCircle, LogOut } from "lucide-react";
 
 const items = [
   { label: "Stopur", icon: Timer, to: "/" as const },
-  { label: "Arkiv", icon: Archive, to: "/arkiv" as const },
+  { label: "Oversigt", icon: CalendarDays, to: "/arkiv" as const },
   { label: "Indstillinger", icon: Settings, to: null },
   { label: "Hjælp", icon: HelpCircle, to: null },
   { label: "Log ud", icon: LogOut, to: null },
