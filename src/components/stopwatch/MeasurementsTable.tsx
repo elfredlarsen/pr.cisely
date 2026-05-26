@@ -1,4 +1,4 @@
-import { useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { EyeOff, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -88,12 +88,44 @@ export function MeasurementsTable({
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
-  const [tip, setTip] = useState<{ x: number; y: number } | null>(null);
+  const [tipPos, setTipPos] = useState<{ x: number; y: number } | null>(null);
+  const [tipVisible, setTipVisible] = useState(false);
+  const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleTipMove = (e: ReactMouseEvent<HTMLElement>) => {
-    setTip({ x: e.clientX, y: e.clientY });
+  const clearShowTimer = () => {
+    if (showTimerRef.current) {
+      clearTimeout(showTimerRef.current);
+      showTimerRef.current = null;
+    }
   };
-  const handleTipLeave = () => setTip(null);
+  const clearHideTimer = () => {
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+      hideTimerRef.current = null;
+    }
+  };
+
+  const handleHeaderEnter = (e: ReactMouseEvent<HTMLElement>) => {
+    clearHideTimer();
+    setTipPos({ x: e.clientX, y: e.clientY });
+    clearShowTimer();
+    showTimerRef.current = setTimeout(() => setTipVisible(true), 1000);
+  };
+  const handleHeaderMove = (e: ReactMouseEvent<HTMLElement>) => {
+    setTipPos({ x: e.clientX, y: e.clientY });
+    if (tipVisible) {
+      setTipVisible(false);
+      clearHideTimer();
+      hideTimerRef.current = setTimeout(() => setTipPos(null), 200);
+    }
+  };
+  const handleHeaderLeave = () => {
+    clearShowTimer();
+    setTipVisible(false);
+    clearHideTimer();
+    hideTimerRef.current = setTimeout(() => setTipPos(null), 200);
+  };
 
   const beginEdit = (m: Measurement, field: NonNullable<EditingCell>["field"]) => {
     setEditing({ id: m.id, field });
@@ -230,9 +262,6 @@ export function MeasurementsTable({
     <>
       <section
         aria-label="Seneste registreringer"
-        onMouseEnter={handleTipMove}
-        onMouseMove={handleTipMove}
-        onMouseLeave={handleTipLeave}
         className="flex h-full w-full flex-col opacity-75"
       >
         <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
@@ -243,7 +272,12 @@ export function MeasurementsTable({
           ) : (
             <Table>
               <TableHeader className="sticky top-0 bg-background">
-                <TableRow className="border-border/50">
+                <TableRow
+                  className="border-border/50"
+                  onMouseEnter={handleHeaderEnter}
+                  onMouseMove={handleHeaderMove}
+                  onMouseLeave={handleHeaderLeave}
+                >
                   <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
                   <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
                   <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
