@@ -1,6 +1,12 @@
-import { useEffect, useReducer, useRef, useState, useCallback } from "react";
+import { useEffect, useReducer, useRef, useState, useCallback, type ReactNode } from "react";
 import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
 import { TimeDisplay } from "./TimeDisplay";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Status = "idle" | "running" | "paused";
 
