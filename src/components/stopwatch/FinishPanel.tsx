@@ -262,19 +262,17 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
         )}
 
         <div className="flex justify-end gap-2 pt-1">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onCancel}
-            className="inline-flex min-h-11 items-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="min-h-11 px-4"
           >
             Annuller
-          </button>
-          <button
-            type="submit"
-            className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          >
+          </Button>
+          <Button type="submit" className="min-h-11 px-4 font-semibold">
             Gem
-          </button>
+          </Button>
         </div>
       </form>
     </div>
