@@ -14,30 +14,42 @@ type State = {
   status: Status;
   elapsed: number;
   startedAt: number | null;
+  startedAtWall: number | null; // wall-clock ms (Date.now) when first started
 };
 
 type Action =
-  | { type: "START"; now: number }
+  | { type: "START"; now: number; wall: number }
   | { type: "PAUSE"; now: number }
   | { type: "RESUME"; now: number }
   | { type: "RESET" };
 
-const initialState: State = { status: "idle", elapsed: 0, startedAt: null };
+const initialState: State = {
+  status: "idle",
+  elapsed: 0,
+  startedAt: null,
+  startedAtWall: null,
+};
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "START":
-      return { status: "running", elapsed: 0, startedAt: action.now };
+      return {
+        status: "running",
+        elapsed: 0,
+        startedAt: action.now,
+        startedAtWall: action.wall,
+      };
     case "PAUSE":
       if (state.status !== "running" || state.startedAt === null) return state;
       return {
+        ...state,
         status: "paused",
         elapsed: state.elapsed + (action.now - state.startedAt),
         startedAt: null,
       };
     case "RESUME":
       if (state.status !== "paused") return state;
-      return { status: "running", elapsed: state.elapsed, startedAt: action.now };
+      return { ...state, status: "running", startedAt: action.now };
     case "RESET":
       return initialState;
     default:
@@ -51,7 +63,6 @@ function computeMs(state: State, now: number) {
   }
   return state.elapsed;
 }
-
 
 const baseBtn =
   "inline-flex min-h-14 items-center justify-center gap-3 rounded-lg px-10 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:ring-2 hover:ring-foreground/15 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -87,10 +98,11 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
 }
 
 type Props = {
-  onSaveMeasurement: (ms: number) => void;
+  onRequestFinish: (startedAt: Date, endedAt: Date) => void;
+  finishOpen?: boolean;
 };
 
-export function Stopwatch({ onSaveMeasurement }: Props) {
+export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -110,22 +122,44 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
     };
   }, [state]);
 
-  const onStart = () => dispatch({ type: "START", now: performance.now() });
+  const onStart = () =>
+    dispatch({ type: "START", now: performance.now(), wall: Date.now() });
   const onPause = () => dispatch({ type: "PAUSE", now: performance.now() });
   const onResume = () => dispatch({ type: "RESUME", now: performance.now() });
   const onReset = () => dispatch({ type: "RESET" });
   const onFinish = () => {
+    if (finishOpen) return;
     const now = performance.now();
     const finalMs = computeMs(state, now);
-    if (finalMs > 0) onSaveMeasurement(finalMs);
-    dispatch({ type: "RESET" });
+    if (finalMs <= 0 || state.startedAtWall === null) {
+      dispatch({ type: "RESET" });
+      return;
+    }
+    const startedAt = new Date(state.startedAtWall);
+    const endedAt = new Date(state.startedAtWall + finalMs);
+    onRequestFinish(startedAt, endedAt);
   };
+
+  // External reset (after dialog save/cancel) handled by parent via key change is overkill;
+  // instead we expose a useEffect: when finishOpen turns from true -> false, reset.
+  const prevFinishOpenRef = useRef(finishOpen);
+  useEffect(() => {
+    if (prevFinishOpenRef.current && !finishOpen) {
+      dispatch({ type: "RESET" });
+    }
+    prevFinishOpenRef.current = finishOpen;
+  }, [finishOpen]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
         return;
       }
+      if (finishOpen) return;
       switch (e.key) {
         case " ":
         case "Spacebar":
@@ -147,7 +181,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
           break;
       }
     },
-    [state.status, onStart, onPause, onResume, onReset, onFinish]
+    [state.status, finishOpen],
   );
 
   useEffect(() => {
@@ -158,7 +192,7 @@ export function Stopwatch({ onSaveMeasurement }: Props) {
   return (
     <section
       aria-labelledby="stopur-overskrift"
-      className="flex w-full flex-col items-center justify-center gap-12 px-6 py-16"
+      className="flex w-full flex-col items-center justify-center gap-12 px-6 py-12"
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
