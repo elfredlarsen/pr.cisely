@@ -88,3 +88,9 @@
     font-family: var(--font-sans);
   }
 }
+
+[data-sonner-toast] [data-close-button] {
+  right: 0 !important;
+  left: auto !important;
+  transform: translate(35%, -35%) !important;
+}
