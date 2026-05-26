@@ -6,17 +6,18 @@ function pad(n: number, w = 2) {
 
 export function formatTime(ms: number) {
   const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  const hundredths = Math.floor((ms % 1000) / 10);
-  return {
-    main: `${pad(minutes)}:${pad(seconds)}`,
-    hundredths: pad(hundredths),
-  };
+  const main =
+    hours > 0
+      ? `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
+      : `${pad(minutes)}:${pad(seconds)}`;
+  return { main, hours, minutes, seconds };
 }
 
 export function TimeDisplay({ ms }: Props) {
-  const { main, hundredths } = formatTime(ms);
+  const { main, hours, minutes, seconds } = formatTime(ms);
   return (
     <div
       aria-live="polite"
@@ -24,10 +25,12 @@ export function TimeDisplay({ ms }: Props) {
       className="flex items-baseline justify-center font-mono tabular-nums text-foreground select-none"
     >
       <span className="text-[clamp(4rem,16vw,12rem)] leading-none font-medium tracking-tight">
-        {main}:{hundredths}
+        {main}
       </span>
       <span className="sr-only">
-        {main} minutter og sekunder, {hundredths} hundrededele
+        {hours > 0
+          ? `${hours} timer, ${minutes} minutter og ${seconds} sekunder`
+          : `${minutes} minutter og ${seconds} sekunder`}
       </span>
     </div>
   );
