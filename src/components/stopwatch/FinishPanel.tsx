@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { CATEGORIES, getLastCategory, setLastCategory, type Category } from "@/lib/categories";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
