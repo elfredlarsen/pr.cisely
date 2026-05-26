@@ -77,124 +77,6 @@ function parseDuration(value: string): number | null {
   return (h * 3600 + mi * 60 + s) * 1000;
 }
 
-function DurationInput({
-  value,
-  onChange,
-  onCommit,
-  onCancel,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  onCommit: () => void;
-  onCancel: () => void;
-}) {
-  const parts = value.match(/^(\d{1,3}):(\d{2}):(\d{2})$/);
-  const initH = parts ? parts[1].padStart(2, "0") : "00";
-  const initM = parts ? parts[2] : "00";
-  const initS = parts ? parts[3] : "00";
-
-  const hRef = useRef<HTMLInputElement>(null);
-  const mRef = useRef<HTMLInputElement>(null);
-  const sRef = useRef<HTMLInputElement>(null);
-  const [h, setH] = useState(initH);
-  const [mm, setMm] = useState(initM);
-  const [ss, setSs] = useState(initS);
-
-  const sync = (hv: string, mv: string, sv: string) => {
-    onChange(`${hv.padStart(2, "0")}:${mv.padStart(2, "0")}:${sv.padStart(2, "0")}`);
-  };
-
-  const handle = (
-    raw: string,
-    setter: (v: string) => void,
-    next: React.RefObject<HTMLInputElement | null>,
-    max: number,
-    other: [string, string],
-    pos: "h" | "m" | "s",
-  ) => {
-    const digits = raw.replace(/\D/g, "").slice(0, pos === "h" ? 3 : 2);
-    setter(digits);
-    const [a, b] = other;
-    if (pos === "h") sync(digits, a, b);
-    else if (pos === "m") sync(a, digits, b);
-    else sync(a, b, digits);
-    if (digits.length === 2 && next.current) next.current.focus();
-    void max;
-  };
-
-  const onBlurClamp = (v: string, setter: (v: string) => void, max: number, pos: "h" | "m" | "s") => {
-    let n = Number(v || "0");
-    if (Number.isNaN(n)) n = 0;
-    if (n > max) n = max;
-    const padded = n.toString().padStart(2, "0");
-    setter(padded);
-    if (pos === "h") sync(padded, mm, ss);
-    else if (pos === "m") sync(h, padded, ss);
-    else sync(h, mm, padded);
-  };
-
-  const onKey = (e: React.KeyboardEvent<HTMLInputElement>, current: string, prev: React.RefObject<HTMLInputElement | null> | null) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onCommit();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      onCancel();
-    } else if (e.key === "Backspace" && current === "" && prev?.current) {
-      prev.current.focus();
-    }
-  };
-
-  const fieldCls =
-    "w-7 bg-transparent text-center font-mono text-sm tabular-nums focus:outline-none";
-
-  return (
-    <span
-      className="inline-flex h-8 items-center rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-within:ring-2 focus-within:ring-ring"
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) onCommit();
-      }}
-    >
-      <input
-        ref={hRef}
-        autoFocus
-        inputMode="numeric"
-        aria-label="Varighed timer"
-        className={fieldCls}
-        value={h}
-        maxLength={3}
-        onChange={(e) => handle(e.target.value, setH, mRef, 999, [mm, ss], "h")}
-        onBlur={() => onBlurClamp(h, setH, 999, "h")}
-        onKeyDown={(e) => onKey(e, h, null)}
-      />
-      <span aria-hidden="true">:</span>
-      <input
-        ref={mRef}
-        inputMode="numeric"
-        aria-label="Varighed minutter"
-        className={fieldCls}
-        value={mm}
-        maxLength={2}
-        onChange={(e) => handle(e.target.value, setMm, sRef, 59, [h, ss], "m")}
-        onBlur={() => onBlurClamp(mm, setMm, 59, "m")}
-        onKeyDown={(e) => onKey(e, mm, hRef)}
-      />
-      <span aria-hidden="true">:</span>
-      <input
-        ref={sRef}
-        inputMode="numeric"
-        aria-label="Varighed sekunder"
-        className={fieldCls}
-        value={ss}
-        maxLength={2}
-        onChange={(e) => handle(e.target.value, setSs, sRef, 59, [h, mm], "s")}
-        onBlur={() => onBlurClamp(ss, setSs, 59, "s")}
-        onKeyDown={(e) => onKey(e, ss, mRef)}
-      />
-    </span>
-  );
-}
-
 type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
 
 export function MeasurementsTable({
@@ -206,13 +88,10 @@ export function MeasurementsTable({
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
-  const [hovered, setHovered] = useState(false);
   const [tipPos, setTipPos] = useState<{ x: number; y: number } | null>(null);
   const [tipVisible, setTipVisible] = useState(false);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const inForeground = hovered || editing !== null;
 
   const clearShowTimer = () => {
     if (showTimerRef.current) {
@@ -300,14 +179,11 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
-          type="time"
-          step={1}
           value={draft}
-          aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          className="h-8 w-28 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -325,11 +201,13 @@ export function MeasurementsTable({
   const renderDurationCell = (m: Measurement) => {
     if (isEditing(m, "duration")) {
       return (
-        <DurationInput
+        <input
+          autoFocus
           value={draft}
-          onChange={setDraft}
-          onCommit={() => commit(m)}
-          onCancel={() => setEditing(null)}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => commit(m)}
+          onKeyDown={(e) => handleKey(e, m)}
+          className="h-8 w-24 rounded border border-input bg-background px-2 font-mono text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -343,8 +221,6 @@ export function MeasurementsTable({
       </button>
     );
   };
-
-
 
   const clearHistoryButton = (
     <AlertDialog>
@@ -386,9 +262,7 @@ export function MeasurementsTable({
     <>
       <section
         aria-label="Seneste registreringer"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className={`flex h-full w-full flex-col transition-opacity duration-200 ${inForeground ? "opacity-100" : "opacity-75"}`}
+        className="flex h-full w-full flex-col opacity-75"
       >
         <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
           {measurements.length === 0 ? (
