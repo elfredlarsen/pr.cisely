@@ -1,33 +1,14 @@
-## Mål
-1. Tydeligere hover-tilstand på alle stopur-knapper.
-2. Tooltip på hver knap med navn + tastaturgenvej.
+## Gennemsigtige, diskrete tooltips
 
-## Tooltips
-Bruger eksisterende `Tooltip` (Radix) fra `src/components/ui/tooltip.tsx`. Pakker knap-rækken i `Stopwatch.tsx` i én `TooltipProvider` og hver knap i `Tooltip`/`TooltipTrigger asChild`/`TooltipContent`.
+I `src/components/stopwatch/Stopwatch.tsx` ændres `ShortcutTooltip` komponenten så tooltip'erne bliver visuelt diskrete:
 
-Tooltip-indhold matcher de faktisk implementerede genveje (ikke "P"):
+- The tooltip should have a short delay before appearing (around 300ms), and use a small, dark, minimal style. Do not add any visible text or badge to the button itself — the tooltip should only appear on hover.
 
-| Knap     | Tooltip               |
-|----------|-----------------------|
-| Start    | Start · `Mellemrum`   |
-| Pause    | Pause · `Mellemrum`   |
-| Fortsæt  | Fortsæt · `Mellemrum` |
-| Nulstil  | Nulstil · `N`         |
-| Afslut   | Afslut · `A`          |
+1. **Baggrund**: `bg-background/80 backdrop-blur-sm` — semi-transparent med let sløring, så baggrunden skinner igennem.
+2. **Tekst**: `text-muted-foreground` i stedet for `text-primary-foreground`, så teksten er afdæmpet og neutral.
+3. **Størrelse**: Reducer padding til `px-2 py-1` og tekststørrelse til `text-[11px]`.
+4. **Afstand**: Reducer `sideOffset` til `2` så tooltip'en sidder tættere på knappen.
+5. **Animation**: Beholder fade-in, men fjerner zoom-effekten for at undgå det visuelle "pop".
+6. **Border**: Tilføjer en subtil `border border-border/50` for let definition.
 
-Genvejen vises som lille `<kbd>`-chip i tooltippen for læsbarhed. Tilføjer desuden `aria-keyshortcuts` på hver knap (` `, `N`, `A`) så skærmlæsere kender genvejen uden hover. Tooltip-tekst er på dansk og respekterer den eksisterende tone.
-
-## Tydeligere hover
-Opdaterer `baseBtn` + varianterne i `Stopwatch.tsx`:
-
-- Stærkere farveskift via `hover:brightness-110` (mørke knapper bliver tydeligt lysere; outline-knapper får `hover:bg-muted` + `hover:border-foreground/40`)
-- `hover:shadow-md` for løft i dybden
-- Let fysisk respons: `motion-safe:hover:-translate-y-0.5` + `motion-safe:active:translate-y-0` med `transition-all duration-150`
-- Tydeligere kant: `hover:ring-2 hover:ring-foreground/15 ring-offset-2 ring-offset-background`
-- Bevarer eksisterende `focus-visible:ring-2` (tastaturfokus uændret)
-- `motion-safe:`-prefix sikrer at `prefers-reduced-motion` deaktiverer transform
-
-## Filer
-- `src/components/stopwatch/Stopwatch.tsx` — wrap knapper i Tooltip, tilføj `aria-keyshortcuts`, opdater knapklasser.
-
-Ingen ændringer i logik, genvejs-handlere, datalag eller andre filer.
+Resultat: Tooltip'en er synlig, men træder i baggrunden og virker som en del af knappen frem for en separat UI-komponent.

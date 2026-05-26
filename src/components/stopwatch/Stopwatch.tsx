@@ -72,9 +72,13 @@ function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent side="bottom" className="flex items-center gap-2">
+      <TooltipContent
+        side="bottom"
+        sideOffset={2}
+        className="flex items-center gap-1.5 rounded border border-border/50 bg-background/80 px-2 py-1 text-[11px] text-muted-foreground shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
+      >
         <span>{label}</span>
-        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+        <kbd className="rounded border border-border/40 bg-muted/50 px-1 py-0 font-mono text-[10px] text-muted-foreground/80">
           {shortcut}
         </kbd>
       </TooltipContent>
