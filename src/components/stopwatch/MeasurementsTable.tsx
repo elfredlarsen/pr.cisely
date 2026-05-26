@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type MouseEvent as ReactMouseEvent } from "react";
 import { EyeOff, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -27,12 +27,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import type { Measurement } from "@/hooks/use-measurements";
 
