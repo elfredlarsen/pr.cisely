@@ -386,7 +386,9 @@ export function MeasurementsTable({
     <>
       <section
         aria-label="Seneste registreringer"
-        className="flex h-full w-full flex-col opacity-75"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={`flex h-full w-full flex-col transition-opacity duration-200 ${inForeground ? "opacity-100" : "opacity-75"}`}
       >
         <div className="mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
           {measurements.length === 0 ? (
