@@ -122,23 +122,9 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
     }
   };
 
-  const maskDuration = (input: string): string => {
-    const digits = input.replace(/\D/g, "").slice(0, 7);
-    if (digits.length === 0) return "";
-    const h = digits.slice(0, Math.max(1, digits.length - 4));
-    const rest = digits.slice(h.length);
-    const m = rest.slice(0, 2);
-    const s = rest.slice(2, 4);
-    let result = h;
-    if (rest.length > 0) result += ":" + m;
-    if (rest.length > 2) result += ":" + s;
-    return result;
-  };
-
   const handleDurationChange = (value: string) => {
-    const masked = maskDuration(value);
-    setDuration(masked);
-    const ms = parseDuration(masked);
+    setDuration(value);
+    const ms = parseDuration(value);
     const s = parseHms(start);
     if (ms !== null && s !== null) {
       const newEndSec = s + Math.floor(ms / 1000);
