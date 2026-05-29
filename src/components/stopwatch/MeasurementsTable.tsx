@@ -82,9 +82,8 @@ type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
 export function MeasurementsTable({
   measurements,
   onUpdate,
-  onHide,
-  onUnhide,
-  onHideAll,
+  onDelete,
+  onDeleteAll,
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
