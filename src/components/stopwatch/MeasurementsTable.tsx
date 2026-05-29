@@ -34,9 +34,8 @@ import type { Measurement } from "@/hooks/use-measurements";
 type Props = {
   measurements: Measurement[];
   onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
-  onHide: (id: string) => void;
-  onUnhide: (id: string) => void;
-  onHideAll: () => void;
+  onDelete: (id: string) => void;
+  onDeleteAll: () => void;
 };
 
 function pad(n: number, w = 2) {
