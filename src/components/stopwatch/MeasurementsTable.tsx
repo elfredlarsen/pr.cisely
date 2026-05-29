@@ -1,5 +1,5 @@
 import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
-import { EyeOff, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -34,9 +34,8 @@ import type { Measurement } from "@/hooks/use-measurements";
 type Props = {
   measurements: Measurement[];
   onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
-  onHide: (id: string) => void;
-  onUnhide: (id: string) => void;
-  onHideAll: () => void;
+  onDelete: (id: string) => void;
+  onDeleteAll: () => void;
 };
 
 function pad(n: number, w = 2) {
@@ -83,9 +82,8 @@ type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
 export function MeasurementsTable({
   measurements,
   onUpdate,
-  onHide,
-  onUnhide,
-  onHideAll,
+  onDelete,
+  onDeleteAll,
 }: Props) {
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
@@ -248,23 +246,21 @@ export function MeasurementsTable({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Skjul alle dagens registreringer?</AlertDialogTitle>
+          <AlertDialogTitle>Slet alle dagens registreringer?</AlertDialogTitle>
           <AlertDialogDescription>
-            Registreringerne fjernes fra listen, men gemmes i arkivet.
+            Registreringerne slettes permanent og kan ikke gendannes.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuller</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              onHideAll();
-              toast.success("Historik skjult", {
-                description: "Registreringerne findes i arkivet.",
-              });
+              onDeleteAll();
+              toast.success("Historik slettet");
             }}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Skjul
+            Slet
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -339,24 +335,39 @@ export function MeasurementsTable({
                       </Select>
                     </TableCell>
                     <TableCell className="py-1 text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          onHide(m.id);
-                          toast("Skjult — findes i arkivet", {
-                            action: {
-                              label: "Fortryd",
-                              onClick: () => onUnhide(m.id),
-                            },
-                          });
-                        }}
-                        aria-label="Skjul registrering"
-                        className="h-11 w-11 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                      >
-                        <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                            aria-label="Slet registrering"
+                          >
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Registreringen slettes permanent og kan ikke gendannes.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuller</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                onDelete(m.id);
+                                toast.success("Registrering slettet");
+                              }}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Slet
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                   );

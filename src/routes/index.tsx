@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { visibleToday, add, update, hide, unhide, hideAllToday } = useMeasurements();
+  const { visibleToday, add, update, remove, removeAllToday } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [resetKey, setResetKey] = useState(0);
 
@@ -82,9 +82,8 @@ function Index() {
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}
-            onHide={hide}
-            onUnhide={unhide}
-            onHideAll={hideAllToday}
+            onDelete={remove}
+            onDeleteAll={removeAllToday}
           />
         </div>
       </main>
