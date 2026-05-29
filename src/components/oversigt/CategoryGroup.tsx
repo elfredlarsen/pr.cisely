@@ -174,17 +174,16 @@ export function CategoryGroup({
   };
 
   const handleChangeDuration = (v: string) => {
-    const masked = maskDuration(v);
     setRowEdit((prev) => {
       if (!prev) return prev;
       const startSec = parseTimeToSec(prev.start);
-      const durMs = parseDuration(masked);
+      const durMs = parseDuration(v);
       let end = prev.end;
       if (startSec !== null && durMs !== null) {
         const newEndSec = startSec + Math.floor(durMs / 1000);
         if (newEndSec < 24 * 3600) end = secToTime(newEndSec);
       }
-      return { ...prev, duration: masked, end };
+      return { ...prev, duration: v, end };
     });
   };
 
