@@ -263,7 +263,7 @@ export function CategoryGroup({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
-          className="h-8 w-24 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-28 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -272,7 +272,7 @@ export function CategoryGroup({
         type="button"
         onClick={() => beginEdit(m, field)}
         className={cn(
-          "group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           editingRow ? "text-foreground/70" : "text-muted-foreground",
         )}
       >
@@ -303,7 +303,7 @@ export function CategoryGroup({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label="Varighed (timer:minutter:sekunder)"
-          className="h-8 w-24 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-28 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -312,7 +312,7 @@ export function CategoryGroup({
         type="button"
         onClick={() => beginEdit(m, "duration")}
         className={cn(
-          "group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           editingRow ? "text-foreground/70" : "text-muted-foreground",
         )}
       >
@@ -397,13 +397,13 @@ export function CategoryGroup({
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow className="border-border/50">
-                <TableHead className="h-8 w-24 py-1">
+                <TableHead className="h-8 w-28 py-1">
                   {renderSortHeader("start", "Start")}
                 </TableHead>
-                <TableHead className="h-8 w-24 py-1">
+                <TableHead className="h-8 w-28 py-1">
                   {renderSortHeader("end", "Slut")}
                 </TableHead>
-                <TableHead className="h-8 w-24 py-1">
+                <TableHead className="h-8 w-28 py-1">
                   {renderSortHeader("duration", "Varighed")}
                 </TableHead>
                 <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
