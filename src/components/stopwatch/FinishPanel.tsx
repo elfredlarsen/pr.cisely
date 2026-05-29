@@ -215,11 +215,10 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             </label>
             <input
               id="finish-duration"
-              type="text"
-              inputMode="numeric"
+              type="time"
+              step={1}
               value={duration}
               onChange={(e) => handleDurationChange(e.target.value)}
-              placeholder="0:00:00"
               className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
