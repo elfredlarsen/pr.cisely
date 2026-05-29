@@ -165,27 +165,27 @@ function OversigtPage() {
             totalMs={totalMs}
             format={format}
             onFormatChange={handleFormatChange}
+            leftSlot={
+              visibleCategories.length > 0 ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleAll}
+                  className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
+                >
+                  {allOpen ? (
+                    <ChevronsDownUp className="h-3.5 w-3.5" aria-hidden="true" />
+                  ) : (
+                    <ChevronsUpDown className="h-3.5 w-3.5" aria-hidden="true" />
+                  )}
+                  {allOpen ? "Fold alle ind" : "Fold alle ud"}
+                </Button>
+              ) : null
+            }
           />
         </div>
 
-        {visibleCategories.length > 0 && (
-          <div className="mt-6 flex justify-start">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={toggleAll}
-              className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
-            >
-              {allOpen ? (
-                <ChevronsDownUp className="h-3.5 w-3.5" aria-hidden="true" />
-              ) : (
-                <ChevronsUpDown className="h-3.5 w-3.5" aria-hidden="true" />
-              )}
-              {allOpen ? "Fold alle ind" : "Fold alle ud"}
-            </Button>
-          </div>
-        )}
 
         <div className="mt-2 space-y-2">
           {dayMeasurements.length === 0 ? (
