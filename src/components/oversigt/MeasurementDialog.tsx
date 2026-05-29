@@ -151,22 +151,9 @@ export function MeasurementDialog({
       setDuration(msToDurationInput((e - s) * 1000));
     }
   };
-  const maskDuration = (input: string): string => {
-    const digits = input.replace(/\D/g, "").slice(0, 7);
-    if (digits.length === 0) return "";
-    const h = digits.slice(0, Math.max(1, digits.length - 4));
-    const rest = digits.slice(h.length);
-    const m = rest.slice(0, 2);
-    const s = rest.slice(2, 4);
-    let r = h;
-    if (rest.length > 0) r += ":" + m;
-    if (rest.length > 2) r += ":" + s;
-    return r;
-  };
   const handleDuration = (v: string) => {
-    const masked = maskDuration(v);
-    setDuration(masked);
-    const ms = parseDuration(masked);
+    setDuration(v);
+    const ms = parseDuration(v);
     const s = parseHms(start);
     if (ms !== null && s !== null) {
       const newEndSec = s + Math.floor(ms / 1000);
