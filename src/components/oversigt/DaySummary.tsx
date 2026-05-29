@@ -9,27 +9,40 @@ type Props = {
 
 export function DaySummary({ totalMs, format, onFormatChange }: Props) {
   return (
-    <div className="flex items-center justify-end gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="text-sm text-muted-foreground">
         Samlet tid:{" "}
         <span className="text-base font-semibold text-foreground tabular-nums">
           {formatTotal(totalMs, format)}
         </span>
       </div>
-      <ToggleGroup
-        type="single"
-        size="sm"
-        value={format}
-        onValueChange={(v) => v && onFormatChange(v as SummaryFormat)}
-        aria-label="Vælg visningsformat"
-      >
-        <ToggleGroupItem value="decimal" aria-label="Decimaltimer">
-          t
-        </ToggleGroupItem>
-        <ToggleGroupItem value="hm" aria-label="Timer og minutter">
-          t:m
-        </ToggleGroupItem>
-      </ToggleGroup>
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">Vis som</span>
+        <ToggleGroup
+          type="single"
+          size="sm"
+          value={format}
+          onValueChange={(v) => v && onFormatChange(v as SummaryFormat)}
+          aria-label="Vælg visningsformat for samlet tid"
+        >
+          <ToggleGroupItem
+            value="decimal"
+            aria-label="Decimaltimer, fx 1,50 t"
+            title="Decimaltimer (fx 1,50 t)"
+            className="px-3 text-xs"
+          >
+            Decimaltimer
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="hm"
+            aria-label="Timer og minutter, fx 1 t 30 min"
+            title="Timer og minutter (fx 1 t 30 min)"
+            className="px-3 text-xs"
+          >
+            Timer + minutter
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
     </div>
   );
 }

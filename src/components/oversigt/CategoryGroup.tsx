@@ -14,6 +14,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -25,25 +32,160 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { categoryLabel, type Category } from "@/lib/categories";
+import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import type { Measurement } from "@/hooks/use-measurements";
-import { fmtDuration, fmtTime, formatTotal, type SummaryFormat } from "./format";
+import {
+  fmtDuration,
+  fmtTime,
+  formatTotal,
+  maskDuration,
+  parseDuration,
+  parseTime,
+  type SummaryFormat,
+} from "./format";
 import { cn } from "@/lib/utils";
 
 type Props = {
   category: Category;
   items: Measurement[];
   format: SummaryFormat;
-  onEdit: (m: Measurement) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
   onDelete: (id: string) => void;
 };
 
-export function CategoryGroup({ category, items, format, onEdit, onDelete }: Props) {
-  const [open, setOpen] = useState(false);
+type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
+
+export function CategoryGroup({
+  category,
+  items,
+  format,
+  open,
+  onOpenChange,
+  onUpdate,
+  onDelete,
+}: Props) {
   const total = items.reduce((sum, m) => sum + m.ms, 0);
 
+  const [editing, setEditing] = useState<EditingCell>(null);
+  const [draft, setDraft] = useState("");
+
+  const beginEdit = (m: Measurement, field: NonNullable<EditingCell>["field"]) => {
+    setEditing({ id: m.id, field });
+    if (field === "start") setDraft(fmtTime(m.startedAt));
+    else if (field === "end") setDraft(fmtTime(m.endedAt));
+    else setDraft(fmtDuration(m.ms));
+  };
+
+  const commit = (m: Measurement) => {
+    if (!editing) return;
+    if (editing.field === "start") {
+      const newStart = parseTime(draft, new Date(m.startedAt));
+      if (newStart) {
+        const endMs = new Date(m.endedAt).getTime();
+        const newMs = Math.max(0, endMs - newStart.getTime());
+        onUpdate(m.id, { startedAt: newStart.toISOString(), ms: newMs });
+      }
+    } else if (editing.field === "end") {
+      const newEnd = parseTime(draft, new Date(m.endedAt));
+      if (newEnd) {
+        const startMs = new Date(m.startedAt).getTime();
+        const newMs = Math.max(0, newEnd.getTime() - startMs);
+        onUpdate(m.id, { endedAt: newEnd.toISOString(), ms: newMs });
+      }
+    } else {
+      const newMs = parseDuration(draft);
+      if (newMs !== null && newMs > 0) {
+        const newEnd = new Date(new Date(m.startedAt).getTime() + newMs);
+        onUpdate(m.id, { ms: newMs, endedAt: newEnd.toISOString() });
+      }
+    }
+    setEditing(null);
+  };
+
+  const handleKey = (e: React.KeyboardEvent<HTMLInputElement>, m: Measurement) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      commit(m);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setEditing(null);
+    }
+  };
+
+  const isEditing = (m: Measurement, field: NonNullable<EditingCell>["field"]) =>
+    editing?.id === m.id && editing.field === field;
+
+  const renderTimeCell = (m: Measurement, field: "start" | "end") => {
+    const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
+    if (isEditing(m, field)) {
+      return (
+        <input
+          autoFocus
+          type="time"
+          step={1}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => commit(m)}
+          onKeyDown={(e) => handleKey(e, m)}
+          aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
+          className="h-8 w-24 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+      );
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => beginEdit(m, field)}
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        <span>{value}</span>
+        <Pencil
+          className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+          aria-hidden="true"
+        />
+      </button>
+    );
+  };
+
+  const renderDurationCell = (m: Measurement) => {
+    if (isEditing(m, "duration")) {
+      return (
+        <input
+          autoFocus
+          inputMode="numeric"
+          value={draft}
+          onChange={(e) => setDraft(maskDuration(e.target.value))}
+          onBlur={() => commit(m)}
+          onKeyDown={(e) => handleKey(e, m)}
+          placeholder="0:00:00"
+          aria-label="Varighed (timer:minutter:sekunder)"
+          className="h-8 w-24 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        />
+      );
+    }
+    return (
+      <button
+        type="button"
+        onClick={() => beginEdit(m, "duration")}
+        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        <span>{fmtDuration(m.ms)}</span>
+        <Pencil
+          className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+          aria-hidden="true"
+        />
+      </button>
+    );
+  };
+
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="rounded-lg border border-border bg-card">
+    <Collapsible
+      open={open}
+      onOpenChange={onOpenChange}
+      className="rounded-lg border border-border bg-card"
+    >
       <CollapsibleTrigger asChild>
         <button
           type="button"
@@ -83,42 +225,64 @@ export function CategoryGroup({ category, items, format, onEdit, onDelete }: Pro
                 <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
                   Varighed
                 </TableHead>
-                <TableHead className="h-8 w-24 py-1 text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
-                  Handlinger
+                <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+                  Kategori
+                </TableHead>
+                <TableHead className="h-8 w-16 py-1 text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+                  <span className="sr-only">Handlinger</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((m) => (
-                <TableRow key={m.id} className="border-border/40">
-                  <TableCell className="py-1 text-xs tabular-nums">
-                    {fmtTime(m.startedAt)}
-                  </TableCell>
-                  <TableCell className="py-1 text-xs tabular-nums">
-                    {fmtTime(m.endedAt)}
-                  </TableCell>
-                  <TableCell className="py-1 text-xs tabular-nums">
-                    {fmtDuration(m.ms)}
-                  </TableCell>
-                  <TableCell className="py-1 text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-foreground"
-                        onClick={() => onEdit(m)}
-                        aria-label="Rediger registrering"
+              {items.map((m) => {
+                const rowEditing = editing?.id === m.id;
+                return (
+                  <TableRow
+                    key={m.id}
+                    data-state={rowEditing ? "selected" : undefined}
+                    className={
+                      rowEditing
+                        ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
+                        : "border-border/40 hover:bg-[#c471ed]/10"
+                    }
+                  >
+                    <TableCell className="py-1 text-xs">
+                      {renderTimeCell(m, "start")}
+                    </TableCell>
+                    <TableCell className="py-1 text-xs">
+                      {renderTimeCell(m, "end")}
+                    </TableCell>
+                    <TableCell className="py-1 text-xs">
+                      {renderDurationCell(m)}
+                    </TableCell>
+                    <TableCell className="py-1 text-xs">
+                      <Select
+                        value={m.category}
+                        onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
                       >
-                        <Pencil className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                        <SelectTrigger
+                          className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
+                          aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
+                        >
+                          <SelectValue className="truncate" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map((c) => (
+                            <SelectItem key={c.value} value={c.value}>
+                              {c.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell className="py-1 text-right">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                            className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
                             aria-label="Slet registrering"
                           >
                             <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -142,10 +306,10 @@ export function CategoryGroup({ category, items, format, onEdit, onDelete }: Pro
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

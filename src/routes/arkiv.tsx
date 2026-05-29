@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { ChevronsDownUp, ChevronsUpDown, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ function OversigtPage() {
   });
   const [format, setFormat] = useState<SummaryFormat>("decimal");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<Measurement | null>(null);
+  const [openCategories, setOpenCategories] = useState<Set<Category>>(new Set());
 
   useEffect(() => {
     try {
@@ -104,29 +104,39 @@ function OversigtPage() {
     return map;
   }, [dayMeasurements]);
 
-  const handleAdd = () => {
-    setEditing(null);
-    setDialogOpen(true);
+  const visibleCategories = useMemo(
+    () => CATEGORIES.filter((c) => (byCategory.get(c.value)?.length ?? 0) > 0),
+    [byCategory],
+  );
+
+  const allOpen =
+    visibleCategories.length > 0 &&
+    visibleCategories.every((c) => openCategories.has(c.value));
+
+  const toggleAll = () => {
+    if (allOpen) {
+      setOpenCategories(new Set());
+    } else {
+      setOpenCategories(new Set(visibleCategories.map((c) => c.value)));
+    }
   };
 
-  const handleEdit = (m: Measurement) => {
-    setEditing(m);
+  const setCategoryOpen = (cat: Category, open: boolean) => {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (open) next.add(cat);
+      else next.delete(cat);
+      return next;
+    });
+  };
+
+  const handleAdd = () => {
     setDialogOpen(true);
   };
 
   const handleSave = (draft: MeasurementDraft) => {
-    if (editing) {
-      update(editing.id, {
-        startedAt: draft.startedAt,
-        endedAt: draft.endedAt,
-        ms: draft.ms,
-        category: draft.category,
-      });
-      toast.success("Registrering opdateret");
-    } else {
-      add(draft);
-      toast.success("Registrering tilføjet");
-    }
+    add(draft);
+    toast.success("Registrering tilføjet");
   };
 
   const handleDelete = (id: string) => {
@@ -158,24 +168,43 @@ function OversigtPage() {
           />
         </div>
 
-        <div className="mt-6 space-y-2">
+        {visibleCategories.length > 0 && (
+          <div className="mt-6 flex justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={toggleAll}
+              className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
+            >
+              {allOpen ? (
+                <ChevronsDownUp className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : (
+                <ChevronsUpDown className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              {allOpen ? "Fold alle ind" : "Fold alle ud"}
+            </Button>
+          </div>
+        )}
+
+        <div className="mt-2 space-y-2">
           {dayMeasurements.length === 0 ? (
             <p className="py-16 text-center text-sm text-muted-foreground">
               Ingen registreringer denne dag
             </p>
           ) : (
-            CATEGORIES.filter((c) => (byCategory.get(c.value)?.length ?? 0) > 0).map(
-              (c) => (
-                <CategoryGroup
-                  key={c.value}
-                  category={c.value}
-                  items={byCategory.get(c.value) ?? []}
-                  format={format}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ),
-            )
+            visibleCategories.map((c) => (
+              <CategoryGroup
+                key={c.value}
+                category={c.value}
+                items={byCategory.get(c.value) ?? []}
+                format={format}
+                open={openCategories.has(c.value)}
+                onOpenChange={(o) => setCategoryOpen(c.value, o)}
+                onUpdate={update}
+                onDelete={handleDelete}
+              />
+            ))
           )}
         </div>
 
@@ -191,18 +220,8 @@ function OversigtPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         baseDate={date}
-        initial={
-          editing
-            ? {
-                startedAt: editing.startedAt,
-                endedAt: editing.endedAt,
-                ms: editing.ms,
-                category: editing.category,
-              }
-            : undefined
-        }
         onSave={handleSave}
-        title={editing ? "Rediger registrering" : "Tilføj registrering"}
+        title="Tilføj registrering"
       />
     </div>
   );
