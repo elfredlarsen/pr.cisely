@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import {
   Collapsible,
@@ -103,6 +103,7 @@ export function CategoryGroup({
   const total = items.reduce((sum, m) => sum + m.ms, 0);
 
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
+  const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
   const [pendingCategoryChange, setPendingCategoryChange] = useState<
     { id: string; from: Category; to: Category } | null
   >(null);
@@ -418,9 +419,11 @@ export function CategoryGroup({
             <TableBody>
               {sortedItems.map((m) => {
                 const rowEditing = isRowEditing(m);
+                const editingComment = commentEdit?.id === m.id;
+                const showCommentRow = m.category === "andet";
                 return (
+                  <React.Fragment key={m.id}>
                   <TableRow
-                    key={m.id}
                     data-state={rowEditing ? "selected" : undefined}
                     className={
                       rowEditing
@@ -499,6 +502,57 @@ export function CategoryGroup({
                       </AlertDialog>
                     </TableCell>
                   </TableRow>
+                  {showCommentRow && (
+                    <TableRow className="border-border/40 hover:bg-transparent">
+                      <TableCell colSpan={5} className="py-1 pl-3 pr-2 text-xs">
+                        {editingComment ? (
+                          <input
+                            autoFocus
+                            type="text"
+                            value={commentEdit!.value}
+                            onChange={(e) =>
+                              setCommentEdit({ id: m.id, value: e.target.value })
+                            }
+                            onBlur={() => {
+                              const trimmed = commentEdit!.value.trim();
+                              onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
+                              setCommentEdit(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                (e.target as HTMLInputElement).blur();
+                              } else if (e.key === "Escape") {
+                                e.preventDefault();
+                                setCommentEdit(null);
+                              }
+                            }}
+                            placeholder="Tilføj kommentar"
+                            aria-label="Kommentar"
+                            className="h-8 w-full rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setCommentEdit({ id: m.id, value: m.comment ?? "" })
+                            }
+                            className={cn(
+                              "group inline-flex min-h-8 w-full items-center gap-1.5 rounded px-1 py-0.5 text-left transition-colors hover:bg-[#c471ed]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                              m.comment ? "text-muted-foreground" : "text-muted-foreground/50 italic",
+                            )}
+                          >
+                            <Pencil
+                              className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+                              aria-hidden="true"
+                            />
+                            <span>{m.comment ?? "Tilføj kommentar"}</span>
+                          </button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  </React.Fragment>
                 );
               })}
             </TableBody>
@@ -524,9 +578,16 @@ export function CategoryGroup({
             <AlertDialogAction
               onClick={() => {
                 if (pendingCategoryChange) {
-                  onUpdate(pendingCategoryChange.id, {
+                  const patch: Partial<Omit<Measurement, "id">> = {
                     category: pendingCategoryChange.to,
-                  });
+                  };
+                  if (
+                    pendingCategoryChange.from === "andet" &&
+                    pendingCategoryChange.to !== "andet"
+                  ) {
+                    patch.comment = undefined;
+                  }
+                  onUpdate(pendingCategoryChange.id, patch);
                 }
                 setPendingCategoryChange(null);
               }}

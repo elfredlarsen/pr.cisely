@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { Category } from "@/lib/categories";
+import { isValidCategory, type Category } from "@/lib/categories";
 
 export type Measurement = {
   id: string;
@@ -8,6 +8,7 @@ export type Measurement = {
   ms: number;
   category: Category;
   hidden: boolean;
+  comment?: string;
 };
 
 export type MeasurementDraft = {
@@ -15,6 +16,7 @@ export type MeasurementDraft = {
   endedAt: string;
   ms: number;
   category: Category;
+  comment?: string;
 };
 
 const STORAGE_KEY = "precisely.measurements";
@@ -38,10 +40,13 @@ function migrate(raw: unknown): Measurement[] {
         typeof r.startedAt === "string"
           ? r.startedAt
           : new Date(new Date(endedAt).getTime() - ms).toISOString();
-      const category = (typeof r.category === "string" ? r.category : "andet") as Category;
+      if (!isValidCategory(r.category)) return null;
+      const category = r.category;
       const hidden = typeof r.hidden === "boolean" ? r.hidden : false;
       const id = typeof r.id === "string" ? r.id : newId();
-      return { id, startedAt, endedAt, ms, category, hidden };
+      const comment =
+        typeof r.comment === "string" && r.comment.trim() !== "" ? r.comment : undefined;
+      return { id, startedAt, endedAt, ms, category, hidden, comment };
     })
     .filter((x): x is Measurement => x !== null);
 }
@@ -73,8 +78,8 @@ function buildSeed(): Measurement[] {
     make(13, 0, 45, "straksafgoerelse"),
     make(10, 30, 30, "biometri"),
     make(14, 0, 45, "biometri"),
-    make(11, 15, 30, "eu_ansoegning"),
-    make(15, 0, 30, "eu_ansoegning"),
+    make(11, 15, 30, "eu_vejledning"),
+    make(15, 0, 30, "eu_vejledning"),
   ];
 }
 
@@ -139,6 +144,7 @@ export function useMeasurements() {
           ms: draft.ms,
           category: draft.category,
           hidden: false,
+          comment: draft.comment,
         },
         ...prev,
       ]);
