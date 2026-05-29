@@ -1,5 +1,5 @@
 import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
-import { EyeOff, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
