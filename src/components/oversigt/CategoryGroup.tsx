@@ -38,7 +38,6 @@ import {
   fmtDuration,
   fmtTime,
   formatTotal,
-  maskDuration,
   parseDuration,
   parseTime,
   type SummaryFormat,
