@@ -224,7 +224,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-auto min-w-[7rem] items-center justify-start gap-1.5 rounded px-1 py-0.5 text-xs tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="group inline-flex h-8 w-full items-center justify-start gap-1.5 rounded px-1 py-0.5 text-xs tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{fmtDuration(m.ms)}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
