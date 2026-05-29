@@ -189,6 +189,11 @@ export function useMeasurements() {
     );
   }, [persist]);
 
+  const removeAllToday = useCallback(() => {
+    const today = new Date();
+    persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
+  }, [persist]);
+
   const visibleToday = useMemo(() => {
     const today = new Date();
     return measurements.filter((m) => !m.hidden && isSameLocalDay(m.endedAt, today));
@@ -209,6 +214,7 @@ export function useMeasurements() {
     hide,
     unhide,
     hideAllToday,
+    removeAllToday,
   };
 }
 
