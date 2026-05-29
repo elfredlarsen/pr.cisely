@@ -169,7 +169,7 @@ function OversigtPage() {
         </div>
 
         {visibleCategories.length > 0 && (
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex justify-start">
             <Button
               type="button"
               variant="ghost"
