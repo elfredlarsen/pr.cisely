@@ -207,7 +207,7 @@ export function MeasurementDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="flex flex-wrap gap-3">
             <div className="flex flex-col gap-1">
               <label htmlFor="md-start" className="text-xs font-medium text-muted-foreground">
                 Starttid
@@ -218,7 +218,7 @@ export function MeasurementDialog({
                 step={1}
                 value={start}
                 onChange={(e) => handleStart(e.target.value)}
-                className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -231,7 +231,7 @@ export function MeasurementDialog({
                 step={1}
                 value={end}
                 onChange={(e) => handleEnd(e.target.value)}
-                className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -244,7 +244,7 @@ export function MeasurementDialog({
                 step={1}
                 value={duration}
                 onChange={(e) => handleDuration(e.target.value)}
-                className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
           </div>
