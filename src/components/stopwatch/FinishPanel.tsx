@@ -84,6 +84,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
     msToDurationInput(endedAt.getTime() - startedAt.getTime()),
   );
   const [category, setCategory] = useState<Category>(getLastCategory());
+  const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const firstRef = useRef<HTMLInputElement>(null);
   const baseDate = useMemo(() => new Date(startedAt), [startedAt]);
@@ -173,11 +174,13 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
     const startDate = setTimeOnDate(baseDate, s);
     const endDate = setTimeOnDate(baseDate, en);
     setLastCategory(category);
+    const trimmed = comment.trim();
     onSave({
       startedAt: startDate.toISOString(),
       endedAt: endDate.toISOString(),
       ms: dur,
       category,
+      comment: category === "andet" && trimmed !== "" ? trimmed : undefined,
     });
   };
 
@@ -254,6 +257,21 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
             </SelectContent>
           </Select>
         </div>
+
+        {category === "andet" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="finish-comment" className="text-xs font-medium text-muted-foreground">
+              Kommentar (valgfri)
+            </label>
+            <textarea
+              id="finish-comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={2}
+              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
+        )}
 
         {error && (
           <p role="alert" aria-live="assertive" className="text-xs text-destructive">
