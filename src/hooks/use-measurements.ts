@@ -144,6 +144,7 @@ export function useMeasurements() {
           ms: draft.ms,
           category: draft.category,
           hidden: false,
+          comment: draft.comment,
         },
         ...prev,
       ]);
