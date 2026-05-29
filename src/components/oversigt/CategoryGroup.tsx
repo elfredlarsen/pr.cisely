@@ -130,12 +130,18 @@ export function CategoryGroup({
   };
 
   const beginEdit = (m: Measurement, field: EditField) => {
+    const start = fmtTime(m.startedAt);
+    const end = fmtTime(m.endedAt);
+    const duration = fmtDuration(m.ms);
     setRowEdit({
       id: m.id,
       field,
-      start: fmtTime(m.startedAt),
-      end: fmtTime(m.endedAt),
-      duration: fmtDuration(m.ms),
+      start,
+      end,
+      duration,
+      origStart: start,
+      origEnd: end,
+      origDuration: duration,
     });
   };
 
