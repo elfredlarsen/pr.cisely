@@ -62,11 +62,15 @@ type RowEdit = {
   start: string;
   end: string;
   duration: string;
+  origStart: string;
+  origEnd: string;
+  origDuration: string;
 };
 type SortField = "start" | "end" | "duration";
 type SortDir = "asc" | "desc";
 
 function parseTimeToSec(value: string): number | null {
+  if (value.trim() === "") return 0;
   const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
   if (!m) return null;
   const h = Number(m[1]);
