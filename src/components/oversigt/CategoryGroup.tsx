@@ -103,6 +103,7 @@ export function CategoryGroup({
   const total = items.reduce((sum, m) => sum + m.ms, 0);
 
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
+  const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
   const [pendingCategoryChange, setPendingCategoryChange] = useState<
     { id: string; from: Category; to: Category } | null
   >(null);
