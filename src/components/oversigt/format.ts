@@ -48,12 +48,12 @@ export function parseTime(value: string, base: Date): Date | null {
 
 export function parseDuration(value: string): number | null {
   if (value.trim() === "") return 0;
-  const m = value.match(/^(\d{1,3}):(\d{2}):(\d{2})$/);
+  const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
   if (!m) return null;
   const h = Number(m[1]);
   const mi = Number(m[2]);
-  const s = Number(m[3]);
-  if (mi > 59 || s > 59) return null;
+  const s = m[3] ? Number(m[3]) : 0;
+  if (h > 23 || mi > 59 || s > 59) return null;
   return (h * 3600 + mi * 60 + s) * 1000;
 }
 
