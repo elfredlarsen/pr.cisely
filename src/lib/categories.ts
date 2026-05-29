@@ -1,24 +1,40 @@
 export type Category =
   | "straksafgoerelse"
-  | "eu_ansoegning"
+  | "arbejdstager"
+  | "tilstraekkelige_midler"
+  | "studerende"
+  | "tidsubegraenset_ophold"
+  | "eu_familiemedlem"
+  | "tredjelandsfamiliemedlem"
+  | "selvstaendig_erhvervsdrivende"
+  | "eu_vejledning"
+  | "et_g_sekundaer_bevaegelighed"
+  | "tub_sekundaer_bevaegelighed"
   | "biometri"
-  | "biometri_inkl_ansoegning"
-  | "tilbagerejsetilladelse"
-  | "forkert_myndighed"
   | "andet";
 
 export const CATEGORIES: { value: Category; label: string }[] = [
   { value: "straksafgoerelse", label: "Straksafgørelse" },
-  { value: "eu_ansoegning", label: "EU-ansøgning modtaget" },
+  { value: "arbejdstager", label: "Arbejdstager" },
+  { value: "tilstraekkelige_midler", label: "Tilstrækkelige midler" },
+  { value: "studerende", label: "Studerende" },
+  { value: "tidsubegraenset_ophold", label: "Tidsubegrænset ophold" },
+  { value: "eu_familiemedlem", label: "EU-familiemedlem" },
+  { value: "tredjelandsfamiliemedlem", label: "Tredjelandsfamiliemedlem" },
+  { value: "selvstaendig_erhvervsdrivende", label: "Selvstændig erhvervsdrivende" },
+  { value: "eu_vejledning", label: "EU-vejledning" },
+  { value: "et_g_sekundaer_bevaegelighed", label: "1G Sekundær bevægelighed" },
+  { value: "tub_sekundaer_bevaegelighed", label: "TUB Sekundær bevægelighed" },
   { value: "biometri", label: "Biometri" },
-  { value: "biometri_inkl_ansoegning", label: "Biometri inkl. indgivelse af ansøgning" },
-  { value: "tilbagerejsetilladelse", label: "Tilbagerejsetilladelse" },
-  { value: "forkert_myndighed", label: "Forkert myndighed" },
   { value: "andet", label: "Andet" },
 ];
 
 export function categoryLabel(value: Category): string {
   return CATEGORIES.find((c) => c.value === value)?.label ?? value;
+}
+
+export function isValidCategory(value: unknown): value is Category {
+  return typeof value === "string" && CATEGORIES.some((c) => c.value === value);
 }
 
 const LAST_CATEGORY_KEY = "precisely.lastCategory";
@@ -27,7 +43,7 @@ export function getLastCategory(): Category {
   if (typeof window === "undefined") return "straksafgoerelse";
   try {
     const v = window.localStorage.getItem(LAST_CATEGORY_KEY);
-    if (v && CATEGORIES.some((c) => c.value === v)) return v as Category;
+    if (v && isValidCategory(v)) return v;
   } catch {
     // ignore
   }
