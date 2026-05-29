@@ -1,68 +1,46 @@
 ## Mål
 
-Først: gør alle tidsfelter (Start, Slut, Varighed) **visuelt identiske** på tværs af Oversigt-tabellen, Historik-tabellen, MeasurementDialog og FinishPanel. Derefter sikres at hele `HH:MM:SS` + native ur-ikon/spinner kan ses uden afklipning.
+Erstat fast `w-36` på tidsfelterne (Start, Slut, Varighed) med auto-bredde + et minimum, så felterne skrumper til indholdet uden at klippe `HH:MM:SS` + ur-ikon/spinner. Gælder både tabeller og dialoger/paneler.
 
-## Nuværende inkonsistens
+## Strategi
 
-| Sted | Højde | Bredde | Tekststr. |
-|---|---|---|---|
-| Oversigt-tabel (input) | h-8 | w-28 | text-xs |
-| Oversigt-tabel (knap) | h-8 | w-28 | text-xs |
-| Historik-tabel (start/slut input) | h-8 | w-28 | text-sm |
-| Historik-tabel (varighed input) | h-8 | **w-24** | text-sm |
-| MeasurementDialog (alle) | h-10 | grid-cell | text-sm |
-| FinishPanel (alle) | h-10 | grid-cell | text-sm |
+- Input: `w-auto min-w-[7rem]` (112px) + behold `tabular-nums` så bredden er stabil.
+- Knap-fallback (vises når feltet er tomt/ugyldigt i tabellerne): samme `w-auto min-w-[7rem]` så layoutet ikke hopper når man skifter mellem knap og input.
+- Tabel-kolonneoverskrifter (`<TableHead>`): `w-auto` + samme `min-w-[7rem]` så kolonnen ikke kollapser når alle rækker er tomme, men heller ikke reserverer unødig plads.
 
-Dialoger og tabeller har bevidst forskellig størrelse (dialog = primær, tabel = kompakt), men **inden for hver kontekst** skal felterne være ens, og bredden skal være den samme for start/slut/varighed.
+7rem (112px) dækker `HH:MM:SS` i `text-xs`/`text-sm` med tabular-nums + native ur-ikon på Chrome/Safari/Firefox med lidt margin.
 
-## Fælles standard
-
-**Tabel-kontekst (Oversigt + Historik):**
-- Højde: `h-8`
-- Bredde: `w-36` (144px — rummer HH:MM:SS + native spinner)
-- Tekststr.: `text-xs` (Historik justeres ned fra `text-sm` for at matche Oversigt)
-- Padding: `px-2`
-- Border-radius og border-input: uændret
-
-**Dialog/panel-kontekst (MeasurementDialog + FinishPanel):**
-- Højde: `h-10`
-- Bredde: fyld grid-cellen (grid-cols-3, gap-3)
-- Container-bredde øges så cellerne kan rumme værdien:
-  - `MeasurementDialog`: `sm:max-w-md` → `sm:max-w-lg`
-  - `FinishPanel`: `w-[min(28rem,...)]` → `w-[min(32rem,...)]`
-- Tekststr.: `text-sm` (uændret)
-
-## Filer og ændringer
+## Filer
 
 ### 1. `src/components/oversigt/CategoryGroup.tsx`
-- `renderTimeCell` input + knap: `w-28` → `w-36`
-- `renderDurationCell` input + knap: `w-28` → `w-36`
-- `<TableHead>` Start/Slut/Varighed: `w-28` → `w-36`
+- `renderTimeCell` input + knap: `w-36` → `w-auto min-w-[7rem]`
+- `renderDurationCell` input + knap: `w-36` → `w-auto min-w-[7rem]`
+- `<TableHead>` Start/Slut/Varighed: `w-36` → `w-auto min-w-[7rem]`
 
 ### 2. `src/components/stopwatch/MeasurementsTable.tsx`
-- `renderTimeCell` input + knap: `text-sm w-28` → `text-xs w-36`
-- `renderDurationCell` input + knap: `text-sm w-24` → `text-xs w-36`
-- `<TableHead>` Start/Slut/Varighed: `w-28`/(varighed) → alle `w-36`
+- Samme ændringer som ovenfor: `w-36` → `w-auto min-w-[7rem]` på inputs, knapper og `<TableHead>`.
 
 ### 3. `src/components/oversigt/MeasurementDialog.tsx`
-- `DialogContent` className: `sm:max-w-md` → `sm:max-w-lg`
-- Felternes klasser allerede ensartet (`h-10 ... text-sm`); ingen ændring.
+- Skift `grid grid-cols-3 gap-3` → `flex flex-wrap gap-3` så felterne tager naturlig bredde i stedet for at strække til en tredjedel hver.
+- Felter får `w-auto min-w-[7rem]` (i stedet for implicit fuld cellebredde).
+- `DialogContent`: `sm:max-w-lg` → `sm:max-w-md` (kan skrumpes igen, da felterne nu er kompakte).
 
 ### 4. `src/components/stopwatch/FinishPanel.tsx`
-- Wrapper-div: `w-[min(28rem,calc(100vw-2rem))]` → `w-[min(32rem,calc(100vw-2rem))]`
-- Felternes klasser allerede ensartet; ingen ændring.
+- Samme grid → flex-wrap ændring som dialogen.
+- Felter får `w-auto min-w-[7rem]`.
+- Wrapper: `w-[min(32rem,calc(100vw-2rem))]` → `w-[min(28rem,calc(100vw-2rem))]`.
+
+## Fallback hvis det ikke duer
+
+Hvis auto-bredden giver layout-spring, klipning på en browser, eller ujævn kolonnebredde mellem rækker i tabellen, går jeg over til forslag 1: fast `w-32` (128px) overalt, samme steder.
 
 ## Hvad ændres ikke
 
-- Logik, validering, sortering, kategorier, kommentarer.
-- Historik beholder sin `opacity-75` og blødere border — den er stadig sekundær, men nu med samme strukturelle layout som Oversigt.
-- Kategori-kolonnen er fortsat `w-auto`.
-- Designtokens (farver, runde hjørner, fokus-ring) er uændrede.
+Logik, validering, kategorier, kommentarer, designtokens, tekststørrelser, højder (`h-8` i tabel, `h-10` i dialog).
 
 ## Verifikation
 
-Efter implementering, tjek i preview at:
-1. Start/Slut/Varighed har præcis samme bredde i Oversigt og Historik.
-2. Tekststørrelsen er ens i de to tabeller.
-3. Hele `HH:MM:SS` + spinner er synligt ved klik på alle fire steder.
-4. Dialogerne åbner uden at felterne klippes.
+I preview tjekkes at:
+1. Hele `HH:MM:SS` + ur-ikon er synligt i alle fire kontekster.
+2. Tabelkolonner har samme bredde på tværs af rækker (ingen spring mellem input og knap-fallback).
+3. Dialog og panel ser balancerede ud uden tom plads til højre for felterne.

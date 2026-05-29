@@ -175,13 +175,13 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
       role="dialog"
       aria-modal="false"
       aria-labelledby="afslut-overskrift"
-      className="w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-5 shadow-xl"
+      className="w-[min(28rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-5 shadow-xl"
     >
       <h2 id="afslut-overskrift" className="mb-4 text-base font-semibold text-foreground">
         Gem registrering
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="flex flex-wrap gap-3">
           <div className="flex flex-col gap-1">
             <label htmlFor="finish-start" className="text-xs font-medium text-muted-foreground">
               Starttid
@@ -193,7 +193,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               step={1}
               value={start}
               onChange={(e) => handleStartChange(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -206,7 +206,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               step={1}
               value={end}
               onChange={(e) => handleEndChange(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -219,7 +219,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
               step={1}
               value={duration}
               onChange={(e) => handleDurationChange(e.target.value)}
-              className="h-10 rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
 
