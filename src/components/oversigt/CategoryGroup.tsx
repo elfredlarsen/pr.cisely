@@ -62,11 +62,15 @@ type RowEdit = {
   start: string;
   end: string;
   duration: string;
+  origStart: string;
+  origEnd: string;
+  origDuration: string;
 };
 type SortField = "start" | "end" | "duration";
 type SortDir = "asc" | "desc";
 
 function parseTimeToSec(value: string): number | null {
+  if (value.trim() === "") return 0;
   const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
   if (!m) return null;
   const h = Number(m[1]);
@@ -126,12 +130,18 @@ export function CategoryGroup({
   };
 
   const beginEdit = (m: Measurement, field: EditField) => {
+    const start = fmtTime(m.startedAt);
+    const end = fmtTime(m.endedAt);
+    const duration = fmtDuration(m.ms);
     setRowEdit({
       id: m.id,
       field,
-      start: fmtTime(m.startedAt),
-      end: fmtTime(m.endedAt),
-      duration: fmtDuration(m.ms),
+      start,
+      end,
+      duration,
+      origStart: start,
+      origEnd: end,
+      origDuration: duration,
     });
   };
 
@@ -196,7 +206,7 @@ export function CategoryGroup({
       }
     } else {
       const newMs = parseDuration(rowEdit.duration);
-      if (newMs !== null && newMs > 0) {
+      if (newMs !== null) {
         const newEnd = new Date(new Date(m.startedAt).getTime() + newMs);
         onUpdate(m.id, { ms: newMs, endedAt: newEnd.toISOString() });
       }
@@ -211,6 +221,18 @@ export function CategoryGroup({
     } else if (e.key === "Escape") {
       e.preventDefault();
       cancelEdit();
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      setRowEdit((prev) =>
+        prev && prev.id === m.id
+          ? {
+              ...prev,
+              start: prev.origStart,
+              end: prev.origEnd,
+              duration: prev.origDuration,
+            }
+          : prev,
+      );
     }
   };
 
