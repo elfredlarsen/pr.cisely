@@ -292,9 +292,9 @@ export function MeasurementsTable({
                   onMouseMove={handleHeaderMove}
                   onMouseLeave={handleHeaderLeave}
                 >
-                  <TableHead className="h-8 w-36 py-1 pl-4 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
-                  <TableHead className="h-8 w-36 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
-                  <TableHead className="h-8 w-36 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
+                  <TableHead className="h-8 w-auto min-w-[7rem] py-1 pl-4 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                  <TableHead className="h-8 w-auto min-w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
+                  <TableHead className="h-8 w-auto min-w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
                   <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
                   <TableHead className="h-8 w-36 py-1 text-right">
                     <div className="flex justify-end">{clearHistoryButton}</div>
