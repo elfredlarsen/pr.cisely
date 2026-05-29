@@ -206,7 +206,7 @@ export function CategoryGroup({
       }
     } else {
       const newMs = parseDuration(rowEdit.duration);
-      if (newMs !== null && newMs > 0) {
+      if (newMs !== null) {
         const newEnd = new Date(new Date(m.startedAt).getTime() + newMs);
         onUpdate(m.id, { ms: newMs, endedAt: newEnd.toISOString() });
       }
