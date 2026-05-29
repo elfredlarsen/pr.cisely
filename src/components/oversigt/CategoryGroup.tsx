@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import {
   Collapsible,
@@ -578,9 +578,16 @@ export function CategoryGroup({
             <AlertDialogAction
               onClick={() => {
                 if (pendingCategoryChange) {
-                  onUpdate(pendingCategoryChange.id, {
+                  const patch: Partial<Omit<Measurement, "id">> = {
                     category: pendingCategoryChange.to,
-                  });
+                  };
+                  if (
+                    pendingCategoryChange.from === "andet" &&
+                    pendingCategoryChange.to !== "andet"
+                  ) {
+                    patch.comment = undefined;
+                  }
+                  onUpdate(pendingCategoryChange.id, patch);
                 }
                 setPendingCategoryChange(null);
               }}
