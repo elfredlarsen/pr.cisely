@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -56,6 +56,8 @@ type Props = {
 };
 
 type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
+type SortField = "start" | "end" | "duration";
+type SortDir = "asc" | "desc";
 
 export function CategoryGroup({
   category,
@@ -70,6 +72,31 @@ export function CategoryGroup({
 
   const [editing, setEditing] = useState<EditingCell>(null);
   const [draft, setDraft] = useState("");
+  const [pendingCategoryChange, setPendingCategoryChange] = useState<
+    { id: string; from: Category; to: Category } | null
+  >(null);
+  const [sort, setSort] = useState<{ field: SortField; dir: SortDir }>({
+    field: "start",
+    dir: "asc",
+  });
+
+  const sortedItems = useMemo(() => {
+    const getKey = (m: Measurement) => {
+      if (sort.field === "start") return new Date(m.startedAt).getTime();
+      if (sort.field === "end") return new Date(m.endedAt).getTime();
+      return m.ms;
+    };
+    const sign = sort.dir === "asc" ? 1 : -1;
+    return [...items].sort((a, b) => (getKey(a) - getKey(b)) * sign);
+  }, [items, sort]);
+
+  const toggleSort = (field: SortField) => {
+    setSort((prev) =>
+      prev.field === field
+        ? { field, dir: prev.dir === "asc" ? "desc" : "asc" }
+        : { field, dir: "asc" },
+    );
+  };
 
   const beginEdit = (m: Measurement, field: NonNullable<EditingCell>["field"]) => {
     setEditing({ id: m.id, field });
@@ -180,6 +207,40 @@ export function CategoryGroup({
     );
   };
 
+  const renderSortHeader = (field: SortField, label: string) => {
+    const active = sort.field === field;
+    const ariaSort = active ? (sort.dir === "asc" ? "ascending" : "descending") : "none";
+    return (
+      <button
+        type="button"
+        onClick={() => toggleSort(field)}
+        aria-sort={ariaSort}
+        className={cn(
+          "inline-flex h-7 items-center gap-1 rounded px-1 text-[11px] font-normal uppercase tracking-wider transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          active ? "text-foreground" : "text-muted-foreground/70",
+        )}
+      >
+        <span>{label}</span>
+        {active ? (
+          sort.dir === "asc" ? (
+            <ArrowUp className="h-3 w-3" aria-hidden="true" />
+          ) : (
+            <ArrowDown className="h-3 w-3" aria-hidden="true" />
+          )
+        ) : (
+          <ArrowUp className="h-3 w-3 opacity-0" aria-hidden="true" />
+        )}
+      </button>
+    );
+  };
+
+  const pendingFromLabel = pendingCategoryChange
+    ? categoryLabel(pendingCategoryChange.from)
+    : "";
+  const pendingToLabel = pendingCategoryChange
+    ? categoryLabel(pendingCategoryChange.to)
+    : "";
+
   return (
     <Collapsible
       open={open}
@@ -216,14 +277,14 @@ export function CategoryGroup({
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow className="border-border/50">
-                <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
-                  Start
+                <TableHead className="h-8 w-24 py-1">
+                  {renderSortHeader("start", "Start")}
                 </TableHead>
-                <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
-                  Slut
+                <TableHead className="h-8 w-24 py-1">
+                  {renderSortHeader("end", "Slut")}
                 </TableHead>
-                <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
-                  Varighed
+                <TableHead className="h-8 w-24 py-1">
+                  {renderSortHeader("duration", "Varighed")}
                 </TableHead>
                 <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
                   Kategori
@@ -234,7 +295,7 @@ export function CategoryGroup({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((m) => {
+              {sortedItems.map((m) => {
                 const rowEditing = editing?.id === m.id;
                 return (
                   <TableRow
@@ -258,7 +319,16 @@ export function CategoryGroup({
                     <TableCell className="py-1 text-xs">
                       <Select
                         value={m.category}
-                        onValueChange={(v) => onUpdate(m.id, { category: v as Category })}
+                        onValueChange={(v) => {
+                          const next = v as Category;
+                          if (next !== m.category) {
+                            setPendingCategoryChange({
+                              id: m.id,
+                              from: m.category,
+                              to: next,
+                            });
+                          }
+                        }}
                       >
                         <SelectTrigger
                           className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
@@ -314,6 +384,37 @@ export function CategoryGroup({
           </Table>
         </div>
       </CollapsibleContent>
+
+      <AlertDialog
+        open={pendingCategoryChange !== null}
+        onOpenChange={(o) => {
+          if (!o) setPendingCategoryChange(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Skift kategori?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Fra <strong>{pendingFromLabel}</strong> til <strong>{pendingToLabel}</strong>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingCategoryChange) {
+                  onUpdate(pendingCategoryChange.id, {
+                    category: pendingCategoryChange.to,
+                  });
+                }
+                setPendingCategoryChange(null);
+              }}
+            >
+              Skift
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Collapsible>
   );
 }
