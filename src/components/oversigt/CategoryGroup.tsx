@@ -55,9 +55,37 @@ type Props = {
   onDelete: (id: string) => void;
 };
 
-type EditingCell = { id: string; field: "start" | "end" | "duration" } | null;
+type EditField = "start" | "end" | "duration";
+type RowEdit = {
+  id: string;
+  field: EditField;
+  start: string;
+  end: string;
+  duration: string;
+};
 type SortField = "start" | "end" | "duration";
 type SortDir = "asc" | "desc";
+
+function parseTimeToSec(value: string): number | null {
+  const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (!m) return null;
+  const h = Number(m[1]);
+  const mi = Number(m[2]);
+  const s = m[3] ? Number(m[3]) : 0;
+  if (h > 23 || mi > 59 || s > 59) return null;
+  return h * 3600 + mi * 60 + s;
+}
+
+function pad(n: number, w = 2) {
+  return n.toString().padStart(w, "0");
+}
+
+function secToTime(sec: number): string {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
 
 export function CategoryGroup({
   category,
@@ -70,8 +98,7 @@ export function CategoryGroup({
 }: Props) {
   const total = items.reduce((sum, m) => sum + m.ms, 0);
 
-  const [editing, setEditing] = useState<EditingCell>(null);
-  const [draft, setDraft] = useState("");
+  const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
   const [pendingCategoryChange, setPendingCategoryChange] = useState<
     { id: string; from: Category; to: Category } | null
   >(null);
@@ -98,37 +125,83 @@ export function CategoryGroup({
     );
   };
 
-  const beginEdit = (m: Measurement, field: NonNullable<EditingCell>["field"]) => {
-    setEditing({ id: m.id, field });
-    if (field === "start") setDraft(fmtTime(m.startedAt));
-    else if (field === "end") setDraft(fmtTime(m.endedAt));
-    else setDraft(fmtDuration(m.ms));
+  const beginEdit = (m: Measurement, field: EditField) => {
+    setRowEdit({
+      id: m.id,
+      field,
+      start: fmtTime(m.startedAt),
+      end: fmtTime(m.endedAt),
+      duration: fmtDuration(m.ms),
+    });
+  };
+
+  const cancelEdit = () => setRowEdit(null);
+
+  const handleChangeStart = (v: string) => {
+    setRowEdit((prev) => {
+      if (!prev) return prev;
+      const startSec = parseTimeToSec(v);
+      const endSec = parseTimeToSec(prev.end);
+      let duration = prev.duration;
+      if (startSec !== null && endSec !== null && endSec >= startSec) {
+        duration = secToTime(endSec - startSec);
+      }
+      return { ...prev, start: v, duration };
+    });
+  };
+
+  const handleChangeEnd = (v: string) => {
+    setRowEdit((prev) => {
+      if (!prev) return prev;
+      const startSec = parseTimeToSec(prev.start);
+      const endSec = parseTimeToSec(v);
+      let duration = prev.duration;
+      if (startSec !== null && endSec !== null && endSec >= startSec) {
+        duration = secToTime(endSec - startSec);
+      }
+      return { ...prev, end: v, duration };
+    });
+  };
+
+  const handleChangeDuration = (v: string) => {
+    const masked = maskDuration(v);
+    setRowEdit((prev) => {
+      if (!prev) return prev;
+      const startSec = parseTimeToSec(prev.start);
+      const durMs = parseDuration(masked);
+      let end = prev.end;
+      if (startSec !== null && durMs !== null) {
+        const newEndSec = startSec + Math.floor(durMs / 1000);
+        if (newEndSec < 24 * 3600) end = secToTime(newEndSec);
+      }
+      return { ...prev, duration: masked, end };
+    });
   };
 
   const commit = (m: Measurement) => {
-    if (!editing) return;
-    if (editing.field === "start") {
-      const newStart = parseTime(draft, new Date(m.startedAt));
+    if (!rowEdit || rowEdit.id !== m.id) return;
+    if (rowEdit.field === "start") {
+      const newStart = parseTime(rowEdit.start, new Date(m.startedAt));
       if (newStart) {
         const endMs = new Date(m.endedAt).getTime();
         const newMs = Math.max(0, endMs - newStart.getTime());
         onUpdate(m.id, { startedAt: newStart.toISOString(), ms: newMs });
       }
-    } else if (editing.field === "end") {
-      const newEnd = parseTime(draft, new Date(m.endedAt));
+    } else if (rowEdit.field === "end") {
+      const newEnd = parseTime(rowEdit.end, new Date(m.endedAt));
       if (newEnd) {
         const startMs = new Date(m.startedAt).getTime();
         const newMs = Math.max(0, newEnd.getTime() - startMs);
         onUpdate(m.id, { endedAt: newEnd.toISOString(), ms: newMs });
       }
     } else {
-      const newMs = parseDuration(draft);
+      const newMs = parseDuration(rowEdit.duration);
       if (newMs !== null && newMs > 0) {
         const newEnd = new Date(new Date(m.startedAt).getTime() + newMs);
         onUpdate(m.id, { ms: newMs, endedAt: newEnd.toISOString() });
       }
     }
-    setEditing(null);
+    setRowEdit(null);
   };
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>, m: Measurement) => {
@@ -137,23 +210,35 @@ export function CategoryGroup({
       commit(m);
     } else if (e.key === "Escape") {
       e.preventDefault();
-      setEditing(null);
+      cancelEdit();
     }
   };
 
-  const isEditing = (m: Measurement, field: NonNullable<EditingCell>["field"]) =>
-    editing?.id === m.id && editing.field === field;
+  const isRowEditing = (m: Measurement) => rowEdit?.id === m.id;
+  const isFieldEditing = (m: Measurement, field: EditField) =>
+    rowEdit?.id === m.id && rowEdit.field === field;
 
   const renderTimeCell = (m: Measurement, field: "start" | "end") => {
-    const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
-    if (isEditing(m, field)) {
+    const editingField = isFieldEditing(m, field);
+    const editingRow = isRowEditing(m);
+    const previewValue = editingRow
+      ? field === "start"
+        ? rowEdit!.start
+        : rowEdit!.end
+      : field === "start"
+        ? fmtTime(m.startedAt)
+        : fmtTime(m.endedAt);
+
+    if (editingField) {
       return (
         <input
           autoFocus
           type="time"
           step={1}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          value={previewValue}
+          onChange={(e) =>
+            field === "start" ? handleChangeStart(e.target.value) : handleChangeEnd(e.target.value)
+          }
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
@@ -165,25 +250,34 @@ export function CategoryGroup({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className={cn(
+          "group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          editingRow ? "text-foreground/70" : "text-muted-foreground",
+        )}
       >
-        <span>{value}</span>
-        <Pencil
-          className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
-          aria-hidden="true"
-        />
+        <span>{previewValue}</span>
+        {!editingRow && (
+          <Pencil
+            className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+            aria-hidden="true"
+          />
+        )}
       </button>
     );
   };
 
   const renderDurationCell = (m: Measurement) => {
-    if (isEditing(m, "duration")) {
+    const editingField = isFieldEditing(m, "duration");
+    const editingRow = isRowEditing(m);
+    const previewValue = editingRow ? rowEdit!.duration : fmtDuration(m.ms);
+
+    if (editingField) {
       return (
         <input
           autoFocus
           inputMode="numeric"
-          value={draft}
-          onChange={(e) => setDraft(maskDuration(e.target.value))}
+          value={previewValue}
+          onChange={(e) => handleChangeDuration(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           placeholder="0:00:00"
@@ -196,13 +290,18 @@ export function CategoryGroup({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className={cn(
+          "group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          editingRow ? "text-foreground/70" : "text-muted-foreground",
+        )}
       >
-        <span>{fmtDuration(m.ms)}</span>
-        <Pencil
-          className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
-          aria-hidden="true"
-        />
+        <span>{previewValue}</span>
+        {!editingRow && (
+          <Pencil
+            className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+            aria-hidden="true"
+          />
+        )}
       </button>
     );
   };
@@ -296,7 +395,7 @@ export function CategoryGroup({
             </TableHeader>
             <TableBody>
               {sortedItems.map((m) => {
-                const rowEditing = editing?.id === m.id;
+                const rowEditing = isRowEditing(m);
                 return (
                   <TableRow
                     key={m.id}
