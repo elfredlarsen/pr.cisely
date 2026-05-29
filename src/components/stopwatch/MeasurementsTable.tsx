@@ -216,7 +216,7 @@ export function MeasurementsTable({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label="Varighed (timer:minutter:sekunder)"
-          className="h-8 w-36 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-auto min-w-[7rem] rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
