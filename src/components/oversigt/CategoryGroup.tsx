@@ -397,13 +397,13 @@ export function CategoryGroup({
           <Table className="w-full table-fixed">
             <TableHeader>
               <TableRow className="border-border/50">
-                <TableHead className="h-8 w-auto min-w-[7rem] py-1">
+                <TableHead className="h-8 w-[7rem] py-1">
                   {renderSortHeader("start", "Start")}
                 </TableHead>
-                <TableHead className="h-8 w-auto min-w-[7rem] py-1">
+                <TableHead className="h-8 w-[7rem] py-1">
                   {renderSortHeader("end", "Slut")}
                 </TableHead>
-                <TableHead className="h-8 w-auto min-w-[7rem] py-1">
+                <TableHead className="h-8 w-[7rem] py-1">
                   {renderSortHeader("duration", "Varighed")}
                 </TableHead>
                 <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
