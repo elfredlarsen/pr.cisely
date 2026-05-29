@@ -278,22 +278,23 @@ export function MeasurementsTable({
         className="flex h-full w-full flex-col opacity-75"
       >
         <div className="scrollbar-purple mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
+          <div className="rounded-lg border border-border/60 bg-card">
           {measurements.length === 0 ? (
             <p className="py-6 text-center text-xs text-muted-foreground/80">
               Ingen registreringer endnu i dag.
             </p>
           ) : (
             <Table className="w-full table-fixed">
-              <TableHeader className="sticky top-0 bg-background">
+              <TableHeader className="sticky top-0 bg-card">
                 <TableRow
                   className="border-border/50"
                   onMouseEnter={handleHeaderEnter}
                   onMouseMove={handleHeaderMove}
                   onMouseLeave={handleHeaderLeave}
                 >
-                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                  <TableHead className="h-8 w-28 py-1 pl-4 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
                   <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
-                  <TableHead className="h-8 w-24 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
+                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
                   <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
                   <TableHead className="h-8 w-36 py-1 text-right">
                     <div className="flex justify-end">{clearHistoryButton}</div>
@@ -364,6 +365,7 @@ export function MeasurementsTable({
               </TableBody>
             </Table>
           )}
+          </div>
         </div>
       </section>
       {tipPos && (

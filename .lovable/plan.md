@@ -1,28 +1,27 @@
 ## Mål
 
-Da varighed nu er begrænset til under 24 timer, kan alle tre felter (Starttid, Sluttid, Varighed) bruge samme native `<input type="time" step={1}>`. Det giver ensartet UX: samme spinner, samme tastaturnavigation, samme udseende.
+Ensart designet af de to tabeller:
+- **Oversigten** (`CategoryGroup` i `/arkiv`): har allerede bløde runde kanter (kort med `rounded-lg border bg-card`), men inputfelterne er smallere (`w-24`) så `<input type="time" step={1}>` afkorter visningen, når man klikker.
+- **Historikken** (`MeasurementsTable` på `/`): har bredere inputfelter (`w-28`) så hele tidsværdien er synlig, men mangler kortramme og bløde kanter.
+
+Resultat: Begge skal have samme kortramme og samme inputbredde. Historikken skal stadig være visuelt nedtonet (mindre fokus).
 
 ## Ændringer
 
-### `src/components/stopwatch/FinishPanel.tsx`
-- Varighedsfeltet skiftes fra `type="text"` + `maskDuration` til `type="time" step={1}` (format `HH:MM:SS`, maks `23:59:59`).
-- Fjern lokal `maskDuration`-funktion.
-- `handleDurationChange` forenkles: parse direkte `HH:MM:SS`, opdater sluttid som før.
-- Validering: hvis sluttid ville overskride `23:59:59` (samme dag), vis fejl "Varighed for stor (maks 24 timer)".
+### `src/components/oversigt/CategoryGroup.tsx`
+- I `renderTimeCell` og `renderDurationCell`: ændr `w-24` → `w-28` på både input og knap, så hele `HH:MM:SS` + spinner er synlig.
+- Opdater tilsvarende kolonnebredder i `<TableHead>` for Start/Slut/Varighed fra `w-24` → `w-28`.
 
-### `src/components/oversigt/MeasurementDialog.tsx`
-- Samme ændring: varighed bliver `type="time" step={1}`.
-- Fjern lokal `maskDuration`.
-
-### `src/components/oversigt/format.ts`
-- `parseDuration` strammes til maks `23:59:59` (regex `^(\d{1,2}):(\d{2}):(\d{2})$` og afvis h > 23). `maskDuration` kan fjernes hvis ingen længere bruger den; ellers bevares.
-
-### `src/components/oversigt/CategoryGroup.tsx` (inline-redigering af varighed)
-- Hvis varighedscellen redigeres som tekstfelt med maske, ændres den ligeledes til `type="time" step={1}` for konsistens. (Bekræftes ved gennemlæsning før implementering.)
+### `src/components/stopwatch/MeasurementsTable.tsx`
+- Wrap tabellen i en kortramme magen til Oversigten: `rounded-lg border border-border bg-card` omkring `<Table>` (inde i den eksisterende scroll-container, eller som dens container).
+- Behold den nedtonede karakter: bevar `opacity-75` på sektionen, og brug evt. lidt blødere border (`border-border/60`) så historikken stadig træder mindre frem end Oversigten.
+- Ingen ændring af bredder (allerede `w-28` / `w-24`).
+- "Ryd historik"-knappen og sticky header skal stadig fungere inden i kortet — sticky `top-0` beholdes; kortets `overflow-hidden` undgås så den sticky header virker.
 
 ## Det der IKKE ændres
-- Datamodel: `ms` forbliver millisekunder; ingen migration nødvendig (eksisterende data er allerede < 24 t i praksis, men hvis nogen findes >= 24 t vil de vises afkortet i input — vi accepterer det).
-- Kategorier, kommentar-funktion, fortryd-omfang.
+- Funktionalitet, kategorier, kommentar, sortering, redigering.
+- Farver/temaer ud over evt. en svagere border på historikken.
+- `opacity-75` på historikken bevares som primær nedtoningsmekanisme.
 
 ## Resultat
-Alle tre felter ser ens ud og opfører sig ens. Ingen custom maske-logik. Brugeren kan ikke længere indtaste varigheder ≥ 24 t.
+Begge tabeller har samme bløde kortramme. Begge har inputfelter brede nok til at vise hele tidsværdien ved klik. Historikken er stadig tydeligt sekundær via opacity (og evt. svagere kant).
