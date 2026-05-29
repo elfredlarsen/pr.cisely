@@ -365,6 +365,7 @@ export function MeasurementsTable({
               </TableBody>
             </Table>
           )}
+          </div>
         </div>
       </section>
       {tipPos && (
