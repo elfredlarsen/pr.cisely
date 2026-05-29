@@ -1,47 +1,28 @@
 ## Mål
-Opdater kategorilisten og tilføj valgfri kommentar til "Andet".
 
-## Ny kategoriliste (rækkefølge)
-1. Straksafgørelse — `straksafgoerelse`
-2. Arbejdstager — `arbejdstager`
-3. Tilstrækkelige midler — `tilstraekkelige_midler`
-4. Studerende — `studerende`
-5. Tidsubegrænset ophold — `tidsubegraenset_ophold`
-6. EU-familiemedlem — `eu_familiemedlem`
-7. Tredjelandsfamiliemedlem — `tredjelandsfamiliemedlem`
-8. Selvstændig erhvervsdrivende — `selvstaendig_erhvervsdrivende`
-9. EU-vejledning — `eu_vejledning`
-10. 1G Sekundær bevægelighed — `et_g_sekundaer_bevaegelighed`
-11. TUB Sekundær bevægelighed — `tub_sekundaer_bevaegelighed`
-12. Biometri — `biometri`
-13. Andet — `andet` (med valgfri kommentar)
+Da varighed nu er begrænset til under 24 timer, kan alle tre felter (Starttid, Sluttid, Varighed) bruge samme native `<input type="time" step={1}>`. Det giver ensartet UX: samme spinner, samme tastaturnavigation, samme udseende.
 
 ## Ændringer
 
-### `src/lib/categories.ts`
-- Erstat `Category` union og `CATEGORIES` med ovenstående 13 værdier i den givne rækkefølge.
-- `getLastCategory()` falder tilbage til `straksafgoerelse` hvis gemt værdi ikke længere findes.
-
-### `src/hooks/use-measurements.ts`
-- Tilføj `comment?: string` til `Measurement` og `MeasurementDraft`.
-- `migrate()`: slet registreringer hvis `category` ikke findes i ny liste (returnerer kun gyldige). Læs `comment` hvis string.
-- `add()` videregiver `comment`.
-- Opdater `buildSeed()` så den kun bruger gyldige kategorier (`straksafgoerelse`, `biometri`, evt. `eu_vejledning`).
-
 ### `src/components/stopwatch/FinishPanel.tsx`
-- Tilføj `comment` state.
-- Når `category === "andet"` vises et valgfrit `<textarea>` "Kommentar (valgfri)" under kategori-feltet.
-- Send `comment` (trimmet, eller udeladt hvis tom) med i `onSave`.
-
-### `src/components/oversigt/CategoryGroup.tsx`
-- Når en række tilhører `andet`: vis kommentaren som lille muted tekst-linje under hovedrækken (ekstra `<TableRow>` med colspan, kun hvis kategori = andet — vist altid, også uden kommentar med placeholder "Tilføj kommentar").
-- Inline-redigerbar: klik på kommentar-linjen → `<input>` der gemmer via `onUpdate(id, { comment: value.trim() || undefined })` ved blur/Enter, Esc annullerer.
-- Hvis kategori ændres væk fra `andet` via category-skift dialogen, ryd kommentar (`comment: undefined`).
+- Varighedsfeltet skiftes fra `type="text"` + `maskDuration` til `type="time" step={1}` (format `HH:MM:SS`, maks `23:59:59`).
+- Fjern lokal `maskDuration`-funktion.
+- `handleDurationChange` forenkles: parse direkte `HH:MM:SS`, opdater sluttid som før.
+- Validering: hvis sluttid ville overskride `23:59:59` (samme dag), vis fejl "Varighed for stor (maks 24 timer)".
 
 ### `src/components/oversigt/MeasurementDialog.tsx`
-- Hvis denne dialog stadig bruges til redigering: tilføj kommentar-felt synligt kun ved `andet`. (Hvis ikke længere brugt efter inline-edit, springes over — bekræftes ved gennemsyn.)
+- Samme ændring: varighed bliver `type="time" step={1}`.
+- Fjern lokal `maskDuration`.
 
-## Teknik
-- "Slet eksisterende registreringer i fjernede kategorier" sker automatisk via `migrate()` næste gang data læses fra localStorage. Ingen separat migrations-knap.
-- Kommentar gemmes i samme localStorage-nøgle som en del af `Measurement`-objektet.
-- Ingen ændringer i `format.ts`, `DaySummary.tsx`, eller stopurets `MeasurementsTable.tsx`.
+### `src/components/oversigt/format.ts`
+- `parseDuration` strammes til maks `23:59:59` (regex `^(\d{1,2}):(\d{2}):(\d{2})$` og afvis h > 23). `maskDuration` kan fjernes hvis ingen længere bruger den; ellers bevares.
+
+### `src/components/oversigt/CategoryGroup.tsx` (inline-redigering af varighed)
+- Hvis varighedscellen redigeres som tekstfelt med maske, ændres den ligeledes til `type="time" step={1}` for konsistens. (Bekræftes ved gennemlæsning før implementering.)
+
+## Det der IKKE ændres
+- Datamodel: `ms` forbliver millisekunder; ingen migration nødvendig (eksisterende data er allerede < 24 t i praksis, men hvis nogen findes >= 24 t vil de vises afkortet i input — vi accepterer det).
+- Kategorier, kommentar-funktion, fortryd-omfang.
+
+## Resultat
+Alle tre felter ser ens ud og opfører sig ens. Ingen custom maske-logik. Brugeren kan ikke længere indtaste varigheder ≥ 24 t.

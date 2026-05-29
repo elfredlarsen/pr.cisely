@@ -38,7 +38,6 @@ import {
   fmtDuration,
   fmtTime,
   formatTotal,
-  maskDuration,
   parseDuration,
   parseTime,
   type SummaryFormat,
@@ -175,17 +174,16 @@ export function CategoryGroup({
   };
 
   const handleChangeDuration = (v: string) => {
-    const masked = maskDuration(v);
     setRowEdit((prev) => {
       if (!prev) return prev;
       const startSec = parseTimeToSec(prev.start);
-      const durMs = parseDuration(masked);
+      const durMs = parseDuration(v);
       let end = prev.end;
       if (startSec !== null && durMs !== null) {
         const newEndSec = startSec + Math.floor(durMs / 1000);
         if (newEndSec < 24 * 3600) end = secToTime(newEndSec);
       }
-      return { ...prev, duration: masked, end };
+      return { ...prev, duration: v, end };
     });
   };
 
@@ -298,12 +296,12 @@ export function CategoryGroup({
       return (
         <input
           autoFocus
-          inputMode="numeric"
+          type="time"
+          step={1}
           value={previewValue}
           onChange={(e) => handleChangeDuration(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          placeholder="0:00:00"
           aria-label="Varighed (timer:minutter:sekunder)"
           className="h-8 w-24 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
