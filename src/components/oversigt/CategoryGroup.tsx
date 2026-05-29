@@ -221,6 +221,18 @@ export function CategoryGroup({
     } else if (e.key === "Escape") {
       e.preventDefault();
       cancelEdit();
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      setRowEdit((prev) =>
+        prev && prev.id === m.id
+          ? {
+              ...prev,
+              start: prev.origStart,
+              end: prev.origEnd,
+              duration: prev.origDuration,
+            }
+          : prev,
+      );
     }
   };
 
