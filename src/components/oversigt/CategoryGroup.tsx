@@ -312,7 +312,7 @@ export function CategoryGroup({
         type="button"
         onClick={() => beginEdit(m, "duration")}
         className={cn(
-          "group inline-flex h-8 w-36 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          "group inline-flex h-8 w-auto min-w-[7rem] items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           editingRow ? "text-foreground/70" : "text-muted-foreground",
         )}
       >
