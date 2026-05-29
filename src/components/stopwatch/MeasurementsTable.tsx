@@ -246,23 +246,21 @@ export function MeasurementsTable({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Skjul alle dagens registreringer?</AlertDialogTitle>
+          <AlertDialogTitle>Slet alle dagens registreringer?</AlertDialogTitle>
           <AlertDialogDescription>
-            Registreringerne fjernes fra listen, men gemmes i arkivet.
+            Registreringerne slettes permanent og kan ikke gendannes.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuller</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              onHideAll();
-              toast.success("Historik skjult", {
-                description: "Registreringerne findes i arkivet.",
-              });
+              onDeleteAll();
+              toast.success("Historik slettet");
             }}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Skjul
+            Slet
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
