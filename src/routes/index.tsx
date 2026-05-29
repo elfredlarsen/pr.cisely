@@ -82,9 +82,8 @@ function Index() {
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}
-            onHide={hide}
-            onUnhide={unhide}
-            onHideAll={hideAllToday}
+            onDelete={remove}
+            onDeleteAll={removeAllToday}
           />
         </div>
       </main>
