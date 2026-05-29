@@ -188,7 +188,7 @@ export function MeasurementsTable({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label={field === "start" ? "Starttidspunkt" : "Sluttidspunkt"}
-          className="h-8 w-28 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-36 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -196,7 +196,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, field)}
-        className="group inline-flex h-8 w-28 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="group inline-flex h-8 w-36 items-center justify-start gap-1.5 rounded px-1 py-0.5 text-xs tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{value}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
@@ -216,7 +216,7 @@ export function MeasurementsTable({
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
           aria-label="Varighed (timer:minutter:sekunder)"
-          className="h-8 w-24 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-8 w-36 rounded border border-input bg-background px-2 text-xs tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       );
     }
@@ -224,7 +224,7 @@ export function MeasurementsTable({
       <button
         type="button"
         onClick={() => beginEdit(m, "duration")}
-        className="group inline-flex h-8 w-24 items-center justify-start gap-1.5 rounded px-1 py-0.5 tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="group inline-flex h-8 w-36 items-center justify-start gap-1.5 rounded px-1 py-0.5 text-xs tabular-nums text-muted-foreground transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <span>{fmtDuration(m.ms)}</span>
         <Pencil className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
@@ -292,9 +292,9 @@ export function MeasurementsTable({
                   onMouseMove={handleHeaderMove}
                   onMouseLeave={handleHeaderLeave}
                 >
-                  <TableHead className="h-8 w-28 py-1 pl-4 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
-                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
-                  <TableHead className="h-8 w-28 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
+                  <TableHead className="h-8 w-36 py-1 pl-4 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Start</TableHead>
+                  <TableHead className="h-8 w-36 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Slut</TableHead>
+                  <TableHead className="h-8 w-36 py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Varighed</TableHead>
                   <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">Kategori</TableHead>
                   <TableHead className="h-8 w-36 py-1 text-right">
                     <div className="flex justify-end">{clearHistoryButton}</div>
