@@ -69,12 +69,12 @@ function parseTime(value: string, base: Date): Date | null {
 }
 
 function parseDuration(value: string): number | null {
-  const m = value.match(/^(\d{1,3}):(\d{2}):(\d{2})$/);
+  const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
   if (!m) return null;
   const h = Number(m[1]);
   const mi = Number(m[2]);
-  const s = Number(m[3]);
-  if (mi > 59 || s > 59) return null;
+  const s = m[3] ? Number(m[3]) : 0;
+  if (h > 23 || mi > 59 || s > 59) return null;
   return (h * 3600 + mi * 60 + s) * 1000;
 }
 
@@ -174,18 +174,6 @@ export function MeasurementsTable({
   const isEditing = (m: Measurement, field: NonNullable<EditingCell>["field"]) =>
     editing?.id === m.id && editing.field === field;
 
-  const maskDuration = (input: string): string => {
-    const digits = input.replace(/\D/g, "").slice(0, 7);
-    if (digits.length === 0) return "";
-    const h = digits.slice(0, Math.max(1, digits.length - 4));
-    const rest = digits.slice(h.length);
-    const m = rest.slice(0, 2);
-    const s = rest.slice(2, 4);
-    let result = h;
-    if (rest.length > 0) result += ":" + m;
-    if (rest.length > 2) result += ":" + s;
-    return result;
-  };
 
   const renderTimeCell = (m: Measurement, field: "start" | "end") => {
     const value = field === "start" ? fmtTime(m.startedAt) : fmtTime(m.endedAt);
@@ -221,12 +209,12 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
-          inputMode="numeric"
+          type="time"
+          step={1}
           value={draft}
-          onChange={(e) => setDraft(maskDuration(e.target.value))}
+          onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          placeholder="0:00:00"
           aria-label="Varighed (timer:minutter:sekunder)"
           className="h-8 w-24 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
