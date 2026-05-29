@@ -335,24 +335,39 @@ export function MeasurementsTable({
                       </Select>
                     </TableCell>
                     <TableCell className="py-1 text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          onHide(m.id);
-                          toast("Skjult — findes i arkivet", {
-                            action: {
-                              label: "Fortryd",
-                              onClick: () => onUnhide(m.id),
-                            },
-                          });
-                        }}
-                        aria-label="Skjul registrering"
-                        className="h-11 w-11 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                      >
-                        <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                            aria-label="Slet registrering"
+                          >
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Registreringen slettes permanent og kan ikke gendannes.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuller</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                onDelete(m.id);
+                                toast.success("Registrering slettet");
+                              }}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Slet
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                   );
