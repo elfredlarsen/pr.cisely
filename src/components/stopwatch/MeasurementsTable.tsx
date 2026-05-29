@@ -209,12 +209,12 @@ export function MeasurementsTable({
       return (
         <input
           autoFocus
-          inputMode="numeric"
+          type="time"
+          step={1}
           value={draft}
-          onChange={(e) => setDraft(maskDuration(e.target.value))}
+          onChange={(e) => setDraft(e.target.value)}
           onBlur={() => commit(m)}
           onKeyDown={(e) => handleKey(e, m)}
-          placeholder="0:00:00"
           aria-label="Varighed (timer:minutter:sekunder)"
           className="h-8 w-24 rounded border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
