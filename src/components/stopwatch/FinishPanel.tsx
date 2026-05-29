@@ -175,7 +175,7 @@ export function FinishPanel({ startedAt, endedAt, onCancel, onSave }: Props) {
       role="dialog"
       aria-modal="false"
       aria-labelledby="afslut-overskrift"
-      className="w-[min(28rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-5 shadow-xl"
+      className="w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-5 shadow-xl"
     >
       <h2 id="afslut-overskrift" className="mb-4 text-base font-semibold text-foreground">
         Gem registrering

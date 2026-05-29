@@ -1,27 +1,68 @@
 ## Mål
 
-Ensart designet af de to tabeller:
-- **Oversigten** (`CategoryGroup` i `/arkiv`): har allerede bløde runde kanter (kort med `rounded-lg border bg-card`), men inputfelterne er smallere (`w-24`) så `<input type="time" step={1}>` afkorter visningen, når man klikker.
-- **Historikken** (`MeasurementsTable` på `/`): har bredere inputfelter (`w-28`) så hele tidsværdien er synlig, men mangler kortramme og bløde kanter.
+Først: gør alle tidsfelter (Start, Slut, Varighed) **visuelt identiske** på tværs af Oversigt-tabellen, Historik-tabellen, MeasurementDialog og FinishPanel. Derefter sikres at hele `HH:MM:SS` + native ur-ikon/spinner kan ses uden afklipning.
 
-Resultat: Begge skal have samme kortramme og samme inputbredde. Historikken skal stadig være visuelt nedtonet (mindre fokus).
+## Nuværende inkonsistens
 
-## Ændringer
+| Sted | Højde | Bredde | Tekststr. |
+|---|---|---|---|
+| Oversigt-tabel (input) | h-8 | w-28 | text-xs |
+| Oversigt-tabel (knap) | h-8 | w-28 | text-xs |
+| Historik-tabel (start/slut input) | h-8 | w-28 | text-sm |
+| Historik-tabel (varighed input) | h-8 | **w-24** | text-sm |
+| MeasurementDialog (alle) | h-10 | grid-cell | text-sm |
+| FinishPanel (alle) | h-10 | grid-cell | text-sm |
 
-### `src/components/oversigt/CategoryGroup.tsx`
-- I `renderTimeCell` og `renderDurationCell`: ændr `w-24` → `w-28` på både input og knap, så hele `HH:MM:SS` + spinner er synlig.
-- Opdater tilsvarende kolonnebredder i `<TableHead>` for Start/Slut/Varighed fra `w-24` → `w-28`.
+Dialoger og tabeller har bevidst forskellig størrelse (dialog = primær, tabel = kompakt), men **inden for hver kontekst** skal felterne være ens, og bredden skal være den samme for start/slut/varighed.
 
-### `src/components/stopwatch/MeasurementsTable.tsx`
-- Wrap tabellen i en kortramme magen til Oversigten: `rounded-lg border border-border bg-card` omkring `<Table>` (inde i den eksisterende scroll-container, eller som dens container).
-- Behold den nedtonede karakter: bevar `opacity-75` på sektionen, og brug evt. lidt blødere border (`border-border/60`) så historikken stadig træder mindre frem end Oversigten.
-- Ingen ændring af bredder (allerede `w-28` / `w-24`).
-- "Ryd historik"-knappen og sticky header skal stadig fungere inden i kortet — sticky `top-0` beholdes; kortets `overflow-hidden` undgås så den sticky header virker.
+## Fælles standard
 
-## Det der IKKE ændres
-- Funktionalitet, kategorier, kommentar, sortering, redigering.
-- Farver/temaer ud over evt. en svagere border på historikken.
-- `opacity-75` på historikken bevares som primær nedtoningsmekanisme.
+**Tabel-kontekst (Oversigt + Historik):**
+- Højde: `h-8`
+- Bredde: `w-36` (144px — rummer HH:MM:SS + native spinner)
+- Tekststr.: `text-xs` (Historik justeres ned fra `text-sm` for at matche Oversigt)
+- Padding: `px-2`
+- Border-radius og border-input: uændret
 
-## Resultat
-Begge tabeller har samme bløde kortramme. Begge har inputfelter brede nok til at vise hele tidsværdien ved klik. Historikken er stadig tydeligt sekundær via opacity (og evt. svagere kant).
+**Dialog/panel-kontekst (MeasurementDialog + FinishPanel):**
+- Højde: `h-10`
+- Bredde: fyld grid-cellen (grid-cols-3, gap-3)
+- Container-bredde øges så cellerne kan rumme værdien:
+  - `MeasurementDialog`: `sm:max-w-md` → `sm:max-w-lg`
+  - `FinishPanel`: `w-[min(28rem,...)]` → `w-[min(32rem,...)]`
+- Tekststr.: `text-sm` (uændret)
+
+## Filer og ændringer
+
+### 1. `src/components/oversigt/CategoryGroup.tsx`
+- `renderTimeCell` input + knap: `w-28` → `w-36`
+- `renderDurationCell` input + knap: `w-28` → `w-36`
+- `<TableHead>` Start/Slut/Varighed: `w-28` → `w-36`
+
+### 2. `src/components/stopwatch/MeasurementsTable.tsx`
+- `renderTimeCell` input + knap: `text-sm w-28` → `text-xs w-36`
+- `renderDurationCell` input + knap: `text-sm w-24` → `text-xs w-36`
+- `<TableHead>` Start/Slut/Varighed: `w-28`/(varighed) → alle `w-36`
+
+### 3. `src/components/oversigt/MeasurementDialog.tsx`
+- `DialogContent` className: `sm:max-w-md` → `sm:max-w-lg`
+- Felternes klasser allerede ensartet (`h-10 ... text-sm`); ingen ændring.
+
+### 4. `src/components/stopwatch/FinishPanel.tsx`
+- Wrapper-div: `w-[min(28rem,calc(100vw-2rem))]` → `w-[min(32rem,calc(100vw-2rem))]`
+- Felternes klasser allerede ensartet; ingen ændring.
+
+## Hvad ændres ikke
+
+- Logik, validering, sortering, kategorier, kommentarer.
+- Historik beholder sin `opacity-75` og blødere border — den er stadig sekundær, men nu med samme strukturelle layout som Oversigt.
+- Kategori-kolonnen er fortsat `w-auto`.
+- Designtokens (farver, runde hjørner, fokus-ring) er uændrede.
+
+## Verifikation
+
+Efter implementering, tjek i preview at:
+1. Start/Slut/Varighed har præcis samme bredde i Oversigt og Historik.
+2. Tekststørrelsen er ens i de to tabeller.
+3. Hele `HH:MM:SS` + spinner er synligt ved klik på alle fire steder.
+4. Dialogerne åbner uden at felterne klippes.
