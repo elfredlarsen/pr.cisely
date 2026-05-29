@@ -1,32 +1,28 @@
 ## Mål
-Gør inline redigering af tider mere intuitiv ved at linke felterne, som i `MeasurementDialog`:
-- Ændrer man **start** → varighed justeres (slut fast).
-- Ændrer man **slut** → varighed justeres (start fast).
-- Ændrer man **varighed** → slut justeres (start fast).
-
-I dag ændres kun det felt brugeren redigerer, hvilket føles brudt.
+1. Tomme tidsfelter (`--:--:--`) skal tolkes som `00:00:00` i stedet for at blive ignoreret.
+2. Tom varighed skal tolkes som `0` (ingen varighed).
+3. Tastaturgenveje under inline-redigering i arkivet:
+   - **Esc** — annullér redigering (allerede implementeret, bevares).
+   - **Cmd/Ctrl+Z** — fortryd ændringer i den åbne celle og sæt tilbage til oprindelig værdi (uden at lukke edit-mode).
 
 ## Ændringer
 
-### `src/components/oversigt/CategoryGroup.tsx` — `commit()`-funktionen
+### `src/components/oversigt/format.ts`
+- `parseTime(value, base)`: hvis `value` er tom streng → returnér `base` med `00:00:00` sat.
+- `parseDuration(value)`: hvis `value` er tom streng → returnér `0`.
+- `parseTimeToSec` (i CategoryGroup) opdateres tilsvarende: tom = `0`.
 
-Aktuel adfærd (linje 81–105) opdaterer allerede de afledte felter korrekt:
-- **start** → `endedAt` fast, `ms` = end − newStart ✓
-- **slut** → `startedAt` fast, `ms` = newEnd − start ✓
-- **varighed** → `startedAt` fast, ny `endedAt` = start + ms ✓
+Live preview-handlere (`handleChangeStart/End/Duration`) genberegner allerede ud fra `parseTimeToSec` / `parseDuration`, så når tom = 0, opdateres varighed/slut korrekt i realtid.
 
-Logikken er altså allerede linket — problemet er at brugeren ikke kan se det, fordi den native `<input type="time">` skjuler de andre cellers værdier indtil commit. Tilføj derfor en **live preview** under redigering:
-
-1. Hold lokal state for hele rækken mens den redigeres (start/end/duration som strenge), initialiseres ved `beginEdit`.
-2. Når et af felterne ændres, opdatér de to andre cellers viste værdi i realtid:
-   - `start` ændres → genberegn `duration` ud fra nuværende `end`.
-   - `end` ændres → genberegn `duration` ud fra nuværende `start`.
-   - `duration` ændres → genberegn `end` ud fra nuværende `start`.
-3. De to ikke-aktive celler viser disse afledte preview-værdier (read-only) i stedet for de gemte værdier, mens rækken er i edit-mode.
-4. `commit` gemmer alle tre konsistente værdier i ét `onUpdate`-kald.
-5. Esc/blur uden gyldig ændring → kasserer preview, viser gemte værdier.
-
-Validering bevares (Esc = annuller, ugyldig = ingen ændring). Negativ varighed afvises (vis ikke et negativt preview — fald tilbage til "—").
+### `src/components/oversigt/CategoryGroup.tsx`
+- `commit()`: tillad `parseDuration` = 0 (fjern `> 0`-kravet) så varighed kan sættes til nul.
+- Gem oprindelige værdier i `RowEdit` (tilføj `origStart`, `origEnd`, `origDuration`) ved `beginEdit`.
+- I `handleKey`: tilføj `(e.metaKey || e.ctrlKey) && e.key === "z"` → nulstil `rowEdit` til de gemte oprindelige værdier (uden at lukke edit-mode, uden commit). Bevar Esc-adfærden (lukker edit-mode helt).
 
 ### Ingen øvrige filer berøres
-Stopurets `MeasurementsTable` ligger urørt — kun arkivets tabel ændres som aftalt tidligere.
+Stopurets `MeasurementsTable` rører vi ikke. Toast-baseret "Fortryd skjul historik" påvirkes ikke.
+
+## Teknik
+- "Tom" defineres som `value.trim() === ""` (native `<input type="time">` med ryddet felt rapporterer `""`).
+- Cmd/Ctrl+Z fanges kun mens en celle er i edit-mode; browserens standard undo bobler ikke videre (`preventDefault`).
+- Shift+Cmd/Ctrl+Z (redo) gør intet — vi gemmer kun ét snapshot (den oprindelige værdi).

@@ -30,6 +30,11 @@ export function fmtDuration(ms: number): string {
 }
 
 export function parseTime(value: string, base: Date): Date | null {
+  if (value.trim() === "") {
+    const d = new Date(base);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
   const m = value.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
   if (!m) return null;
   const h = Number(m[1]);
@@ -42,6 +47,7 @@ export function parseTime(value: string, base: Date): Date | null {
 }
 
 export function parseDuration(value: string): number | null {
+  if (value.trim() === "") return 0;
   const m = value.match(/^(\d{1,3}):(\d{2}):(\d{2})$/);
   if (!m) return null;
   const h = Number(m[1]);
