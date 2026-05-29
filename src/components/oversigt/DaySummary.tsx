@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { formatTotal, type SummaryFormat } from "./format";
 
@@ -5,16 +6,20 @@ type Props = {
   totalMs: number;
   format: SummaryFormat;
   onFormatChange: (f: SummaryFormat) => void;
+  leftSlot?: ReactNode;
 };
 
-export function DaySummary({ totalMs, format, onFormatChange }: Props) {
+export function DaySummary({ totalMs, format, onFormatChange, leftSlot }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="text-sm text-muted-foreground">
-        Samlet tid:{" "}
-        <span className="text-base font-semibold text-foreground tabular-nums">
-          {formatTotal(totalMs, format)}
-        </span>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="text-sm text-muted-foreground">
+          Samlet tid:{" "}
+          <span className="text-base font-semibold text-foreground tabular-nums">
+            {formatTotal(totalMs, format)}
+          </span>
+        </div>
+        {leftSlot}
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground">Vis som</span>
