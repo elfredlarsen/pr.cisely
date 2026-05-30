@@ -91,7 +91,7 @@ export function MeasurementsTable({
                 </span>
               </button>
             </CollapsibleTrigger>
-            <CollapsibleContent>
+            <CollapsibleContent className="!overflow-visible">
               <div className="border-t border-border px-2 pb-2">
                 <MeasurementsList
                   items={measurements}
