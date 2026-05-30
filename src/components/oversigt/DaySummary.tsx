@@ -18,18 +18,13 @@ export function DaySummary({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative flex min-h-9 items-center justify-center">
+      <div className="flex min-h-9 items-center justify-center">
         <div className="text-sm text-muted-foreground">
           Samlet tid:{" "}
           <span className="text-base font-semibold text-foreground tabular-nums">
             {formatTotal(totalMs, format)}
           </span>
         </div>
-        {rightSlot && (
-          <div className="absolute right-0 flex items-center gap-2">
-            {rightSlot}
-          </div>
-        )}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">{leftSlot}</div>
