@@ -80,7 +80,7 @@ function Index() {
                   startedAt: pending.startedAt.toISOString(),
                   endedAt: pending.endedAt.toISOString(),
                   ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
-                  category: getLastCategory(),
+                  category: getLastCategory() ?? "",
                 }
               : undefined
           }
