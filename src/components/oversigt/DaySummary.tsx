@@ -38,20 +38,20 @@ export function DaySummary({
             aria-label="Vælg visningsformat for samlet tid"
           >
             <ToggleGroupItem
-              value="hm"
-              aria-label="Timer og minutter, fx 1 t 30 min"
-              title="Timer og minutter (fx 1 t 30 min)"
-              className="px-3 text-xs"
-            >
-              hh:mm
-            </ToggleGroupItem>
-            <ToggleGroupItem
               value="decimal"
               aria-label="Decimaltimer, fx 1,50 t"
               title="Decimaltimer (fx 1,50 t)"
               className="px-3 text-xs"
             >
               timer
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="hm"
+              aria-label="Timer og minutter, fx 1 t 30 min"
+              title="Timer og minutter (fx 1 t 30 min)"
+              className="px-3 text-xs"
+            >
+              hh:mm
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
