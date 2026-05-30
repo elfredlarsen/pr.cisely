@@ -49,6 +49,8 @@ type Props = {
   stickyHeader?: boolean;
   /** Optional handlers for the header row (used by Stopur for tooltip). */
   headerRowProps?: React.HTMLAttributes<HTMLTableRowElement>;
+  /** Allow sorting by clicking column headers. Defaults to true. */
+  sortable?: boolean;
 };
 
 type EditField = "start" | "end" | "duration";
@@ -95,6 +97,8 @@ export function MeasurementsList({
   actionsColWidthClass = "w-16",
   stickyHeader = false,
   headerRowProps,
+  sortable = true,
+
 }: Props) {
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
   const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
@@ -361,14 +365,14 @@ export function MeasurementsList({
       <Table className="w-full table-fixed">
         <TableHeader className={stickyHeader ? "sticky top-0 z-10 bg-card" : undefined}>
           <TableRow className="border-border/50" {...headerRowProps}>
-            <TableHead className="h-8 w-[7rem] py-1">
-              {renderSortHeader("start", "Start")}
+            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+              {sortable ? renderSortHeader("start", "Start") : <span className="px-1">Start</span>}
             </TableHead>
-            <TableHead className="h-8 w-[7rem] py-1">
-              {renderSortHeader("end", "Slut")}
+            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+              {sortable ? renderSortHeader("end", "Slut") : <span className="px-1">Slut</span>}
             </TableHead>
-            <TableHead className="h-8 w-[7rem] py-1">
-              {renderSortHeader("duration", "Varighed")}
+            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+              {sortable ? renderSortHeader("duration", "Varighed") : <span className="px-1">Varighed</span>}
             </TableHead>
             <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               Kategori

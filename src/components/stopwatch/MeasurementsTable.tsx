@@ -126,6 +126,7 @@ export function MeasurementsTable({
                   onUpdate={onUpdate}
                   onDelete={onDelete}
                   stickyHeader
+                  sortable={false}
                   headerRowProps={{
                     onMouseEnter: handleHeaderEnter,
                     onMouseMove: handleHeaderMove,
