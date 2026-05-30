@@ -97,7 +97,7 @@ export function MeasurementsList({
   onUpdate,
   onDelete,
   actionsHeaderContent,
-  actionsColWidthClass = "w-20",
+  actionsColWidthClass = "w-32",
   stickyHeader = false,
   headerRowProps,
   sortable = true,
