@@ -1,9 +1,12 @@
-## Ændring
+## Problem
 
-I `src/routes/_authenticated/admin.tsx`:
+Kommentarknappen i `MeasurementsList.tsx` (linje 465–488) bruger `size="icon"` som låser knappen til `h-9 w-9` (36×36 px). Men knappen indeholder **to** glyffer: `MessageSquare` (16 px) + `ChevronRight` (12 px), så indholdet flyder ud over knappens boks vandret. Hover-baggrunden (`hover:bg-[#c471ed]/25`) tegnes kun inde i de 36×36 px, så chevronen stikker ud uden baggrund — det ligner at hover-boksen ikke dækker hele knappen.
 
-- Fjern den indre `max-w-md`-wrapper omkring `<CategoriesAdminList />` + `<AddCategoryForm />` så listen og tilføj-feltet fylder hele kortets bredde.
-- Gør selve kortet bredere på desktop: erstat `lg:col-start-2 lg:max-w-none` + 3-kolonne-griddet med en simplere centreret container, fx `max-w-2xl mx-auto` (ca. 42rem), så boksen er markant bredere end indstillingers `max-w-md` (28rem) men stadig komfortabel at læse.
-- Mobil-bredden (`max-w-md` på små skærme) bevares uændret.
+## Løsning
 
-Ingen ændringer i `CategoriesSection` i indstillinger og ingen funktionelle ændringer.
+I `src/components/measurements/MeasurementsList.tsx` på kommentarknappen:
+
+- Fjern `size="icon"` (eller behold default) og brug i stedet en egen størrelse der tilpasser sig indholdet: `className="relative h-9 w-auto px-2 gap-0.5 ..."` så baggrunden omslutter både ikon, prik og chevron.
+- Bevar `aria-label`, `aria-expanded`, prikken og chevron-rotationen uændret.
+
+Ingen ændringer i andre filer eller funktionalitet.
