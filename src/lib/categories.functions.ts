@@ -94,7 +94,7 @@ export const createCategory = createServerFn({ method: "POST" })
     const { data: existing, error: exErr } = await supabase
       .from("categories")
       .select("value");
-    if (exErr) throw new Error(exErr.message);
+    if (exErr) dbError("categories.create", exErr);
     const taken = new Set((existing ?? []).map((r: { value: string }) => r.value));
     let value = base;
     let i = 2;
@@ -109,7 +109,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .order("sort_order", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (maxErr) throw new Error(maxErr.message);
+    if (maxErr) dbError("categories.create", maxErr);
     const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
     const { data: inserted, error } = await supabase
