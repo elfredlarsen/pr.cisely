@@ -441,7 +441,11 @@ export function MeasurementsList({
                         <SelectValue className="truncate" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORIES.map((c) => (
+                        {CATEGORIES.filter(
+                          (c) =>
+                            activeCategoryValues.includes(c.value) ||
+                            c.value === m.category,
+                        ).map((c) => (
                           <SelectItem key={c.value} value={c.value}>
                             {c.label}
                           </SelectItem>
