@@ -28,18 +28,39 @@ function writeSession(on: boolean) {
   }
 }
 
+// Only allow preview mode when the page is embedded in the Lovable editor
+// iframe. This prevents arbitrary internet visitors from bypassing the
+// client-side auth guard by appending ?preview=1 to a public URL.
+function isTrustedEmbed(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    if (window.self === window.top) return false;
+    const ref = document.referrer;
+    if (!ref) return false;
+    const host = new URL(ref).hostname;
+    return (
+      host === "lovable.dev" ||
+      host.endsWith(".lovable.dev") ||
+      host.endsWith(".lovable.app") ||
+      host.endsWith(".lovableproject.com")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function isPreviewMode(): boolean {
   if (typeof window === "undefined") return false;
-  // Activate from URL on first read
+  // Activate from URL on first read, but only inside a trusted editor embed
   try {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("preview") === "1" && !readSession()) {
+    if (params.get("preview") === "1" && !readSession() && isTrustedEmbed()) {
       writeSession(true);
     }
   } catch {
     // ignore
   }
-  return readSession();
+  return readSession() && isTrustedEmbed();
 }
 
 export function enablePreview() {
