@@ -40,7 +40,7 @@ export function CategoriesSection() {
   };
 
   return (
-    <ul className="divide-y divide-border rounded-md border border-border">
+    <ul className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border">
       {CATEGORIES.map((c) => {
         const isActive = active.has(c.value);
         const isLastActive = isActive && active.size === 1;
