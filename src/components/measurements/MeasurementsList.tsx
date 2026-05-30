@@ -409,9 +409,8 @@ export function MeasurementsList({
           {sortedItems.map((m) => {
             const rowEditing = isRowEditing(m);
             const editingComment = commentEdit?.id === m.id;
-            const isAndet = m.category === "andet";
             const commentExpanded = expandedComments.has(m.id);
-            const showCommentRow = isAndet && commentExpanded;
+            const showCommentRow = commentExpanded;
             return (
               <React.Fragment key={m.id}>
                 <TableRow
