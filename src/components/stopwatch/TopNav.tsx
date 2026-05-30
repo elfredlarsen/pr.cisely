@@ -6,6 +6,18 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseSession } from "@/hooks/use-supabase-session";
 import { useMyRoleInfo } from "@/hooks/use-my-role";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 const baseItems = [
   { label: "Stopur", to: "/" as const },
@@ -90,18 +102,34 @@ export function TopNav() {
         )}
       </ul>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        aria-label="Log ud"
-        className="group inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-transparent px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:px-2.5"
-      >
-        <LogOut
-          className="h-[15px] w-[15px] opacity-60 transition-opacity group-hover:opacity-100"
-          aria-hidden="true"
-        />
-        <span className="max-[640px]:hidden">Log ud</span>
-      </button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button
+            type="button"
+            aria-label="Log ud"
+            className="group inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-transparent px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:px-2.5"
+          >
+            <LogOut
+              className="h-[15px] w-[15px] opacity-60 transition-opacity group-hover:opacity-100"
+              aria-hidden="true"
+            />
+            <span className="max-[640px]:hidden">Log ud</span>
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Log ud?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Du bliver sendt til login-siden og skal logge ind igen for at fortsætte.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annullér</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Log ud</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </nav>
   );
 }
