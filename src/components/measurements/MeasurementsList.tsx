@@ -111,6 +111,8 @@ export function MeasurementsList({
     field: "start",
     dir: sortable ? "asc" : "desc",
   });
+  const activeCategoryValues = useActiveCategories();
+
 
   const toggleCommentExpanded = (id: string) => {
     setExpandedComments((prev) => {
