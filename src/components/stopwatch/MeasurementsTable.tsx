@@ -59,10 +59,22 @@ export function MeasurementsTable({
       className="flex h-full w-full min-h-0 flex-col"
     >
       <div className="mx-auto flex h-full w-full min-h-0 max-w-3xl flex-col px-4 pb-3 pt-2">
-        {measurements.length === 0 ? (
-          <div className="rounded-lg border border-border bg-card">
-            <p className="py-6 text-center text-xs text-muted-foreground/80">
-              Ingen registreringer endnu i dag.
+        {!loaded ? (
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="space-y-2">
+              <Skeleton className="h-7 w-full" />
+              <Skeleton className="h-7 w-11/12" />
+              <Skeleton className="h-7 w-10/12" />
+            </div>
+          </div>
+        ) : measurements.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card px-6 py-10 text-center">
+            <Timer className="h-6 w-6 text-muted-foreground/60" aria-hidden="true" />
+            <p className="text-sm font-medium text-foreground">
+              Ingen registreringer endnu i dag
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Start stopuret ovenfor for at registrere din første tid
             </p>
           </div>
         ) : (
