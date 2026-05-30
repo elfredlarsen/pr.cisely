@@ -114,8 +114,7 @@ export function MeasurementDialog({
   const { data: allCategories = [] } = useCategories();
   const visibleCategories = allCategories.filter(
     (c) =>
-      !c.hidden &&
-      (activeFilter === null || activeFilter.includes(c.value) || c.value === category),
+      activeFilter === null || activeFilter.includes(c.value) || c.value === category,
   );
 
   useEffect(() => {
@@ -125,7 +124,7 @@ export function MeasurementDialog({
       setStart(toTimeInput(initial.startedAt));
       setEnd(toTimeInput(initial.endedAt));
       setDuration(msToDurationInput(initial.ms));
-      setCategory(initial.category);
+      setCategory(initial.category || "");
       setComment(initial.comment ?? "");
     } else {
       const now = new Date();
@@ -138,10 +137,19 @@ export function MeasurementDialog({
         `${pad(Math.floor(endSec / 3600))}:${pad(Math.floor((endSec % 3600) / 60))}:00`,
       );
       setDuration(msToDurationInput((endSec - startSec) * 1000));
-      setCategory(defaultCategory ?? getLastCategory());
+      setCategory(defaultCategory ?? getLastCategory() ?? "");
       setComment("");
     }
   }, [open, initial, defaultCategory]);
+
+  // Fall back to first available category if current one is missing.
+  useEffect(() => {
+    if (!open) return;
+    if (category && allCategories.some((c) => c.value === category)) return;
+    if (visibleCategories.length > 0) {
+      setCategory(visibleCategories[0].value);
+    }
+  }, [open, category, allCategories, visibleCategories]);
 
   const handleStart = (v: string) => {
     setStart(v);
