@@ -16,7 +16,7 @@ export function TopNav() {
   return (
     <nav
       aria-label="Hovednavigation"
-      className="font-poppins sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-border/60 bg-background/90 px-8 backdrop-blur-md max-[640px]:px-4"
+      className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-border/60 bg-background/90 px-8 backdrop-blur-md max-[640px]:px-4"
     >
       <Link
         to="/"
