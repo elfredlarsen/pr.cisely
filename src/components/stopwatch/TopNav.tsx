@@ -8,13 +8,13 @@ const navItems = [
 ];
 
 const itemClass = [
-  "relative inline-flex min-h-11 items-center px-1 py-2 text-sm font-medium tracking-wide transition-colors",
+  "relative inline-flex items-center px-1 py-1.5 text-sm font-medium tracking-wide transition-colors",
   "text-muted-foreground hover:text-foreground",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
 ].join(" ");
 
 const activeItemClass =
-  "text-foreground after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-primary after:rounded-full";
+  "text-foreground after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:bg-primary after:rounded-full";
 
 export function TopNav() {
   return (
@@ -22,14 +22,14 @@ export function TopNav() {
       aria-label="Hovednavigation"
       className="sticky top-0 z-40 w-full border-b border-border bg-background"
     >
-      <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-4">
+      <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-2">
         <div className="justify-self-start">
           <Link
             to="/"
             aria-label="pr:cisely – til forsiden"
             className="inline-flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            <img src={logo} alt="pr:cisely" className="h-7 w-auto" />
+            <img src={logo} alt="pr:cisely" className="h-5 w-auto" />
           </Link>
         </div>
 
@@ -51,7 +51,7 @@ export function TopNav() {
         <div className="justify-self-end">
           <button
             type="button"
-            className="inline-flex min-h-11 items-center px-1 py-2 text-sm font-medium tracking-wide text-muted-foreground transition-colors hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+            className="inline-flex items-center px-1 py-1.5 text-sm font-medium tracking-wide text-muted-foreground transition-colors hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
           >
             Log ud
           </button>
