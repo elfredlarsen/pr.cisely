@@ -9,6 +9,7 @@ import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconTooltip } from "@/components/ui/icon-tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -244,30 +245,34 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
       )}
       <div className="flex shrink-0 items-center gap-1">
         {!editing && (
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            onClick={() => setEditing(true)}
-            disabled={saving || deleting}
-            className="h-8 w-8 text-muted-foreground"
-            aria-label={`Omdøb ${row.label}`}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-        )}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
+          <IconTooltip label="Omdøb">
             <Button
               type="button"
               size="icon"
               variant="ghost"
-              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-              disabled={saving || deleting || editing}
-              aria-label={`Slet ${row.label}`}
+              onClick={() => setEditing(true)}
+              disabled={saving || deleting}
+              className="h-8 w-8 text-muted-foreground"
+              aria-label={`Omdøb ${row.label}`}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Pencil className="h-3.5 w-3.5" />
             </Button>
+          </IconTooltip>
+        )}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <IconTooltip label="Slet">
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                disabled={saving || deleting || editing}
+                aria-label={`Slet ${row.label}`}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </IconTooltip>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

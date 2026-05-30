@@ -4,6 +4,7 @@ import { da } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -42,16 +43,18 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={prev}
-        aria-label="Forrige dag"
-        className="h-11 w-11"
-      >
-        <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-      </Button>
+      <IconTooltip label="Forrige dag">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={prev}
+          aria-label="Forrige dag"
+          className="h-11 w-11"
+        >
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+        </Button>
+      </IconTooltip>
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -85,16 +88,18 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
         </PopoverContent>
       </Popover>
 
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={next}
-        aria-label="Næste dag"
-        className="h-11 w-11"
-      >
-        <ChevronRight className="h-5 w-5" aria-hidden="true" />
-      </Button>
+      <IconTooltip label="Næste dag">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={next}
+          aria-label="Næste dag"
+          className="h-11 w-11"
+        >
+          <ChevronRight className="h-5 w-5" aria-hidden="true" />
+        </Button>
+      </IconTooltip>
     </div>
   );
 }
