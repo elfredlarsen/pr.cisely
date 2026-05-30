@@ -108,7 +108,7 @@ export function MeasurementsList({
   >(null);
   const [sort, setSort] = useState<{ field: SortField; dir: SortDir }>({
     field: "start",
-    dir: "asc",
+    dir: sortable ? "asc" : "desc",
   });
 
   const toggleCommentExpanded = (id: string) => {
@@ -375,21 +375,21 @@ export function MeasurementsList({
       <Table className="w-full table-fixed">
         <TableHeader className={stickyHeader ? "sticky top-0 z-10 bg-card" : undefined}>
           <TableRow className="border-border/50" {...headerRowProps}>
-            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("start", "Start") : <span className="px-1">Start</span>}
             </TableHead>
-            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("end", "Slut") : <span className="px-1">Slut</span>}
             </TableHead>
-            <TableHead className="h-8 w-[7rem] py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("duration", "Varighed") : <span className="px-1">Varighed</span>}
             </TableHead>
-            <TableHead className="h-8 w-auto py-1 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-auto py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               Kategori
             </TableHead>
             <TableHead
               className={cn(
-                "h-8 py-1 text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70",
+                "h-10 py-2 text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70",
                 actionsColWidthClass,
               )}
             >
