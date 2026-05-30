@@ -102,6 +102,7 @@ export function MeasurementsList({
 }: Props) {
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
   const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [pendingCategoryChange, setPendingCategoryChange] = useState<
     { id: string; from: Category; to: Category } | null
   >(null);
@@ -109,6 +110,15 @@ export function MeasurementsList({
     field: "start",
     dir: "asc",
   });
+
+  const toggleCommentExpanded = (id: string) => {
+    setExpandedComments((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const sortedItems = useMemo(() => {
     const getKey = (m: Measurement) => {
