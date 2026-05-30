@@ -462,7 +462,7 @@ export function MeasurementsList({
                     </Select>
                   </TableCell>
                   <TableCell className="py-1 text-right">
-                    <div className="flex items-center justify-end gap-0.5">
+                    <div className="flex items-center justify-end gap-0">
                       <IconTooltip label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}>
                         <Button
                           type="button"
