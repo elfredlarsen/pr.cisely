@@ -1,43 +1,40 @@
-## Nyt layout for oversigtens header (fra skitse)
-
-To rækker over kategori-kortene:
-
-```
-Række 1:                 [ Samlet tid: 6 t 40 min ]                    [ 🗑 Slet ]
-Række 2:  [ ⌄ Fold alle ud ]                                    [ Vis som: hh:mm | timer ]
-```
-
-### `src/components/oversigt/DaySummary.tsx`
-- Erstat den nuværende `flex justify-between`-struktur med to rækker:
-  - **Række 1** (`relative flex items-center justify-center`):
-    - "Samlet tid: X" centreret midt på siden.
-    - "Slet"-knap absolut placeret yderst til højre (`absolute right-0`).
-  - **Række 2** (`flex items-center justify-between`):
-    - Venstre: "Fold alle ud / ind"-knap (eksisterende).
-    - Højre: "Vis som"-ToggleGroup (flyttes fra nuværende plads).
-- Tilføj `rightSlot` prop til "Slet"-knappen; behold `leftSlot` til "Fold alle".
-- "Vis som"-toggle bliver intern i `DaySummary` (uændret styling), bare flyttet til række 2 højre.
-
-### `src/components/oversigt/DaySummary.tsx` — labels
-- Skift `<span className="text-xs text-muted-foreground">Vis som</span>` til at stå **før** togglen som i skitsen ("Vis som: hh:mm | timer").
+## Flyt Slet-knap ned under kategori-tabellen — højrejusteret
 
 ### `src/routes/arkiv.tsx`
-- Fjern de to separate `AlertDialog`-blokke ("Ryd historik" + "Ryd al historik").
-- Erstat med **én** kombineret slet-knap → `rightSlot` på `DaySummary`:
-  - Knap: `<Trash2 /> Slet` (kun synlig hvis `measurements.length > 0`).
-  - Åbner én `AlertDialog` med to handlinger i footeren:
-    - `Annuller`
-    - `Slet dagens` (kalder `removeAllToday`, kun aktiv hvis `dayMeasurements.length > 0`)
-    - `Slet alt` (kalder `removeAll`, destructive styling)
-  - Dialogtitel: "Slet registreringer?"
-  - Beskrivelse: "Vælg om du vil slette dagens registreringer eller samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes."
+- Fjern `rightSlot={...}` (hele Slet-`AlertDialog`-blokken) fra `<DaySummary />`.
+- Omstrukturér den eksisterende `mt-6 flex justify-center`-række så "Tilføj registrering" forbliver visuelt centreret midt på siden, og "Slet" placeres yderst til højre på samme linje:
+
+```
+              [ + Tilføj registrering ]                       [ 🗑 Slet ]
+```
+
+Konkret markup (3-spaltet grid så center er sand-centreret uafhængigt af knappernes bredde):
+
+```tsx
+<div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+  <div />
+  <Button …>+ Tilføj registrering</Button>
+  <div className="justify-self-end">
+    {measurements.length > 0 && (
+      <AlertDialog>…Slet…</AlertDialog>
+    )}
+  </div>
+</div>
+```
+
+- "Slet"-knappen bevarer nuværende styling (ghost, `min-h-9`, hover destructive).
+- Dialogen (Slet dagens / Slet alt) er uændret.
+
+### `src/components/oversigt/DaySummary.tsx`
+- Fjern `rightSlot`-prop og den absolut-positionerede højre-container i række 1.
+- Række 1: `flex items-center justify-center` med "Samlet tid: X" centreret.
+- Række 2 ("Fold alle" + "Vis som") uændret.
 
 ### Bevares
-- Knapstilarter (ghost, size sm), hover-farver, toast-beskeder, `formatTotal`-output, eksisterende state og handlers.
-- Memory-reglen: kun denne række ændres — kategori-kortene og historik-kortet på `/` rører vi ikke.
+- "Samlet tid" centreret, "Fold alle" venstre, "Vis som" højre.
+- Toast-beskeder, handlers, `removeAllToday` / `removeAll`.
 
 ### Verifikation
-- "Samlet tid" står visuelt centreret midt på siden uafhængigt af knappernes bredde.
-- Kun ét trash-ikon ("Slet") i hele headeren, yderst til højre i række 1.
-- Række 2 har "Fold alle" til venstre og "Vis som"-toggle til højre.
-- Klik på "Slet" åbner én dialog med valg mellem "Slet dagens" og "Slet alt".
+- Ingen Slet-knap i DaySummary-headeren.
+- Under kategori-kortene: "Tilføj registrering" centreret, "Slet" yderst til højre.
+- Klik på "Slet" åbner dialogen med valg mellem dagens og alt.

@@ -196,57 +196,9 @@ function OversigtPage() {
                 )}
               </>
             }
-            rightSlot={
-              measurements.length > 0 && (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                      Slet
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Slet registreringer?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Vælg om du vil slette dagens registreringer eller samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Annuller</AlertDialogCancel>
-                      {dayMeasurements.length > 0 && (
-                        <AlertDialogAction
-                          onClick={() => {
-                            removeAllToday();
-                            toast.success("Dagens historik slettet");
-                          }}
-                          className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                        >
-                          Slet dagens
-                        </AlertDialogAction>
-                      )}
-                      <AlertDialogAction
-                        onClick={() => {
-                          removeAll();
-                          toast.success("Al historik slettet");
-                        }}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Slet alt
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )
-            }
-
           />
         </div>
+
 
 
         <div className="mt-2 space-y-2">
@@ -270,12 +222,62 @@ function OversigtPage() {
           )}
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div />
           <Button type="button" onClick={handleAdd} className="min-h-11 px-5 font-semibold">
             <Plus className="h-4 w-4" aria-hidden="true" />
             Tilføj registrering
           </Button>
+          <div className="justify-self-end">
+            {measurements.length > 0 && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    Slet
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Slet registreringer?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Vælg om du vil slette dagens registreringer eller samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuller</AlertDialogCancel>
+                    {dayMeasurements.length > 0 && (
+                      <AlertDialogAction
+                        onClick={() => {
+                          removeAllToday();
+                          toast.success("Dagens historik slettet");
+                        }}
+                        className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      >
+                        Slet dagens
+                      </AlertDialogAction>
+                    )}
+                    <AlertDialogAction
+                      onClick={() => {
+                        removeAll();
+                        toast.success("Al historik slettet");
+                      }}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Slet alt
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         </div>
+
       </main>
 
       <MeasurementDialog
