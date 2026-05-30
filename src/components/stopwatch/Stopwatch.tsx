@@ -193,7 +193,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
           <TimeDisplay ms={displayMs} />
         </div>
 
-        <TooltipProvider delayDuration={1000}>
+        
           <div
             role="group"
             aria-label="Stopur-kontroller"
@@ -201,7 +201,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
             className={`flex flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
           >
             {state.status === "idle" && (
-              <ShortcutTooltip label="Start" shortcut="Mellemrum">
+              <IconTooltip label="Start" shortcut="Mellemrum">
                 <button
                   type="button"
                   onClick={onStart}
@@ -211,12 +211,12 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                   <Play className="h-7 w-7" aria-hidden="true" />
                   Start
                 </button>
-              </ShortcutTooltip>
+              </IconTooltip>
             )}
 
             {state.status === "running" && (
               <>
-                <ShortcutTooltip label="Nulstil" shortcut="N">
+                <IconTooltip label="Nulstil" shortcut="N">
                   <button
                     type="button"
                     onClick={onReset}
@@ -226,8 +226,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Afslut" shortcut="A">
+                </IconTooltip>
+                <IconTooltip label="Afslut" shortcut="A">
                   <button
                     type="button"
                     onClick={onFinish}
@@ -237,8 +237,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Pause" shortcut="Mellemrum">
+                </IconTooltip>
+                <IconTooltip label="Pause" shortcut="Mellemrum">
                   <button
                     type="button"
                     onClick={onPause}
@@ -248,13 +248,13 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Pause className="h-7 w-7" aria-hidden="true" />
                     Pause
                   </button>
-                </ShortcutTooltip>
+                </IconTooltip>
               </>
             )}
 
             {state.status === "paused" && (
               <>
-                <ShortcutTooltip label="Nulstil" shortcut="N">
+                <IconTooltip label="Nulstil" shortcut="N">
                   <button
                     type="button"
                     onClick={onReset}
@@ -264,8 +264,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Afslut" shortcut="A">
+                </IconTooltip>
+                <IconTooltip label="Afslut" shortcut="A">
                   <button
                     type="button"
                     onClick={onFinish}
@@ -275,8 +275,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Fortsæt" shortcut="Mellemrum">
+                </IconTooltip>
+                <IconTooltip label="Fortsæt" shortcut="Mellemrum">
                   <button
                     type="button"
                     onClick={onResume}
@@ -286,11 +286,11 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <FastForward className="h-7 w-7" aria-hidden="true" />
                     Fortsæt
                   </button>
-                </ShortcutTooltip>
+                </IconTooltip>
               </>
             )}
           </div>
-        </TooltipProvider>
+        
       </div>
     </section>
   );
