@@ -75,7 +75,7 @@ function AdminContent() {
 
         <section
           aria-labelledby="kategorier-admin-heading"
-          className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-card p-6"
+          className="mx-auto w-full max-w-xl rounded-lg border border-border bg-card p-6"
         >
           <header className="mb-6 text-center">
             <h2 id="kategorier-admin-heading" className="text-lg font-semibold">
