@@ -92,11 +92,11 @@ export function MeasurementsTable({
     <>
       <section
         aria-label="Seneste registreringer"
-        className="flex h-full w-full flex-col opacity-75"
+        className="flex h-full w-full flex-col"
       >
         <div className="scrollbar-purple mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
           {measurements.length === 0 ? (
-            <div className="rounded-lg border border-border/60 bg-card">
+            <div className="rounded-lg border border-border bg-card">
               <p className="py-6 text-center text-xs text-muted-foreground/80">
                 Ingen registreringer endnu i dag.
               </p>
@@ -105,7 +105,7 @@ export function MeasurementsTable({
             <Collapsible
               open={open}
               onOpenChange={handleOpenChange}
-              className="rounded-lg border border-border/60 bg-card"
+              className="rounded-lg border border-border bg-card"
             >
               <CollapsibleTrigger asChild>
                 <button
@@ -131,7 +131,7 @@ export function MeasurementsTable({
                 </button>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <div className="border-t border-border/60 px-2 pb-2">
+                <div className="border-t border-border px-2 pb-2">
                   <MeasurementsList
                     items={measurements}
                     onUpdate={onUpdate}
