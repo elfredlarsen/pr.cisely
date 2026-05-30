@@ -1,6 +1,10 @@
-Skift den aktive nav-links underline fra brand-gradient til solid cyan (#12c2e9).
+Gør "Vis kommentar"-knappen og trash-knappen lige brede i `MeasurementsList`. Da både historik (`/`) og oversigt (`/arkiv` via `CategoryGroup`) renderer denne komponent, opdateres begge tabeller med én ændring.
 
-**`src/styles.css`** (linje 147)
-- `background: var(--gradient-brand);` → `background: #12c2e9;`
+## Ændring
 
-Hover-state og logo-accent (`:`) bibeholder gradienten, så pr:cisely-æstetikken er intakt.
+**`src/components/measurements/MeasurementsList.tsx`** (linje 473)
+- Vis kommentar-knap: skift `h-9 w-auto gap-0.5 px-2` → `h-9 w-16 justify-center gap-0.5 px-0` så den får samme faste bredde (64px) som trash-knappen.
+- Trash-knap (linje 497) er uændret (`w-16`).
+- Hover-stil, chevron og notifikations-prik bevares.
+
+Resultat: Begge handlings-knapper har præcis 64px bredde — både i historik og i oversigt.
