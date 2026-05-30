@@ -263,7 +263,7 @@ export function MeasurementDialog({
                 <SelectValue placeholder="Vælg kategori" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => (
+                {visibleCategories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
                     {c.label}
                   </SelectItem>
