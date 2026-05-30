@@ -88,7 +88,7 @@ function Index() {
           title="Gem registrering"
         />
 
-        <div className="flex min-h-0 flex-1 flex-col items-center px-6 pt-6 pb-8">
+        <div className="flex min-h-0 flex-1 flex-col items-center px-6 pt-2 pb-8">
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}

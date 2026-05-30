@@ -1,22 +1,29 @@
-## Problem
+## Ændringer
 
-Historik-kortet er centreret vertikalt med `py-10` padding, og kortet tager kun sin naturlige højde (`max-h-full`). Det betyder at der bliver scrollet selvom der er masser af lodret plads tilbage på siden.
+### 1. Tabel tættere på knapperne
 
-## Løsning
+I `src/routes/index.tsx`: skift wrapperens `pt-6` til `pt-2` (behold `pb-8`) så historik-kortet rykker tæt op under Start/Afslut-knapperne.
 
-I `src/routes/index.tsx`:
+### 2. Scrollbar skal kun vises ved hover
 
-- Skift wrapperen om `<MeasurementsTable>` fra `flex min-h-0 flex-1 items-center justify-center px-6 py-10` til `flex min-h-0 flex-1 flex-col items-center px-6 pt-6 pb-8`.
+I `src/styles.css` reserverer `.scrollbar-purple::-webkit-scrollbar { width: 6px }` altid 6px gutter, så på browsere/OS hvor scrollbar-tracket vises (Chrome på Windows, macOS med "Always show"), ses der hele tiden en tom 6px-stribe. Fix: gør scrollbaren fuldstændig skjult som default og vis den først ved hover på containeren.
 
-Det fjerner den vertikale centrering, så kortet ankres øverst med et lille top/bund-padding og kan udnytte hele den tilgængelige højde.
+```css
+.scrollbar-purple { scrollbar-width: none; }
+.scrollbar-purple::-webkit-scrollbar { width: 0; height: 0; }
 
-I `src/components/stopwatch/MeasurementsTable.tsx`:
-
-- Skift `section`-className fra `flex max-h-full w-full flex-col` til `flex h-full w-full flex-col` så `section` fylder hele wrapperen.
-- Skift indre scroll-div'en fra `max-h-full ... ` til `flex-1` så scroll-containeren tager al resterende højde, hvilket gør at flere rækker er synlige før scroll sættes ind.
+.scrollbar-purple:hover { scrollbar-width: thin; scrollbar-color: #c471ed transparent; }
+.scrollbar-purple:hover::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-purple:hover::-webkit-scrollbar-thumb {
+  background-color: #c471ed;
+  border-radius: 9999px;
+}
+.scrollbar-purple:hover::-webkit-scrollbar-thumb:hover { background-color: #b35ee0; }
+.scrollbar-purple::-webkit-scrollbar-track { background: transparent; }
+```
 
 ## Verifikation
 
-- `/`: bekræft at historik-tabellen viser markant flere rækker uden scroll på en typisk viewport (~707px høj).
-- Lange lister scroller stadig korrekt med sticky header.
-- Stadig pæn afstand til knapperne ovenfor og siden bunden nedenfor.
+- `/`: historik-kortet sidder tættere på knapperne.
+- Ingen synlig scrollbar i historikken ved indlæsning; hover over listen viser den lilla scrollbar.
+- Scroll-funktionalitet virker stadig.
