@@ -287,20 +287,18 @@ export function MeasurementDialog({
             </Select>
           </div>
 
-          {category === "andet" && (
-            <div className="flex flex-col gap-1">
-              <label htmlFor="md-comment" className="text-xs font-medium text-muted-foreground">
-                Kommentar (valgfri)
-              </label>
-              <textarea
-                id="md-comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows={2}
-                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
-            </div>
-          )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="md-comment" className="text-xs font-medium text-muted-foreground">
+              Kommentar (valgfri)
+            </label>
+            <textarea
+              id="md-comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={2}
+              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
 
           {error && (
             <p role="alert" className="text-xs text-destructive">
