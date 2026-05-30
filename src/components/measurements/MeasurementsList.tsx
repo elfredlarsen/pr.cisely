@@ -447,36 +447,64 @@ export function MeasurementsList({
                     </Select>
                   </TableCell>
                   <TableCell className="py-1 text-right">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                    <div className="flex items-center justify-end gap-0.5">
+                      {isAndet && (
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
-                          aria-label="Slet registrering"
+                          onClick={() => toggleCommentExpanded(m.id)}
+                          aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
+                          aria-expanded={commentExpanded}
+                          className="relative h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
                         >
-                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                          {m.comment && (
+                            <span
+                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <ChevronRight
+                            className={cn(
+                              "h-3 w-3 transition-transform duration-150",
+                              commentExpanded && "rotate-90",
+                            )}
+                            aria-hidden="true"
+                          />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Registreringen slettes permanent og kan ikke gendannes.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Annuller</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => onDelete(m.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      )}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                            aria-label="Slet registrering"
                           >
-                            Slet
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Registreringen slettes permanent og kan ikke gendannes.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Annuller</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => onDelete(m.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Slet
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
                 {showCommentRow && (
