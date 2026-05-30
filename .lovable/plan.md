@@ -1,40 +1,43 @@
-## Flyt Slet-knap ned under kategori-tabellen — højrejusteret
+## Brug `MeasurementDialog`-UI til "Gem registrering" på forsiden
 
-### `src/routes/arkiv.tsx`
-- Fjern `rightSlot={...}` (hele Slet-`AlertDialog`-blokken) fra `<DaySummary />`.
-- Omstrukturér den eksisterende `mt-6 flex justify-center`-række så "Tilføj registrering" forbliver visuelt centreret midt på siden, og "Slet" placeres yderst til højre på samme linje:
+Forsidens `FinishPanel` er en inline-card oven på stopuret. Oversigtens `MeasurementDialog` er en rigtig modal (shadcn `Dialog` med overlay, centreret kort, X-luk, ESC-luk, focus-trap). Forretningslogikken (felter, validering, kategori, kommentar, varigheds-synk) er stort set ens.
 
-```
-              [ + Tilføj registrering ]                       [ 🗑 Slet ]
-```
+Vi genbruger `MeasurementDialog` til at gemme stopurets måling og fjerner `FinishPanel`.
 
-Konkret markup (3-spaltet grid så center er sand-centreret uafhængigt af knappernes bredde):
+### `src/components/oversigt/MeasurementDialog.tsx`
+- Tillader allerede `initial` (start/slut/varighed/kategori/kommentar) og `title`. Ingen ændringer nødvendige — vi bruger den som den er.
 
-```tsx
-<div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-  <div />
-  <Button …>+ Tilføj registrering</Button>
-  <div className="justify-self-end">
-    {measurements.length > 0 && (
-      <AlertDialog>…Slet…</AlertDialog>
-    )}
-  </div>
-</div>
-```
+### `src/routes/index.tsx`
+- Fjern import af `FinishPanel`.
+- Importér `MeasurementDialog` fra `@/components/oversigt/MeasurementDialog`.
+- Erstat den absolut-positionerede `<FinishPanel … />`-overlay-blok (linje 68–79) med:
+  ```tsx
+  <MeasurementDialog
+    open={pending !== null}
+    onOpenChange={(o) => { if (!o) handleCancel(); }}
+    baseDate={pending?.startedAt ?? new Date()}
+    initial={pending ? {
+      startedAt: pending.startedAt.toISOString(),
+      endedAt: pending.endedAt.toISOString(),
+      ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
+      category: getLastCategory(),
+    } : undefined}
+    onSave={(draft) => { handleSave(draft); }}
+    title="Gem registrering"
+  />
+  ```
+- `handleSave` lukker `pending` (kald `setPending(null)` / nuv. flow), så dialogen lukker automatisk via `open={pending !== null}`.
+- Bevarer `Stopwatch` med `finishOpen={pending !== null}` (uændret prop).
+- Importér `getLastCategory` fra `@/lib/categories` til at sætte initial-kategori.
 
-- "Slet"-knappen bevarer nuværende styling (ghost, `min-h-9`, hover destructive).
-- Dialogen (Slet dagens / Slet alt) er uændret.
-
-### `src/components/oversigt/DaySummary.tsx`
-- Fjern `rightSlot`-prop og den absolut-positionerede højre-container i række 1.
-- Række 1: `flex items-center justify-center` med "Samlet tid: X" centreret.
-- Række 2 ("Fold alle" + "Vis som") uændret.
+### `src/components/stopwatch/FinishPanel.tsx`
+- Slet filen — bruges ikke længere.
 
 ### Bevares
-- "Samlet tid" centreret, "Fold alle" venstre, "Vis som" højre.
-- Toast-beskeder, handlers, `removeAllToday` / `removeAll`.
+- Stopurets eksisterende start/stop/reset-logik, `pending`-state, `handleSave`, `handleCancel`, `resetKey`.
+- `setLastCategory` håndteres allerede inde i `MeasurementDialog.handleSubmit`.
 
 ### Verifikation
-- Ingen Slet-knap i DaySummary-headeren.
-- Under kategori-kortene: "Tilføj registrering" centreret, "Slet" yderst til højre.
-- Klik på "Slet" åbner dialogen med valg mellem dagens og alt.
+- Stop stopuret → modal dukker op centreret med overlay og samme UI som "Tilføj registrering" på `/arkiv`.
+- ESC eller X lukker dialogen og annullerer (kalder `handleCancel`).
+- Gem indsætter måling som før og nulstiller stopuret.
