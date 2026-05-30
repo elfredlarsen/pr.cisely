@@ -25,13 +25,13 @@ function IndstillingerPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Indstillinger</h1>
+        <h1 className="text-center text-2xl font-semibold tracking-tight">Indstillinger</h1>
 
         <section
           aria-labelledby="konto-heading"
           className="mt-8 rounded-lg border border-border bg-card p-6"
         >
-          <header className="mb-6">
+          <header className="mb-6 text-center">
             <h2 id="konto-heading" className="text-lg font-semibold">
               Konto
             </h2>
@@ -41,8 +41,8 @@ function IndstillingerPage() {
           </header>
 
           <div>
-            <h3 className="text-sm font-semibold">Skift adgangskode</h3>
-            <div className="mt-4 max-w-md">
+            <h3 className="text-center text-sm font-semibold">Skift adgangskode</h3>
+            <div className="mx-auto mt-4 max-w-md">
               <ChangePasswordForm />
             </div>
           </div>
