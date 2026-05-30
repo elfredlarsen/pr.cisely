@@ -4,10 +4,12 @@ import { toast } from "sonner";
 import { Stopwatch } from "@/components/stopwatch/Stopwatch";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { MeasurementsTable } from "@/components/stopwatch/MeasurementsTable";
-import { FinishPanel } from "@/components/stopwatch/FinishPanel";
+import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
+import { getLastCategory } from "@/lib/categories";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
 
-export const Route = createFileRoute("/")({
+
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "pr:cisely · Stopur" },
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { visibleToday, add, update, hide, unhide, hideAllToday } = useMeasurements();
+  const { visibleToday, loaded, add, update, remove } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [resetKey, setResetKey] = useState(0);
 
@@ -47,7 +49,7 @@ function Index() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <a
         href="#stopur-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-card focus:px-4 focus:py-2 focus:text-sm focus:shadow"
@@ -57,7 +59,7 @@ function Index() {
       <TopNav />
       <main
         id="stopur-main"
-        className="flex min-h-0 flex-1 flex-col"
+        className="flex flex-1 flex-col"
       >
         <div className="relative shrink-0">
           <Stopwatch
@@ -65,26 +67,33 @@ function Index() {
             finishOpen={pending !== null}
             resetKey={resetKey}
           />
-          {pending && (
-            <div className="pointer-events-none absolute inset-x-0 top-full z-20 flex justify-center">
-              <div className="pointer-events-auto -mt-2">
-                <FinishPanel
-                  startedAt={pending.startedAt}
-                  endedAt={pending.endedAt}
-                  onCancel={handleCancel}
-                  onSave={handleSave}
-                />
-              </div>
-            </div>
-          )}
         </div>
-        <div className="min-h-0 flex-1 pt-12">
+        <MeasurementDialog
+          open={pending !== null}
+          onOpenChange={(o) => {
+            if (!o) handleCancel();
+          }}
+          baseDate={pending?.startedAt ?? new Date()}
+          initial={
+            pending
+              ? {
+                  startedAt: pending.startedAt.toISOString(),
+                  endedAt: pending.endedAt.toISOString(),
+                  ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
+                  category: getLastCategory() ?? "",
+                }
+              : undefined
+          }
+          onSave={handleSave}
+          title="Gem registrering"
+        />
+
+        <div className="flex min-h-[60vh] flex-1 flex-col items-center px-6 pt-2 pb-8">
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}
-            onHide={hide}
-            onUnhide={unhide}
-            onHideAll={hideAllToday}
+            onDelete={remove}
+            loaded={loaded}
           />
         </div>
       </main>

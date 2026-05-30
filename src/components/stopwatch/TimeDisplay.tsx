@@ -17,7 +17,7 @@ export function formatTime(ms: number) {
 }
 
 const digitClass =
-  "text-[clamp(4rem,16vw,12rem)] leading-none tracking-tight";
+  "text-[clamp(3.75rem,14.5vw,10.5rem)] leading-none tracking-tight";
 const labelClass =
   "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
 
@@ -28,7 +28,7 @@ export function TimeDisplay({ ms }: Props) {
       aria-live="polite"
       aria-atomic="true"
       className="flex flex-col items-center select-none text-foreground"
-      style={{ fontFamily: "'Poppins', sans-serif", fontVariantNumeric: "tabular-nums" }}
+      style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
       <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
         <div className="flex flex-col items-center">

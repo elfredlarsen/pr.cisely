@@ -96,16 +96,13 @@
 }
 
 .scrollbar-purple {
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: transparent transparent;
   transition: scrollbar-color 0.2s ease;
 }
-.scrollbar-purple:hover {
-  scrollbar-color: #c471ed transparent;
-}
 .scrollbar-purple::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 0;
+  height: 0;
 }
 .scrollbar-purple::-webkit-scrollbar-track {
   background: transparent;
@@ -115,9 +112,53 @@
   border-radius: 9999px;
   transition: background-color 0.2s ease;
 }
+.scrollbar-purple:hover {
+  scrollbar-width: thin;
+  scrollbar-color: #c471ed transparent;
+}
+.scrollbar-purple:hover::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 .scrollbar-purple:hover::-webkit-scrollbar-thumb {
   background-color: #c471ed;
 }
 .scrollbar-purple::-webkit-scrollbar-thumb:hover {
   background-color: #b35ee0;
+}
+
+/* Brand gradient (pr:cisely) */
+:root {
+  --gradient-brand: linear-gradient(135deg, #f64f59, #c471ed, #12c2e9);
+}
+
+/* TopNav active/hover underline */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #c471ed, #12c2e9);
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+.nav-link:hover::after {
+  opacity: 0.35;
+  transform: scaleX(0.7);
+}
+.nav-link[data-active="true"]::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.font-poppins {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
