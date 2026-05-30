@@ -22,6 +22,7 @@ import {
   setLastCategory,
   type Category,
 } from "@/lib/categories";
+import { useActiveCategories } from "@/hooks/use-active-categories";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
 type Props = {
