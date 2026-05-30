@@ -17,7 +17,7 @@ async function assertAdmin(supabase: SupabaseClient, userId: string) {
     _user_id: userId,
     _role: "administrator",
   });
-  if (error) throw new Error(error.message);
+  if (error) dbError("categories", error);
   if (!isAdmin) throw new Error("Forbidden: administrator role required");
 }
 
@@ -39,7 +39,7 @@ export const listCategories = createServerFn({ method: "GET" })
       .from("categories")
       .select("id, value, label, sort_order, hidden")
       .order("sort_order", { ascending: true });
-    if (error) throw new Error(error.message);
+    if (error) dbError("categories", error);
     return data ?? [];
   });
 
@@ -66,7 +66,7 @@ export const updateCategory = createServerFn({ method: "POST" })
       .from("categories")
       .update(patch)
       .eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) dbError("categories", error);
     return { ok: true };
   });
 
@@ -111,7 +111,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .insert({ value, label, sort_order: nextOrder, hidden: false })
       .select("id, value, label, sort_order, hidden")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) dbError("categories", error);
     return inserted as CategoryRow;
   });
 
@@ -128,6 +128,6 @@ export const deleteCategory = createServerFn({ method: "POST" })
       .from("categories")
       .delete()
       .eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) dbError("categories", error);
     return { ok: true };
   });
