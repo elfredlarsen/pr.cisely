@@ -66,8 +66,8 @@ function Index() {
             resetKey={resetKey}
           />
           {pending && (
-            <div className="pointer-events-none absolute inset-x-0 top-full z-20 flex justify-center">
-              <div className="pointer-events-auto -mt-2">
+            <div className="pointer-events-none absolute inset-x-0 bottom-12 z-20 flex justify-center">
+              <div className="pointer-events-auto">
                 <FinishPanel
                   startedAt={pending.startedAt}
                   endedAt={pending.endedAt}

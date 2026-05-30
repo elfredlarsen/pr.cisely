@@ -1,19 +1,15 @@
 ## Plan
 
-### 1. Sortering: historikken skal vise seneste først
-Fil: `src/components/measurements/MeasurementsList.tsx`
+`Gem registrering`-dialogen (FinishPanel) er i dag positioneret under stopur-sektionen (`top-full`), så den lander under stopurets knapper. Brugeren vil have den vist henover knapperne i stedet.
 
-- Ændr standard-sortering så den respekterer `sortable`-prop'en. Initial state bliver:
-  - `sortable === true` (Oversigt): `{ field: "start", dir: "asc" }` — uændret.
-  - `sortable === false` (Historik): `{ field: "start", dir: "desc" }` — seneste registrering øverst.
+### Ændring
+Fil: `src/routes/index.tsx`
 
-### 2. Header ser for lav ud
-Fil: `src/components/measurements/MeasurementsList.tsx`
+- I wrapper-div'en omkring `<FinishPanel>` ændres positioneringen fra `top-full` (under sektionen) til `bottom-12` (oven på knappernes område, matchende stopurets `py-12`-padding).
+- Fjern `-mt-2` på det indre div og brug i stedet et lille mellemrum opad fra knapperne (intet ekstra margin nødvendigt — `bottom-12` placerer panelet lige over knapperne).
+- Behold `pointer-events-none` på wrapperen og `pointer-events-auto` på det indre div, så klik kun fanges af selve panelet.
+- Behold `z-20` så panelet ligger over knapperne.
 
-- I `<TableHeader>` bruges `h-8 py-1` på `<TableHead>`-cellerne, hvilket gør headeren markant lavere (32px) end shadcn-standarden (40px) og lavere end body-rækkerne (slet-knappen er `h-9`). Det får headeren til at virke klemt — især når den er sticky.
-- Forhøj header-cellerne til `h-10` og opdater `py-1` til `py-2` så headeren får samme visuelle vægt som body-rækkerne i begge tabeller (Historik + Oversigt).
-- Behold `text-[11px]` typografi, sticky/baggrundsklasser og bredder uændret.
-
-### 3. Verificering
-- Tjek `/`: nyeste registrering vises øverst, header virker visuelt afbalanceret.
-- Tjek `/arkiv`: header har samme højde, sortering virker stadig efter klik på kolonneoverskrifter.
+### Verificering
+- Tryk Afslut på `/`: panelet skal nu vises hen over (oven på) Start/Pause/Afslut-knapperne — ikke under dem.
+- Bekræft at Annuller/Gem stadig virker og at klik uden for panelet ikke aktiverer de underliggende (dæmpede) knapper.
