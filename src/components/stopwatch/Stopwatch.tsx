@@ -107,6 +107,21 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
+  const clockRef = useRef<HTMLDivElement | null>(null);
+  const [clockWidth, setClockWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!clockRef.current) return;
+    const el = clockRef.current;
+    const update = () => {
+      const inner = el.firstElementChild as HTMLElement | null;
+      setClockWidth(inner ? inner.getBoundingClientRect().width : el.getBoundingClientRect().width);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (state.status !== "running") {
