@@ -494,7 +494,8 @@ export function MeasurementsList({
                             <Button
                               type="button"
                               variant="ghost"
-                              className="h-9 w-16 px-0 py-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                              style={{ width: 64, height: 36, padding: 0 }}
+                              className="text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
                               aria-label="Slet registrering"
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />
