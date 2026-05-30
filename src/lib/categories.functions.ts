@@ -109,7 +109,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .order("sort_order", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (maxErr) throw new Error(maxErr.message);
+    if (maxErr) dbError("categories.create", maxErr);
     const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
     const { data: inserted, error } = await supabase
