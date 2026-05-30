@@ -229,7 +229,6 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
             style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
             className={`flex flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
           >
-          >
             {state.status === "idle" && (
               <ShortcutTooltip label="Start" shortcut="Mellemrum">
                 <button
