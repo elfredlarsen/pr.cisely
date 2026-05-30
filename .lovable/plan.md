@@ -1,29 +1,27 @@
-## Ændringer
+## Problem
 
-### 1. Tabel tættere på knapperne
+Hele historik-kortet ligger i en ydre scroll-container, så når listen er lang scroller hele kortet (med "Historik"-bjælken og tabelheaderen) i stedet for kun rækkerne. Du vil have "Historik"-bjælken og tabelheaderen fastlåst og kun rækkerne scrollende.
 
-I `src/routes/index.tsx`: skift wrapperens `pt-6` til `pt-2` (behold `pb-8`) så historik-kortet rykker tæt op under Start/Afslut-knapperne.
+## Løsning
 
-### 2. Scrollbar skal kun vises ved hover
+I `src/components/stopwatch/MeasurementsTable.tsx`:
 
-I `src/styles.css` reserverer `.scrollbar-purple::-webkit-scrollbar { width: 6px }` altid 6px gutter, så på browsere/OS hvor scrollbar-tracket vises (Chrome på Windows, macOS med "Always show"), ses der hele tiden en tom 6px-stribe. Fix: gør scrollbaren fuldstændig skjult som default og vis den først ved hover på containeren.
+- Lad `section` og selve `Collapsible`-kortet fylde hele højden (`h-full min-h-0 flex flex-col`) i stedet for at lægge kortet i en scrollende wrapper.
+- Fjern `overflow-y-auto` og `scrollbar-purple` fra den ydre wrapper.
+- Flyt scroll-containeren ind i `CollapsibleContent`: wrap `MeasurementsList` i `<div className="scrollbar-purple flex-1 min-h-0 overflow-y-auto border-t border-border px-2 pb-2">`.
+- Giv `CollapsibleContent` `data-[state=open]:flex-1 data-[state=open]:min-h-0 data-[state=open]:flex data-[state=open]:flex-col` så den udvider sig til den resterende plads når den er åben.
+- Fjern det tidligere `!overflow-visible` workaround — sticky table-header virker nu inde i den nye indre scroll-container.
+- Tom-tilstand beholder samme look; bare ingen scroll nødvendig.
 
-```css
-.scrollbar-purple { scrollbar-width: none; }
-.scrollbar-purple::-webkit-scrollbar { width: 0; height: 0; }
+## Konsekvenser
 
-.scrollbar-purple:hover { scrollbar-width: thin; scrollbar-color: #c471ed transparent; }
-.scrollbar-purple:hover::-webkit-scrollbar { width: 6px; height: 6px; }
-.scrollbar-purple:hover::-webkit-scrollbar-thumb {
-  background-color: #c471ed;
-  border-radius: 9999px;
-}
-.scrollbar-purple:hover::-webkit-scrollbar-thumb:hover { background-color: #b35ee0; }
-.scrollbar-purple::-webkit-scrollbar-track { background: transparent; }
-```
+- "Historik"-trigger-bjælken bliver stående øverst i kortet — den scroller ikke længere ud af syne.
+- Tabel-headeren (Start / Slut / Varighed / Kategori) bliver stående via `sticky top-0` i den nye scroll-container.
+- Kun rækkerne scroller.
+- Radix' åbn/luk-højdeanimation deaktiveres for dette kort (vi tvinger højden til flex-1 når åben), så det folder ud/ind uden glat animation — men uden hop.
 
 ## Verifikation
 
-- `/`: historik-kortet sidder tættere på knapperne.
-- Ingen synlig scrollbar i historikken ved indlæsning; hover over listen viser den lilla scrollbar.
-- Scroll-funktionalitet virker stadig.
+- `/` med mange målinger: "Historik"-bjælken og kolonneoverskrifterne står stille; kun rækkerne scroller.
+- Fold ind/ud virker stadig; ingen visuelt hop.
+- Scrollbar er stadig skjult indtil hover.

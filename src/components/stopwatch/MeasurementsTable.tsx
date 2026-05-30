@@ -53,9 +53,9 @@ export function MeasurementsTable({
   return (
     <section
       aria-label="Seneste registreringer"
-      className="flex h-full w-full flex-col"
+      className="flex h-full w-full min-h-0 flex-col"
     >
-      <div className="scrollbar-purple mx-auto w-full max-w-3xl flex-1 overflow-y-auto px-4 pb-3 pt-2">
+      <div className="mx-auto flex h-full w-full min-h-0 max-w-3xl flex-col px-4 pb-3 pt-2">
         {measurements.length === 0 ? (
           <div className="rounded-lg border border-border bg-card">
             <p className="py-6 text-center text-xs text-muted-foreground/80">
@@ -66,12 +66,12 @@ export function MeasurementsTable({
           <Collapsible
             open={open}
             onOpenChange={handleOpenChange}
-            className="rounded-lg border border-border bg-card"
+            className="flex min-h-0 flex-col rounded-lg border border-border bg-card data-[state=open]:h-full"
           >
             <CollapsibleTrigger asChild>
               <button
                 type="button"
-                className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-4 py-2 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="flex min-h-11 w-full shrink-0 items-center justify-between gap-3 rounded-lg px-4 py-2 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <span className="flex items-center gap-2">
                   <ChevronRight
@@ -91,8 +91,8 @@ export function MeasurementsTable({
                 </span>
               </button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="!overflow-visible">
-              <div className="border-t border-border px-2 pb-2">
+            <CollapsibleContent className="data-[state=open]:flex data-[state=open]:min-h-0 data-[state=open]:flex-1 data-[state=open]:flex-col">
+              <div className="scrollbar-purple flex-1 min-h-0 overflow-y-auto border-t border-border px-2 pb-2">
                 <MeasurementsList
                   items={measurements}
                   onUpdate={onUpdate}
