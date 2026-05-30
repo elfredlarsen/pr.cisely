@@ -55,7 +55,7 @@ export function MeasurementsTable({
       aria-label="Seneste registreringer"
       className="flex h-full w-full min-h-0 flex-col"
     >
-      <div className="mx-auto flex h-full w-full min-h-0 max-w-3xl flex-col px-4 pb-3 pt-2">
+      <div className="mx-auto flex h-full w-full min-h-0 max-w-5xl flex-col px-4 pb-3 pt-2">
         {measurements.length === 0 ? (
           <div className="rounded-lg border border-border bg-card">
             <p className="py-6 text-center text-xs text-muted-foreground/80">
