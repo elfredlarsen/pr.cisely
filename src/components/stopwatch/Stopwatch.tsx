@@ -193,13 +193,13 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     <section
       aria-labelledby="stopur-overskrift"
       aria-hidden={finishOpen || undefined}
-      className={`flex w-full flex-col items-center justify-center px-6 py-8 ${finishOpen ? "pointer-events-none" : ""}`}
+      className={`flex w-full flex-col items-center justify-center py-8 ${finishOpen ? "pointer-events-none" : ""}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
       </h1>
 
-      <div className="flex w-[36rem] max-w-full flex-col items-stretch gap-8">
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-stretch gap-8 px-4">
         <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
           <TimeDisplay ms={displayMs} />
         </div>
