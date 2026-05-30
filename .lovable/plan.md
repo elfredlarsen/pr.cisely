@@ -1,27 +1,30 @@
-Audit af alle ikon-knapper i appen viser at de har korrekte `aria-label`, men mangler visuelle hover-tooltips. Stopuret har dem allerede via `ShortcutTooltip`. Jeg tilføjer simple hover-tooltips på de resterende ikon-knapper.
+Standardisér tooltips på tværs af appen — ensartet stil, placering, delay og tekstkonvention.
 
-**Mangler tooltips:**
+**Konvention**
 
-1. `src/components/measurements/MeasurementsList.tsx`
-   - Kommentar-toggle (linje ~465) → "Vis/skjul kommentar"
-   - Slet registrering (linje ~488) → "Slet"
-   - OK i kommentar-editor (linje ~548) → "Gem (Enter)"
-   - Annuller i kommentar-editor (linje ~562) → "Annuller (Esc)"
+- **Placering:** altid `side="top"`, `sideOffset={6}`.
+- **Delay:** `delayDuration={400}` overalt.
+- **Stil:** samme klasser — `rounded border border-border/30 bg-background/80 px-2 py-0.5 text-[11px] text-muted-foreground shadow-none backdrop-blur-sm`.
+- **Tekst:** imperativ verbum + objekt, ingen punktum (fx "Slet registrering", "Omdøb kategori", "Forrige dag"). Holde det kort men beskrivende — undgå rene enkeltord når kontekst er nyttig.
+- **Tastatur-shortcut:** vises som lille `<kbd>` efter teksten i samme tooltip.
 
-2. `src/components/oversigt/DateNavigator.tsx`
-   - Forrige dag (linje 45) → "Forrige dag"
-   - Næste dag (linje 88) → "Næste dag"
+**Refactor**
 
-3. `src/routes/_authenticated/admin.tsx`
-   - Omdøb kategori (linje 247) → "Omdøb"
-   - Slet kategori (linje 261) → "Slet"
+1. Udvid `src/components/ui/icon-tooltip.tsx` til at acceptere optional `shortcut?: string`. Når sat, rendres label + en `<kbd>`-chip identisk med stopurets nuværende stil.
+2. Erstat `ShortcutTooltip` i `src/components/stopwatch/Stopwatch.tsx` med `IconTooltip` så de bruger samme komponent og stil. Fjern den lokale `TooltipProvider` (IconTooltip leverer sin egen).
 
-4. `src/components/indstillinger/ChangePasswordForm.tsx`
-   - Vis/skjul adgangskode (linje 71) → "Vis/Skjul adgangskode"
+**Tekst-justering**
 
-**Implementering:**
-- Wrap hver ikon-knap i `<Tooltip><TooltipTrigger asChild>...</TooltipTrigger><TooltipContent>...</TooltipContent></Tooltip>`.
-- Sørg for at filerne ligger inden for en `TooltipProvider`. Tilføj en `TooltipProvider` lokalt omkring sektioner der ikke allerede har én (MeasurementsList, DateNavigator, admin kategori-række, ChangePasswordForm-input).
-- Tooltip-styling: discrete, matche samme stil som ShortcutTooltip i stopuret (lille, baggrund/blur, muted tekst) — bruger standard `TooltipContent` med default delay.
+- `src/components/measurements/MeasurementsList.tsx`
+  - "Vis/Skjul kommentar" → bevares ("Vis kommentar" / "Skjul kommentar")
+  - "Slet" → "Slet registrering"
+  - "Gem (Enter)" → label "Gem", shortcut `Enter`
+  - "Annuller (Esc)" → label "Annuller", shortcut `Esc`
+- `src/routes/_authenticated/admin.tsx`
+  - "Omdøb" → "Omdøb kategori"
+  - "Slet" → "Slet kategori"
+- `src/components/oversigt/DateNavigator.tsx` — bevares ("Forrige dag", "Næste dag").
+- `src/components/indstillinger/ChangePasswordForm.tsx` — bevares ("Vis adgangskode" / "Skjul adgangskode").
+- Stopur (efter refactor): label `Start`/`Pause`/`Fortsæt`/`Nulstil`/`Afslut` + shortcuts (Mellemrum/N/A).
 
-Ingen ændringer i funktionalitet eller knaplayout.
+Ingen ændringer i funktionalitet.
