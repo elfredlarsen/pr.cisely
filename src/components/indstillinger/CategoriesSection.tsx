@@ -89,13 +89,13 @@ export function CategoriesSection() {
       {canScrollUp && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-md bg-gradient-to-b from-card to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-10 rounded-t-md bg-gradient-to-b from-card to-transparent"
         />
       )}
       {canScrollDown && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-6 rounded-b-md bg-gradient-to-t from-card to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-md bg-gradient-to-t from-card to-transparent"
         />
       )}
     </div>
