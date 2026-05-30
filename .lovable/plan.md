@@ -1,10 +1,8 @@
-Justeringer i `src/components/stopwatch/Stopwatch.tsx`:
+Knapperækken skal aldrig være bredere end urets faktiske visuelle bredde (kanten af første "0" til kanten af sidste ciffer).
 
-1. **Samme start/slut for ur og knapper**: Wrap knapperækken i en indre container med samme bredde som tidsvisningen, og brug `justify-between` så første og sidste knap flugter med urets venstre/højre kant. Når der kun er én knap (idle-state), bruges `justify-center` så Start-knappen ikke sidder klistret i venstre side.
+**Løsning** i `src/components/stopwatch/Stopwatch.tsx`:
+- Tilføj en `ref` på `TimeDisplay`-wrapperen og mål dens faktiske bredde med `ResizeObserver`.
+- Sæt knapperækkens `maxWidth` til den målte bredde via inline style, og behold `mx-auto justify-between` så de tre knapper fordeles inden for præcis den bredde.
+- Når der kun er én knap (idle), bruges `justify-center` så Start-knappen står midt under uret.
 
-2. **Lidt større elementer**:
-   - Knapper (`baseBtn`): `h-12 w-40 text-lg` → `h-14 w-44 text-xl`, ikoner `h-6 w-6` → `h-7 w-7`.
-   - Container `max-w-2xl` → `max-w-3xl` så uret og knaprækken matcher tabellens bredde bedre.
-   - TimeDisplay forstørres en anelse via dens egen tekststørrelse (tjekker filen og bumper én tier op, fx `text-7xl` → `text-8xl`).
-
-Ingen ændringer i logik, keyboard shortcuts eller funktionalitet.
+Ingen ændringer i `TimeDisplay`, knapstørrelser eller funktionalitet.

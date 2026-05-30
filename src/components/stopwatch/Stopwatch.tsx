@@ -107,6 +107,21 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
+  const clockRef = useRef<HTMLDivElement | null>(null);
+  const [clockWidth, setClockWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!clockRef.current) return;
+    const el = clockRef.current;
+    const update = () => {
+      const inner = el.firstElementChild as HTMLElement | null;
+      setClockWidth(inner ? inner.getBoundingClientRect().width : el.getBoundingClientRect().width);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (state.status !== "running") {
@@ -199,8 +214,11 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
         Stopur
       </h1>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-col items-stretch gap-6 px-4">
-        <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 px-4">
+        <div
+          ref={clockRef}
+          className={`flex w-full justify-center transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}
+        >
           <TimeDisplay ms={displayMs} />
         </div>
 
@@ -208,7 +226,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
           <div
             role="group"
             aria-label="Stopur-kontroller"
-            className={`flex w-full flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
+            style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
+            className={`flex flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
           >
             {state.status === "idle" && (
               <ShortcutTooltip label="Start" shortcut="Mellemrum">
