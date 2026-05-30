@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Pencil } from "lucide-react";
 
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
@@ -73,10 +73,10 @@ function AdminContent() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
         <h1 className="sr-only">Administrator</h1>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <section
             aria-labelledby="kategorier-admin-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
+            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:col-start-2 lg:max-w-none"
           >
             <header className="mb-6 text-center">
               <h2 id="kategorier-admin-heading" className="text-lg font-semibold">
@@ -89,23 +89,6 @@ function AdminContent() {
 
             <div className="mx-auto max-w-md">
               <CategoriesAdminList />
-            </div>
-          </section>
-
-          <section
-            aria-labelledby="tilfoej-kategori-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
-          >
-            <header className="mb-6 text-center">
-              <h2 id="tilfoej-kategori-heading" className="text-lg font-semibold">
-                Tilføj kategori
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Opret en ny kategori. Den bliver tilgængelig for alle brugere.
-              </p>
-            </header>
-
-            <div className="mx-auto max-w-md">
               <AddCategoryForm />
             </div>
           </section>
@@ -117,6 +100,27 @@ function AdminContent() {
 
 function CategoriesAdminList() {
   const { data: categories, isLoading } = useCategories();
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
+
+  const sorted = [...(categories ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+
+  useLayoutEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollUp(el.scrollTop > 0);
+      setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [sorted.length]);
 
   if (isLoading) {
     return (
@@ -128,44 +132,66 @@ function CategoriesAdminList() {
     );
   }
 
-  const sorted = [...(categories ?? [])].sort((a, b) => a.sort_order - b.sort_order);
-
   if (sorted.length === 0) {
     return (
       <p className="rounded-md border border-border p-4 text-center text-sm text-muted-foreground">
-        Ingen kategorier endnu. Tilføj den første til højre.
+        Ingen kategorier endnu. Tilføj den første nedenfor.
       </p>
     );
   }
 
   return (
-    <ul className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border">
-      {sorted.map((c) => (
-        <CategoryAdminRow key={c.id} row={c} />
-      ))}
-    </ul>
+    <div className="relative">
+      <ul
+        ref={listRef}
+        className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border"
+      >
+        {sorted.map((c) => (
+          <CategoryAdminRow key={c.id} row={c} />
+        ))}
+      </ul>
+      {canScrollUp && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-10 rounded-t-md bg-gradient-to-b from-card to-transparent"
+        />
+      )}
+      {canScrollDown && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-md bg-gradient-to-t from-card to-transparent"
+        />
+      )}
+    </div>
   );
 }
 
 function CategoryAdminRow({ row }: { row: CategoryRow }) {
+  const [editing, setEditing] = useState(false);
   const [label, setLabel] = useState(row.label);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const queryClient = useQueryClient();
   const update = useServerFn(updateCategory);
   const remove = useServerFn(deleteCategory);
-  const dirty = label.trim() !== row.label && label.trim().length > 0;
 
-  const saveLabel = async () => {
-    if (!dirty) return;
+  const commit = async () => {
+    const trimmed = label.trim();
+    if (!trimmed || trimmed === row.label) {
+      setLabel(row.label);
+      setEditing(false);
+      return;
+    }
     setSaving(true);
     try {
-      await update({ data: { id: row.id, label: label.trim() } });
+      await update({ data: { id: row.id, label: trimmed } });
       await queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Navn opdateret");
+      setEditing(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Kunne ikke gemme");
       setLabel(row.label);
+      setEditing(false);
     } finally {
       setSaving(false);
     }
@@ -185,69 +211,85 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
   };
 
   return (
-    <li className="flex min-h-11 items-center gap-2 px-3 py-2">
-      <Input
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        onBlur={saveLabel}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            (e.target as HTMLInputElement).blur();
-          }
-          if (e.key === "Escape") {
-            setLabel(row.label);
-            (e.target as HTMLInputElement).blur();
-          }
-        }}
-        disabled={saving || deleting}
-        maxLength={80}
-        className="h-9 flex-1"
-        aria-label={`Navn for kategorien ${row.value}`}
-      />
-      {dirty && (
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={saveLabel}
+    <li className="flex min-h-11 items-center justify-between gap-4 px-4 py-2">
+      {editing ? (
+        <Input
+          autoFocus
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              (e.target as HTMLInputElement).blur();
+            }
+            if (e.key === "Escape") {
+              setLabel(row.label);
+              setEditing(false);
+            }
+          }}
           disabled={saving}
+          maxLength={80}
+          className="h-8 flex-1"
+          aria-label={`Navn for kategorien ${row.value}`}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="flex-1 cursor-text truncate text-left text-sm font-normal"
+          aria-label={`Rediger ${row.label}`}
         >
-          Gem
-        </Button>
+          {row.label}
+        </button>
       )}
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
+      <div className="flex shrink-0 items-center gap-1">
+        {!editing && (
           <Button
             type="button"
             size="icon"
             variant="ghost"
-            className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+            onClick={() => setEditing(true)}
             disabled={saving || deleting}
-            aria-label={`Slet ${row.label}`}
+            className="h-8 w-8 text-muted-foreground"
+            aria-label={`Omdøb ${row.label}`}
           >
-            <Trash2 className="h-4 w-4" />
+            <Pencil className="h-3.5 w-3.5" />
           </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Slet kategorien "{row.label}"?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Historiske registreringer berøres ikke. Kategorien forsvinder blot
-              fra dropdowns ved nye registreringer.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annullér</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        )}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              disabled={saving || deleting || editing}
+              aria-label={`Slet ${row.label}`}
             >
-              Slet
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Slet kategorien "{row.label}"?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Historiske registreringer berøres ikke. Kategorien forsvinder blot
+                fra dropdowns ved nye registreringer.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annullér</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Slet
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </li>
   );
 }
@@ -276,7 +318,10 @@ function AddCategoryForm() {
   };
 
   return (
-    <form onSubmit={submit} className="flex items-center gap-2">
+    <form
+      onSubmit={submit}
+      className="mt-4 flex items-center gap-2 border-t border-border pt-4"
+    >
       <Input
         value={label}
         onChange={(e) => setLabel(e.target.value)}
