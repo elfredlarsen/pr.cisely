@@ -73,26 +73,25 @@ function AdminContent() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
         <h1 className="sr-only">Administrator</h1>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <section
-            aria-labelledby="kategorier-admin-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:col-start-2 lg:max-w-none"
-          >
-            <header className="mb-6 text-center">
-              <h2 id="kategorier-admin-heading" className="text-lg font-semibold">
-                Kategorier
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Omdøb eller slet kategorier. Historiske registreringer berøres ikke.
-              </p>
-            </header>
+        <section
+          aria-labelledby="kategorier-admin-heading"
+          className="mx-auto w-full max-w-2xl rounded-lg border border-border bg-card p-6"
+        >
+          <header className="mb-6 text-center">
+            <h2 id="kategorier-admin-heading" className="text-lg font-semibold">
+              Kategorier
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Omdøb eller slet kategorier. Historiske registreringer berøres ikke.
+            </p>
+          </header>
 
-            <div className="mx-auto max-w-md">
-              <CategoriesAdminList />
-              <AddCategoryForm />
-            </div>
-          </section>
-        </div>
+          <div>
+            <CategoriesAdminList />
+            <AddCategoryForm />
+          </div>
+        </section>
+
       </main>
     </div>
   );
