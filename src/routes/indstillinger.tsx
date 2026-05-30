@@ -51,6 +51,24 @@ function IndstillingerPage() {
         </section>
 
         <section
+          aria-labelledby="kategorier-heading"
+          className="mt-6 rounded-lg border border-border bg-card p-6"
+        >
+          <header className="mb-6 text-center">
+            <h2 id="kategorier-heading" className="text-lg font-semibold">
+              Kategorier
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Vælg hvilke kategorier der vises, når du gemmer en registrering.
+            </p>
+          </header>
+
+          <div className="mx-auto max-w-md">
+            <CategoriesSection />
+          </div>
+        </section>
+
+        <section
           aria-labelledby="mine-data-heading"
           className="mt-6 rounded-lg border border-border bg-card p-6"
         >
