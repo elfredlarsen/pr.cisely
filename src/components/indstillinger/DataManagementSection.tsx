@@ -95,34 +95,36 @@ export function DataManagementSection() {
         </p>
       </div>
 
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button
-            type="button"
-            variant="destructive"
-            className="min-h-11 px-5 font-semibold"
-          >
-            Slet al historik
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Denne handling kan ikke fortrydes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuller</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAll}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      <div className="flex justify-center">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              type="button"
+              variant="destructive"
+              className="min-h-11 px-5 font-semibold"
             >
-              Slet alt
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              Slet al historik
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Denne handling kan ikke fortrydes.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuller</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAll}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Slet alt
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }
