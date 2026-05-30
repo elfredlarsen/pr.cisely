@@ -1,8 +1,13 @@
-Gør de tre stopur-knapper bredere, så afstanden mellem dem bliver mindre.
+Tilføj OK- og Annuller-knapper ved redigering af kommentar i tabellerne.
 
-**Ændring** i `src/components/stopwatch/Stopwatch.tsx` (`baseBtn`, linje 67-68):
-- `w-44` → `w-56` (knapper bliver bredere og fylder mere af urets bredde).
-- `h-14` bevares.
-- `justify-between` bevares, så første/sidste knap stadig flugter med urets venstre/højre kant.
+**Ændring** i `src/components/measurements/MeasurementsList.tsx` (linje 524-549, kommentar-redigeringsfeltet):
 
-Ingen ændringer i farver, ikoner eller funktionalitet.
+- Wrap input + nye knapper i en `flex items-center gap-2`.
+- Fjern `onBlur`-gemning (så klik på Annuller ikke trigger gem).
+- Tilføj to små knapper efter inputtet:
+  - **OK** (primary/default variant) → gemmer trimmet værdi via `onUpdate` og lukker editor.
+  - **Annuller** (ghost/outline variant) → sætter `setCommentEdit(null)` uden at gemme.
+- Behold tastatur-shortcuts: Enter = OK, Escape = Annuller.
+- Brug eksisterende `Check` og `X` ikoner fra lucide-react (eller blot tekst-knapper) — holdes diskrete så de matcher tabellens tætte stil.
+
+Ingen ændringer i datamodel eller andre kolonner.
