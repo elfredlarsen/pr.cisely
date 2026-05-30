@@ -143,7 +143,7 @@ export function ChangePasswordForm() {
           onToggle={() => setShowConfirm((v) => !v)}
         />
 
-        <div className="pt-2">
+        <div className="flex justify-center pt-2">
           <Button
             type="submit"
             disabled={form.formState.isSubmitting}

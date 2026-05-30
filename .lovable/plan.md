@@ -1,11 +1,10 @@
-## Ændring
-I `src/components/indstillinger/CategoriesSection.tsx`: Øg højden på top- og bund-fade-overlays fra `h-6` (24px) til `h-10` (40px), så den delvist synlige række fader markant ud mod kortets baggrund og scroll-hintet bliver tydeligere.
+## Ændringer
 
-- Top: `h-6` → `h-10`
-- Bund: `h-6` → `h-10`
+### `src/components/indstillinger/ChangePasswordForm.tsx`
+- Wrap "Gem adgangskode"-knappen i `<div className="flex justify-center">`, så den centreres i bunden af formularen.
 
-Ingen anden adfærd ændres — gradienterne vises stadig kun når der faktisk er noget at scrolle til.
+### `src/components/indstillinger/DataManagementSection.tsx`
+- Wrap "Slet al historik"-AlertDialog-triggeren i `<div className="flex justify-center">`, så knappen centreres på samme måde.
 
 ## Verifikation
-- På `/indstillinger`: den 8. række ("Selvstændig erhvervsdrivende") fader nu kraftigere ud i bunden af listen.
-- Scroll til bunden → bund-fade forsvinder. Scroll tilbage → top-fade dukker op med samme styrke.
+- `/indstillinger`: begge knapper står centreret under deres respektive formularblok i `max-w-md`-containeren.
