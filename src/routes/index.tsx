@@ -88,7 +88,7 @@ function Index() {
           title="Gem registrering"
         />
 
-        <div className="min-h-0 flex-1 pt-12">
+        <div className="flex min-h-0 flex-1 items-center justify-center px-6 py-10">
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}

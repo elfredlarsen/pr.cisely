@@ -1,18 +1,26 @@
 ## Problem
 
-Tabel-headeren ("Start / Slut / Varighed / Kategori") i historikken på stopursforsiden er ikke længere sticky, når man scroller i listen.
-
-Årsag: Tabellen er wrappet i Radix `CollapsibleContent`, som sætter `overflow: hidden` (inline). `position: sticky` virker ikke, når en mellemliggende forfader har `overflow: hidden` — den klippes væk i stedet for at flyde over toppen af scroll-containeren.
+Historik-tabellen på forsiden ligger klistret op til Start/Afslut-knapperne (kun `pt-12` over) og strækker sig helt til bunden, så der ikke er luft under den. Du vil have den centreret vertikalt i pladsen mellem knapperne og den synlige bund af viewporten, med større afstand til alle kanter.
 
 ## Løsning
 
+I `src/routes/index.tsx`:
+
+- Skift wrapperen om `<MeasurementsTable>` fra `min-h-0 flex-1 pt-12` til en flex-container, der centrerer barnet vertikalt og giver lige meget luft top/bund samt sider, fx `min-h-0 flex-1 flex items-center justify-center px-6 py-10`.
+
 I `src/components/stopwatch/MeasurementsTable.tsx`:
 
-- Tilføj `!overflow-visible` til `CollapsibleContent` (overskriver Radix' inline `overflow: hidden`), så `sticky` virker op til den ydre scroll-container (`overflow-y-auto` div'en).
+- Fjern `h-full` på `<section>` og `flex-1` på den indre scroll-container, så kortet får sin naturlige højde (men beholder `max-h` så det stadig kan scrolle hvis listen bliver lang). Konkret: `flex w-full flex-col` på section, og `max-h-full` i stedet for `flex-1` på scroll-div'en.
 
-Ingen ændringer i `MeasurementsList.tsx` — den har allerede `stickyHeader` korrekt sat.
+Dette gør at:
+- Kortet kun fylder den højde dets indhold kræver, op til den tilgængelige plads.
+- Flex-containerens `items-center` centrerer det vertikalt mellem knapperne og bunden.
+- `px-6`/`py-10` giver luft til kanterne.
+
+Sticky header virker stadig, fordi scroll-containeren beholder `overflow-y-auto` og `!overflow-visible` på `CollapsibleContent` er uændret.
 
 ## Verifikation
 
-- Åbn `/`, opret nogle målinger, scroll i historik-listen og bekræft at tabel-header bliver klistret til toppen af kort-området.
-- Bekræft at åbn/luk-animationen på Collapsible stadig fungerer pænt.
+- Åbn `/`, bekræft at historik-kortet er vertikalt centreret mellem knap-området og bunden af siden med tydelig luft.
+- Bekræft at lang liste stadig scroller inde i kortet med sticky header.
+- Bekræft at tomt-tilstand ("Ingen registreringer endnu i dag") også er centreret.
