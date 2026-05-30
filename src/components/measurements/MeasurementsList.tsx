@@ -49,6 +49,8 @@ type Props = {
   stickyHeader?: boolean;
   /** Optional handlers for the header row (used by Stopur for tooltip). */
   headerRowProps?: React.HTMLAttributes<HTMLTableRowElement>;
+  /** Allow sorting by clicking column headers. Defaults to true. */
+  sortable?: boolean;
 };
 
 type EditField = "start" | "end" | "duration";
