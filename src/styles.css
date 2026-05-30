@@ -96,16 +96,13 @@
 }
 
 .scrollbar-purple {
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: transparent transparent;
   transition: scrollbar-color 0.2s ease;
 }
-.scrollbar-purple:hover {
-  scrollbar-color: #c471ed transparent;
-}
 .scrollbar-purple::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 0;
+  height: 0;
 }
 .scrollbar-purple::-webkit-scrollbar-track {
   background: transparent;
@@ -114,6 +111,14 @@
   background-color: transparent;
   border-radius: 9999px;
   transition: background-color 0.2s ease;
+}
+.scrollbar-purple:hover {
+  scrollbar-width: thin;
+  scrollbar-color: #c471ed transparent;
+}
+.scrollbar-purple:hover::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 .scrollbar-purple:hover::-webkit-scrollbar-thumb {
   background-color: #c471ed;
