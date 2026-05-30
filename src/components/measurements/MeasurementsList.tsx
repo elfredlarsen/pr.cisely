@@ -587,6 +587,12 @@ export function MeasurementsList({
                     pendingCategoryChange.to !== "andet"
                   ) {
                     patch.comment = undefined;
+                    setExpandedComments((prev) => {
+                      if (!prev.has(pendingCategoryChange.id)) return prev;
+                      const next = new Set(prev);
+                      next.delete(pendingCategoryChange.id);
+                      return next;
+                    });
                   }
                   onUpdate(pendingCategoryChange.id, patch);
                 }
