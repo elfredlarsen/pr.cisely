@@ -260,8 +260,8 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
           </IconTooltip>
         )}
         <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <IconTooltip label="Slet">
+          <IconTooltip label="Slet">
+            <AlertDialogTrigger asChild>
               <Button
                 type="button"
                 size="icon"
@@ -272,8 +272,8 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
-            </IconTooltip>
-          </AlertDialogTrigger>
+            </AlertDialogTrigger>
+          </IconTooltip>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Slet kategorien "{row.label}"?</AlertDialogTitle>
