@@ -1,9 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronsDownUp, ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useMeasurements, type Measurement } from "@/hooks/use-measurements";
 import { CATEGORIES, type Category } from "@/lib/categories";
 import { DateNavigator } from "@/components/oversigt/DateNavigator";
@@ -42,7 +53,7 @@ function isSameDay(a: Date, b: Date): boolean {
 }
 
 function OversigtPage() {
-  const { measurements, add, update, remove } = useMeasurements();
+  const { measurements, add, update, remove, removeAllToday, removeAll } = useMeasurements();
   const [date, setDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -166,22 +177,94 @@ function OversigtPage() {
             format={format}
             onFormatChange={handleFormatChange}
             leftSlot={
-              visibleCategories.length > 0 ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleAll}
-                  className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
-                >
-                  {allOpen ? (
-                    <ChevronsDownUp className="h-3.5 w-3.5" aria-hidden="true" />
-                  ) : (
-                    <ChevronsUpDown className="h-3.5 w-3.5" aria-hidden="true" />
-                  )}
-                  {allOpen ? "Fold alle ind" : "Fold alle ud"}
-                </Button>
-              ) : null
+              <>
+                {visibleCategories.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleAll}
+                    className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
+                  >
+                    {allOpen ? (
+                      <ChevronsDownUp className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <ChevronsUpDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    {allOpen ? "Fold alle ind" : "Fold alle ud"}
+                  </Button>
+                )}
+                {dayMeasurements.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        Ryd historik
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Slet dagens registreringer?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Alle registreringer for den valgte dag slettes permanent og kan ikke gendannes.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuller</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            removeAllToday();
+                            toast.success("Dagens historik slettet");
+                          }}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Slet
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+                {measurements.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        Ryd al historik
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Slet ALLE registreringer?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Dette sletter samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuller</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            removeAll();
+                            toast.success("Al historik slettet");
+                          }}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Slet alt
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </>
             }
           />
         </div>

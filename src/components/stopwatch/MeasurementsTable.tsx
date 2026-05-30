@@ -1,18 +1,4 @@
 import { useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import type { Measurement } from "@/hooks/use-measurements";
 import { MeasurementsList } from "@/components/measurements/MeasurementsList";
 
@@ -20,14 +6,12 @@ type Props = {
   measurements: Measurement[];
   onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
   onDelete: (id: string) => void;
-  onDeleteAll: () => void;
 };
 
 export function MeasurementsTable({
   measurements,
   onUpdate,
   onDelete,
-  onDeleteAll,
 }: Props) {
   const [tipPos, setTipPos] = useState<{ x: number; y: number } | null>(null);
   const [tipVisible, setTipVisible] = useState(false);
@@ -68,42 +52,6 @@ export function MeasurementsTable({
     hideTimerRef.current = setTimeout(() => setTipPos(null), 200);
   };
 
-  const clearHistoryButton = (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-        >
-          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-          Ryd historik
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Slet alle dagens registreringer?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Registreringerne slettes permanent og kan ikke gendannes.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Annuller</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              onDeleteAll();
-              toast.success("Historik slettet");
-            }}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          >
-            Slet
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-
   return (
     <>
       <section
@@ -118,9 +66,6 @@ export function MeasurementsTable({
               </p>
             ) : (
               <div className="px-2 pb-2">
-                <div className="flex justify-end px-1 pt-1">
-                  {clearHistoryButton}
-                </div>
                 <MeasurementsList
                   items={measurements}
                   onUpdate={onUpdate}
