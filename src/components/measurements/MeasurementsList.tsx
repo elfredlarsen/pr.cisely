@@ -97,7 +97,7 @@ export function MeasurementsList({
   onUpdate,
   onDelete,
   actionsHeaderContent,
-  actionsColWidthClass = "w-20",
+  actionsColWidthClass = "w-32",
   stickyHeader = false,
   headerRowProps,
   sortable = true,
@@ -494,8 +494,7 @@ export function MeasurementsList({
                             <Button
                               type="button"
                               variant="ghost"
-                              size="icon"
-                              className="h-9 w-16 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                              className="h-9 w-16 px-0 py-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
                               aria-label="Slet registrering"
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />

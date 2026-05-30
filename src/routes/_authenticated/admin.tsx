@@ -248,11 +248,10 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
           <IconTooltip label="Omdøb kategori">
             <Button
               type="button"
-              size="icon"
               variant="ghost"
               onClick={() => setEditing(true)}
               disabled={saving || deleting}
-              className="h-8 w-14 text-muted-foreground"
+              className="h-8 w-14 px-0 py-0 text-muted-foreground"
               aria-label={`Omdøb ${row.label}`}
             >
               <Pencil className="h-3.5 w-3.5" />
@@ -264,9 +263,8 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
             <AlertDialogTrigger asChild>
               <Button
                 type="button"
-                size="icon"
                 variant="ghost"
-                className="h-8 w-14 text-muted-foreground hover:text-destructive"
+                className="h-8 w-14 px-0 py-0 text-muted-foreground hover:text-destructive"
                 disabled={saving || deleting || editing}
                 aria-label={`Slet ${row.label}`}
               >
