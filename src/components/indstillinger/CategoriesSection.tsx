@@ -3,24 +3,37 @@ import { toast } from "sonner";
 
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  CATEGORIES,
-  getActiveCategories,
-  setActiveCategories,
+  getActiveCategoriesFilter,
+  setActiveCategoriesFilter,
   type Category,
 } from "@/lib/categories";
+import { useCategories } from "@/hooks/use-categories";
 
 export function CategoriesSection() {
-  const [active, setActive] = useState<Set<Category>>(
-    () => new Set(getActiveCategories()),
-  );
+  const { data: categories, isLoading } = useCategories();
+  const visible = (categories ?? []).filter((c) => !c.hidden);
+
+  // active er sættet af kategorier brugeren vil have vist; null = alle (afledt fra synlige)
+  const [filter, setFilter] = useState<Set<Category> | null>(() => {
+    const v = getActiveCategoriesFilter();
+    return v ? new Set(v) : null;
+  });
   const didMountRef = useRef(false);
   const listRef = useRef<HTMLUListElement | null>(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
+  // Hvis filter er null (=alle), behandl alle synlige som aktive
+  const isActive = (value: Category) =>
+    filter === null ? true : filter.has(value);
+
+  const activeCount = filter === null ? visible.length : visible.filter((c) => filter.has(c.value)).length;
+
   useEffect(() => {
-    setActive(new Set(getActiveCategories()));
+    const v = getActiveCategoriesFilter();
+    setFilter(v ? new Set(v) : null);
   }, []);
 
   useLayoutEffect(() => {
@@ -37,25 +50,35 @@ export function CategoriesSection() {
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, []);
+  }, [visible.length]);
 
   const toggle = (value: Category, next: boolean) => {
-    setActive((prev) => {
-      const updated = new Set(prev);
-      if (next) updated.add(value);
-      else updated.delete(value);
+    const current = filter ?? new Set(visible.map((c) => c.value));
+    const updated = new Set(current);
+    if (next) updated.add(value);
+    else updated.delete(value);
 
-      const ordered = CATEGORIES.map((c) => c.value).filter((v) => updated.has(v));
-      setActiveCategories(ordered);
+    // Keep order matching the visible sort order
+    const ordered = visible.map((c) => c.value).filter((v) => updated.has(v));
+    setActiveCategoriesFilter(ordered);
+    setFilter(updated);
 
-      if (didMountRef.current) {
-        toast.success("Kategorier opdateret");
-      } else {
-        didMountRef.current = true;
-      }
-      return updated;
-    });
+    if (didMountRef.current) {
+      toast.success("Kategorier opdateret");
+    } else {
+      didMountRef.current = true;
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -63,9 +86,9 @@ export function CategoriesSection() {
         ref={listRef}
         className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border"
       >
-        {CATEGORIES.map((c) => {
-          const isActive = active.has(c.value);
-          const isLastActive = isActive && active.size === 1;
+        {visible.map((c) => {
+          const active = isActive(c.value);
+          const isLastActive = active && activeCount === 1;
           const id = `category-toggle-${c.value}`;
           return (
             <li
@@ -77,7 +100,7 @@ export function CategoriesSection() {
               </Label>
               <Switch
                 id={id}
-                checked={isActive}
+                checked={active}
                 disabled={isLastActive}
                 onCheckedChange={(v) => toggle(c.value, v)}
                 aria-label={`Aktivér ${c.label}`}

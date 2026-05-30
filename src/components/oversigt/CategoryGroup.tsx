@@ -4,7 +4,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { categoryLabel, type Category } from "@/lib/categories";
+import { type Category } from "@/lib/categories";
+import { useCategoryLabel } from "@/hooks/use-categories";
 import type { Measurement } from "@/hooks/use-measurements";
 import { formatTotal, type SummaryFormat } from "./format";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ export function CategoryGroup({
   onDelete,
 }: Props) {
   const total = items.reduce((sum, m) => sum + m.ms, 0);
+  const label = useCategoryLabel(category);
 
   return (
     <Collapsible
@@ -51,7 +53,7 @@ export function CategoryGroup({
               aria-hidden="true"
             />
             <span className="text-sm font-medium text-foreground">
-              {categoryLabel(category)}
+              {label}
             </span>
           </span>
           <span className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground">
