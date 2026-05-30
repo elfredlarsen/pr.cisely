@@ -58,3 +58,33 @@ export function setLastCategory(value: Category) {
     // ignore
   }
 }
+
+export const ACTIVE_CATEGORIES_KEY = "precisely.activeCategories";
+export const ACTIVE_CATEGORIES_EVENT = "precisely:active-categories-changed";
+
+const ALL_VALUES: Category[] = CATEGORIES.map((c) => c.value);
+
+export function getActiveCategories(): Category[] {
+  if (typeof window === "undefined") return ALL_VALUES;
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_CATEGORIES_KEY);
+    if (!raw) return ALL_VALUES;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return ALL_VALUES;
+    const filtered = parsed.filter(isValidCategory) as Category[];
+    return filtered.length > 0 ? filtered : ALL_VALUES;
+  } catch {
+    return ALL_VALUES;
+  }
+}
+
+export function setActiveCategories(values: Category[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(ACTIVE_CATEGORIES_KEY, JSON.stringify(values));
+    window.dispatchEvent(new Event(ACTIVE_CATEGORIES_EVENT));
+  } catch {
+    // ignore
+  }
+}
+

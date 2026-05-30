@@ -22,6 +22,7 @@ import {
   setLastCategory,
   type Category,
 } from "@/lib/categories";
+import { useActiveCategories } from "@/hooks/use-active-categories";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
 type Props = {
@@ -109,6 +110,10 @@ export function MeasurementDialog({
   const [category, setCategory] = useState<Category>("straksafgoerelse");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const activeValues = useActiveCategories();
+  const visibleCategories = CATEGORIES.filter(
+    (c) => activeValues.includes(c.value) || c.value === category,
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -258,7 +263,7 @@ export function MeasurementDialog({
                 <SelectValue placeholder="Vælg kategori" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => (
+                {visibleCategories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
                     {c.label}
                   </SelectItem>
