@@ -144,7 +144,7 @@
   bottom: 2px;
   height: 2px;
   border-radius: 2px;
-  background: var(--gradient-brand);
+  background: #12c2e9;
   opacity: 0;
   transform: scaleX(0.4);
   transition: opacity 0.18s, transform 0.18s;
