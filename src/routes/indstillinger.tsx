@@ -25,7 +25,7 @@ function IndstillingerPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-        <h1 className="text-center text-2xl font-semibold tracking-tight">Indstillinger</h1>
+        <h1 className="sr-only">Indstillinger</h1>
 
         <section
           aria-labelledby="konto-heading"
