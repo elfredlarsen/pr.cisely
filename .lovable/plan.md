@@ -1,27 +1,24 @@
-## Problem
+## Hvorfor det sker
 
-Hele historik-kortet ligger i en ydre scroll-container, så når listen er lang scroller hele kortet (med "Historik"-bjælken og tabelheaderen) i stedet for kun rækkerne. Du vil have "Historik"-bjælken og tabelheaderen fastlåst og kun rækkerne scrollende.
+Begge sider (`/` og `/arkiv`) har et `max-w-3xl` (= 768px) på indholdscontaineren. På den smalle preview-viewport (927px) fylder tabellen næsten hele bredden, men i et bredt browservindue (fx 1400-1900px) bliver tabellen "låst fast" på 768px og virker derfor smal i forhold til den ledige plads.
+
+Det er ikke en bug — det er bare den faste max-bredde der ikke skalerer.
 
 ## Løsning
 
-I `src/components/stopwatch/MeasurementsTable.tsx`:
+Øg max-bredden så tabellen får mere plads i brede vinduer, og behold paritet mellem `/` og `/arkiv` (jf. memory).
 
-- Lad `section` og selve `Collapsible`-kortet fylde hele højden (`h-full min-h-0 flex flex-col`) i stedet for at lægge kortet i en scrollende wrapper.
-- Fjern `overflow-y-auto` og `scrollbar-purple` fra den ydre wrapper.
-- Flyt scroll-containeren ind i `CollapsibleContent`: wrap `MeasurementsList` i `<div className="scrollbar-purple flex-1 min-h-0 overflow-y-auto border-t border-border px-2 pb-2">`.
-- Giv `CollapsibleContent` `data-[state=open]:flex-1 data-[state=open]:min-h-0 data-[state=open]:flex data-[state=open]:flex-col` så den udvider sig til den resterende plads når den er åben.
-- Fjern det tidligere `!overflow-visible` workaround — sticky table-header virker nu inde i den nye indre scroll-container.
-- Tom-tilstand beholder samme look; bare ingen scroll nødvendig.
+- `src/components/stopwatch/MeasurementsTable.tsx`: skift `max-w-3xl` → `max-w-5xl` på den indre wrapper.
+- `src/routes/arkiv.tsx`: skift `max-w-3xl` → `max-w-5xl` på `<main>` så oversigten matcher.
 
-## Konsekvenser
-
-- "Historik"-trigger-bjælken bliver stående øverst i kortet — den scroller ikke længere ud af syne.
-- Tabel-headeren (Start / Slut / Varighed / Kategori) bliver stående via `sticky top-0` i den nye scroll-container.
-- Kun rækkerne scroller.
-- Radix' åbn/luk-højdeanimation deaktiveres for dette kort (vi tvinger højden til flex-1 når åben), så det folder ud/ind uden glat animation — men uden hop.
+`max-w-5xl` = 1024px. Det giver markant mere bredde i en almindelig browser uden at blive uoverskueligt på 1080p-skærme. På smalle viewports bliver layoutet uændret (responsivt indtil 1024px).
 
 ## Verifikation
 
-- `/` med mange målinger: "Historik"-bjælken og kolonneoverskrifterne står stille; kun rækkerne scroller.
-- Fold ind/ud virker stadig; ingen visuelt hop.
-- Scrollbar er stadig skjult indtil hover.
+- Åbn `/` i et bredt browservindue: tabellen er tydeligt bredere og bruger mere af pladsen.
+- Åbn `/arkiv`: samme bredde som forsiden.
+- På smalle viewports (~900px): uændret — beggesider fylder hele bredden minus padding.
+
+## Memory-opdatering
+
+Memory-reglen "historik skal matche oversigt 1:1" forbliver gyldig fordi vi ændrer begge sider samtidig.
