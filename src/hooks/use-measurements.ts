@@ -168,7 +168,7 @@ function usePreviewMeasurements() {
 
 // ---------------- Supabase-backed implementation ----------------
 
-function useSupabaseMeasurements() {
+function useSupabaseMeasurements(enabled: boolean) {
   const qc = useQueryClient();
   const listFn = useServerFn(listMeasurements);
   const createFn = useServerFn(createMeasurement);
@@ -184,10 +184,12 @@ function useSupabaseMeasurements() {
       const rows = await listFn();
       return rows.map(rowToMeasurement).filter((m): m is Measurement => m !== null);
     },
+    enabled,
   });
 
   const measurements = query.data ?? [];
-  const loaded = query.isFetched;
+  const loaded = enabled ? query.isFetched : true;
+
 
   const invalidate = useCallback(() => {
     qc.invalidateQueries({ queryKey: QUERY_KEY });
