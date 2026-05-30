@@ -93,6 +93,7 @@ function Index() {
             measurements={visibleToday}
             onUpdate={update}
             onDelete={remove}
+            loaded={loaded}
           />
         </div>
       </main>
