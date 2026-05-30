@@ -194,78 +194,57 @@ function OversigtPage() {
                     {allOpen ? "Fold alle ind" : "Fold alle ud"}
                   </Button>
                 )}
-                {dayMeasurements.length > 0 && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        Ryd historik
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Slet dagens registreringer?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Alle registreringer for den valgte dag slettes permanent og kan ikke gendannes.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Annuller</AlertDialogCancel>
+              </>
+            }
+            rightSlot={
+              measurements.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      Slet
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Slet registreringer?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Vælg om du vil slette dagens registreringer eller samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annuller</AlertDialogCancel>
+                      {dayMeasurements.length > 0 && (
                         <AlertDialogAction
                           onClick={() => {
                             removeAllToday();
                             toast.success("Dagens historik slettet");
                           }}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
                         >
-                          Slet
+                          Slet dagens
                         </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-                {measurements.length > 0 && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="min-h-9 whitespace-nowrap px-2 text-xs font-normal text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                      )}
+                      <AlertDialogAction
+                        onClick={() => {
+                          removeAll();
+                          toast.success("Al historik slettet");
+                        }}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        Ryd al historik
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Slet ALLE registreringer?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Dette sletter samtlige registreringer på tværs af alle dage. Handlingen kan ikke fortrydes.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Annuller</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => {
-                            removeAll();
-                            toast.success("Al historik slettet");
-                          }}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Slet alt
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-              </>
+                        Slet alt
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )
             }
+
           />
         </div>
 
