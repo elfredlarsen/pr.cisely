@@ -1,9 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronsDownUp, ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useMeasurements, type Measurement } from "@/hooks/use-measurements";
 import { CATEGORIES, type Category } from "@/lib/categories";
 import { DateNavigator } from "@/components/oversigt/DateNavigator";
