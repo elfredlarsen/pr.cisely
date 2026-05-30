@@ -49,7 +49,7 @@ function Index() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <a
         href="#stopur-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-card focus:px-4 focus:py-2 focus:text-sm focus:shadow"
@@ -59,7 +59,7 @@ function Index() {
       <TopNav />
       <main
         id="stopur-main"
-        className="flex min-h-0 flex-1 flex-col"
+        className="flex flex-1 flex-col"
       >
         <div className="relative shrink-0">
           <Stopwatch
