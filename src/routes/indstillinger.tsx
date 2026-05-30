@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordForm";
+import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
 
 export const Route = createFileRoute("/indstillinger")({
   head: () => ({
