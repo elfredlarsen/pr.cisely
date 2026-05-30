@@ -17,12 +17,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
-  CATEGORIES,
   getLastCategory,
   setLastCategory,
   type Category,
 } from "@/lib/categories";
-import { useActiveCategories } from "@/hooks/use-active-categories";
+import { useActiveCategoriesFilter } from "@/hooks/use-active-categories";
+import { useCategories } from "@/hooks/use-categories";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
 type Props = {
@@ -110,9 +110,12 @@ export function MeasurementDialog({
   const [category, setCategory] = useState<Category>("straksafgoerelse");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const activeValues = useActiveCategories();
-  const visibleCategories = CATEGORIES.filter(
-    (c) => activeValues.includes(c.value) || c.value === category,
+  const activeFilter = useActiveCategoriesFilter();
+  const { data: allCategories = [] } = useCategories();
+  const visibleCategories = allCategories.filter(
+    (c) =>
+      !c.hidden &&
+      (activeFilter === null || activeFilter.includes(c.value) || c.value === category),
   );
 
   useEffect(() => {

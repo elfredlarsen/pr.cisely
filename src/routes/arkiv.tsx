@@ -16,7 +16,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useMeasurements, type Measurement } from "@/hooks/use-measurements";
-import { CATEGORIES, type Category } from "@/lib/categories";
+import { type Category } from "@/lib/categories";
+import { useCategories } from "@/hooks/use-categories";
 import { DateNavigator } from "@/components/oversigt/DateNavigator";
 import { DaySummary } from "@/components/oversigt/DaySummary";
 import { CategoryGroup } from "@/components/oversigt/CategoryGroup";
@@ -115,9 +116,10 @@ function OversigtPage() {
     return map;
   }, [dayMeasurements]);
 
+  const { data: categoriesData = [] } = useCategories();
   const visibleCategories = useMemo(
-    () => CATEGORIES.filter((c) => (byCategory.get(c.value)?.length ?? 0) > 0),
-    [byCategory],
+    () => categoriesData.filter((c) => (byCategory.get(c.value)?.length ?? 0) > 0),
+    [categoriesData, byCategory],
   );
 
   const allOpen =
