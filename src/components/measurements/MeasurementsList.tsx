@@ -489,7 +489,7 @@ export function MeasurementsList({
                         </Button>
                       </IconTooltip>
                       <AlertDialog>
-                        <IconTooltip label="Slet">
+                        <IconTooltip label="Slet registrering">
                           <AlertDialogTrigger asChild>
                             <Button
                               type="button"
@@ -550,7 +550,7 @@ export function MeasurementsList({
                             aria-label="Kommentar"
                             className="h-8 flex-1 rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           />
-                          <IconTooltip label="Gem (Enter)">
+                          <IconTooltip label="Gem" shortcut="Enter">
                             <Button
                               type="button"
                               size="icon"
@@ -566,7 +566,7 @@ export function MeasurementsList({
                               <Check className="h-4 w-4" aria-hidden="true" />
                             </Button>
                           </IconTooltip>
-                          <IconTooltip label="Annuller (Esc)">
+                          <IconTooltip label="Annuller" shortcut="Esc">
                             <Button
                               type="button"
                               size="icon"

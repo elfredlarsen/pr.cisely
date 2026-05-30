@@ -245,7 +245,7 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
       )}
       <div className="flex shrink-0 items-center gap-1">
         {!editing && (
-          <IconTooltip label="Omdøb">
+          <IconTooltip label="Omdøb kategori">
             <Button
               type="button"
               size="icon"
@@ -260,7 +260,7 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
           </IconTooltip>
         )}
         <AlertDialog>
-          <IconTooltip label="Slet">
+          <IconTooltip label="Slet kategori">
             <AlertDialogTrigger asChild>
               <Button
                 type="button"
