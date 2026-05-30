@@ -13,6 +13,19 @@ export type MeasurementRow = {
   comment: string | null;
 };
 
+function dbError(scope: string, error: { message: string }): never {
+  console.error(`[${scope}] DB error:`, error.message);
+  throw new Error("Databasefejl. Prøv igen.");
+}
+
+const isoDate = z
+  .string()
+  .min(1)
+  .max(64)
+  .refine((v) => !Number.isNaN(Date.parse(v)), "Ugyldig dato");
+
+const MAX_MS = 1000 * 60 * 60 * 24 * 30;
+
 export const listMeasurements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<MeasurementRow[]> => {
@@ -22,17 +35,26 @@ export const listMeasurements = createServerFn({ method: "GET" })
       .select("id, started_at, ended_at, ms, category, hidden, comment")
       .order("ended_at", { ascending: false })
       .limit(1000);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.list", error);
     return (data ?? []) as MeasurementRow[];
   });
 
-const createSchema = z.object({
-  started_at: z.string().min(1).max(64),
-  ended_at: z.string().min(1).max(64),
-  ms: z.number().int().min(0).max(1000 * 60 * 60 * 24 * 30),
-  category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/),
-  comment: z.string().max(2000).optional(),
-});
+const createSchema = z
+  .object({
+    started_at: isoDate,
+    ended_at: isoDate,
+    ms: z.number().int().min(0).max(MAX_MS),
+    category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/),
+    comment: z.string().max(2000).optional(),
+  })
+  .refine((d) => Date.parse(d.ended_at) >= Date.parse(d.started_at), {
+    message: "ended_at skal være efter started_at",
+    path: ["ended_at"],
+  })
+  .refine(
+    (d) => Math.abs(Date.parse(d.ended_at) - Date.parse(d.started_at) - d.ms) <= 2000,
+    { message: "ms passer ikke til tidsintervallet", path: ["ms"] },
+  );
 
 export const createMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -52,19 +74,27 @@ export const createMeasurement = createServerFn({ method: "POST" })
       })
       .select("id, started_at, ended_at, ms, category, hidden, comment")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.create", error);
     return row as MeasurementRow;
   });
 
-const updateSchema = z.object({
-  id: z.string().uuid(),
-  started_at: z.string().min(1).max(64).optional(),
-  ended_at: z.string().min(1).max(64).optional(),
-  ms: z.number().int().min(0).max(1000 * 60 * 60 * 24 * 30).optional(),
-  category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/).optional(),
-  hidden: z.boolean().optional(),
-  comment: z.string().max(2000).nullable().optional(),
-});
+const updateSchema = z
+  .object({
+    id: z.string().uuid(),
+    started_at: isoDate.optional(),
+    ended_at: isoDate.optional(),
+    ms: z.number().int().min(0).max(MAX_MS).optional(),
+    category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/).optional(),
+    hidden: z.boolean().optional(),
+    comment: z.string().max(2000).nullable().optional(),
+  })
+  .refine(
+    (d) =>
+      d.started_at === undefined ||
+      d.ended_at === undefined ||
+      Date.parse(d.ended_at) >= Date.parse(d.started_at),
+    { message: "ended_at skal være efter started_at", path: ["ended_at"] },
+  );
 
 export const updateMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -74,7 +104,7 @@ export const updateMeasurement = createServerFn({ method: "POST" })
     const { id, ...patch } = data;
     if (Object.keys(patch).length === 0) return { ok: true };
     const { error } = await supabase.from("measurements").update(patch).eq("id", id);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.update", error);
     return { ok: true };
   });
 
@@ -86,13 +116,13 @@ export const deleteMeasurement = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase } = context;
     const { error } = await supabase.from("measurements").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.delete", error);
     return { ok: true };
   });
 
 const dayBoundsSchema = z.object({
-  from: z.string().min(1).max(64),
-  to: z.string().min(1).max(64),
+  from: isoDate,
+  to: isoDate,
 });
 
 export const removeMeasurementsInRange = createServerFn({ method: "POST" })
@@ -106,7 +136,7 @@ export const removeMeasurementsInRange = createServerFn({ method: "POST" })
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
       .eq("hidden", false);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.removeRange", error);
     return { ok: true };
   });
 
@@ -121,7 +151,7 @@ export const hideMeasurementsInRange = createServerFn({ method: "POST" })
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
       .eq("hidden", false);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.hideRange", error);
     return { ok: true };
   });
 
@@ -130,7 +160,6 @@ export const removeAllMeasurements = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     const { error } = await supabase.from("measurements").delete().eq("user_id", userId);
-    if (error) throw new Error(error.message);
+    if (error) dbError("measurements.removeAll", error);
     return { ok: true };
   });
-
