@@ -25,6 +25,7 @@ export function MeasurementsTable({
   measurements,
   onUpdate,
   onDelete,
+  loaded = true,
 }: Props) {
   const [format, setFormat] = useState<SummaryFormat>("hm");
   const [open, setOpen] = useState(true);
