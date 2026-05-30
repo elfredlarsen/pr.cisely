@@ -65,7 +65,7 @@ function computeMs(state: State, now: number) {
 }
 
 const baseBtn =
-  "inline-flex h-14 w-44 items-center justify-center gap-3 rounded-lg px-6 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
+  "inline-flex h-12 w-40 items-center justify-center gap-2.5 rounded-lg px-5 py-2.5 text-lg font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
 const startBtn = `${baseBtn} bg-success text-success-foreground`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
@@ -193,13 +193,13 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     <section
       aria-labelledby="stopur-overskrift"
       aria-hidden={finishOpen || undefined}
-      className={`flex w-full flex-col items-center justify-center px-6 py-12 ${finishOpen ? "pointer-events-none" : ""}`}
+      className={`flex w-full flex-col items-center justify-center px-6 py-8 ${finishOpen ? "pointer-events-none" : ""}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
       </h1>
 
-      <div className="flex w-[36rem] max-w-full flex-col items-stretch gap-12">
+      <div className="flex w-[36rem] max-w-full flex-col items-stretch gap-8">
         <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
           <TimeDisplay ms={displayMs} />
         </div>
@@ -218,7 +218,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                   className={startBtn}
                   aria-keyshortcuts=" "
                 >
-                  <Play className="h-7 w-7" aria-hidden="true" />
+                  <Play className="h-6 w-6" aria-hidden="true" />
                   Start
                 </button>
               </ShortcutTooltip>
@@ -233,7 +233,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resetBtn}
                     aria-keyshortcuts="N"
                   >
-                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                    <RotateCcw className="h-6 w-6" aria-hidden="true" />
                     Nulstil
                   </button>
                 </ShortcutTooltip>
@@ -244,7 +244,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Square className="h-6 w-6" aria-hidden="true" />
                     Afslut
                   </button>
                 </ShortcutTooltip>
@@ -255,7 +255,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={pauseBtn}
                     aria-keyshortcuts=" "
                   >
-                    <Pause className="h-7 w-7" aria-hidden="true" />
+                    <Pause className="h-6 w-6" aria-hidden="true" />
                     Pause
                   </button>
                 </ShortcutTooltip>
@@ -271,7 +271,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resetBtn}
                     aria-keyshortcuts="N"
                   >
-                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
+                    <RotateCcw className="h-6 w-6" aria-hidden="true" />
                     Nulstil
                   </button>
                 </ShortcutTooltip>
@@ -282,7 +282,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Square className="h-6 w-6" aria-hidden="true" />
                     Afslut
                   </button>
                 </ShortcutTooltip>
@@ -293,7 +293,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resumeBtn}
                     aria-keyshortcuts=" "
                   >
-                    <FastForward className="h-7 w-7" aria-hidden="true" />
+                    <FastForward className="h-6 w-6" aria-hidden="true" />
                     Fortsæt
                   </button>
                 </ShortcutTooltip>
