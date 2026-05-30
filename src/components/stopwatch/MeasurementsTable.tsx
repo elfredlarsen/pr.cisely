@@ -118,14 +118,13 @@ export function MeasurementsTable({
               </p>
             ) : (
               <div className="px-2 pb-2">
+                <div className="flex justify-end px-1 pt-1">
+                  {clearHistoryButton}
+                </div>
                 <MeasurementsList
                   items={measurements}
                   onUpdate={onUpdate}
                   onDelete={onDelete}
-                  actionsHeaderContent={
-                    <div className="flex justify-end">{clearHistoryButton}</div>
-                  }
-                  actionsColWidthClass="w-36"
                   stickyHeader
                   headerRowProps={{
                     onMouseEnter: handleHeaderEnter,
