@@ -470,7 +470,7 @@ export function MeasurementsList({
                           onClick={() => toggleCommentExpanded(m.id)}
                           aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
                           aria-expanded={commentExpanded}
-                          className="relative h-9 w-16 justify-center gap-0.5 px-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                          className="relative h-9 w-12 justify-center gap-0.5 px-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
                         >
                           <MessageSquare className="h-4 w-4" aria-hidden="true" />
                           {m.comment && (
