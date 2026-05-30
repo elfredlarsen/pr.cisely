@@ -28,7 +28,7 @@ export function TimeDisplay({ ms }: Props) {
       aria-live="polite"
       aria-atomic="true"
       className="flex flex-col items-center select-none text-foreground"
-      style={{ fontFamily: "'Poppins', sans-serif", fontVariantNumeric: "tabular-nums" }}
+      style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
       <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
         <div className="flex flex-col items-center">
