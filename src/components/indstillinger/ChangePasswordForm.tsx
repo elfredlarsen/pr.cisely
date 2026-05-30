@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { IconTooltip } from "@/components/ui/icon-tooltip";
 import {
   Form,
   FormControl,
@@ -68,20 +69,22 @@ function PasswordField({
                 className={cn("h-11 pr-12 rounded-md")}
               />
             </FormControl>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onToggle}
-              aria-label={visible ? "Skjul adgangskode" : "Vis adgangskode"}
-              className="absolute right-1 top-1/2 h-11 w-11 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              {visible ? (
-                <EyeOff className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Eye className="h-4 w-4" aria-hidden="true" />
-              )}
-            </Button>
+            <IconTooltip label={visible ? "Skjul adgangskode" : "Vis adgangskode"}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onToggle}
+                aria-label={visible ? "Skjul adgangskode" : "Vis adgangskode"}
+                className="absolute right-1 top-1/2 h-11 w-11 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {visible ? (
+                  <EyeOff className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                )}
+              </Button>
+            </IconTooltip>
           </div>
           {description && (
             <p className="text-xs text-muted-foreground">{description}</p>

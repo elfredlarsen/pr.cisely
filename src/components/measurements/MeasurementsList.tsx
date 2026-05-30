@@ -27,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { type Category, fallbackCategoryLabel } from "@/lib/categories";
 import { useActiveCategoriesFilter } from "@/hooks/use-active-categories";
 import { useCategories } from "@/hooks/use-categories";
@@ -462,41 +463,45 @@ export function MeasurementsList({
                   </TableCell>
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0.5">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => toggleCommentExpanded(m.id)}
-                        aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
-                        aria-expanded={commentExpanded}
-                        className="relative h-9 w-auto gap-0.5 px-2 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                      >
-                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                        {m.comment && (
-                          <span
-                            className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
+                      <IconTooltip label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => toggleCommentExpanded(m.id)}
+                          aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
+                          aria-expanded={commentExpanded}
+                          className="relative h-9 w-auto gap-0.5 px-2 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                        >
+                          <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                          {m.comment && (
+                            <span
+                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <ChevronRight
+                            className={cn(
+                              "h-3 w-3 transition-transform duration-150",
+                              commentExpanded && "rotate-90",
+                            )}
                             aria-hidden="true"
                           />
-                        )}
-                        <ChevronRight
-                          className={cn(
-                            "h-3 w-3 transition-transform duration-150",
-                            commentExpanded && "rotate-90",
-                          )}
-                          aria-hidden="true"
-                        />
-                      </Button>
+                        </Button>
+                      </IconTooltip>
                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
-                            aria-label="Slet registrering"
-                          >
-                            <Trash2 className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                        </AlertDialogTrigger>
+                        <IconTooltip label="Slet">
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                              aria-label="Slet registrering"
+                            >
+                              <Trash2 className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </AlertDialogTrigger>
+                        </IconTooltip>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
@@ -545,30 +550,34 @@ export function MeasurementsList({
                             aria-label="Kommentar"
                             className="h-8 flex-1 rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            aria-label="OK"
-                            onClick={() => {
-                              const trimmed = commentEdit!.value.trim();
-                              onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
-                              setCommentEdit(null);
-                            }}
-                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                          >
-                            <Check className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            aria-label="Annuller"
-                            onClick={() => setCommentEdit(null)}
-                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
-                          >
-                            <X className="h-4 w-4" aria-hidden="true" />
-                          </Button>
+                          <IconTooltip label="Gem (Enter)">
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              aria-label="OK"
+                              onClick={() => {
+                                const trimmed = commentEdit!.value.trim();
+                                onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
+                                setCommentEdit(null);
+                              }}
+                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                            >
+                              <Check className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </IconTooltip>
+                          <IconTooltip label="Annuller (Esc)">
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Annuller"
+                              onClick={() => setCommentEdit(null)}
+                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                            >
+                              <X className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </IconTooltip>
                         </div>
                       ) : (
                         <button
