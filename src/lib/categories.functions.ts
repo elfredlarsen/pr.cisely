@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -11,7 +12,7 @@ export type CategoryRow = {
   hidden: boolean;
 };
 
-async function assertAdmin(supabase: any, userId: string) {
+async function assertAdmin(supabase: SupabaseClient, userId: string) {
   const { data: isAdmin, error } = await supabase.rpc("has_role", {
     _user_id: userId,
     _role: "administrator",

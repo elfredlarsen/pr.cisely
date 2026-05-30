@@ -124,7 +124,7 @@ export function TopNav() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annullér</AlertDialogCancel>
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
             <AlertDialogAction onClick={handleLogout}>Log ud</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

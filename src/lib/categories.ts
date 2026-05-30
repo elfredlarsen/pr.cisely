@@ -12,15 +12,15 @@ export function isValidCategory(value: unknown): value is Category {
 
 const LAST_CATEGORY_KEY = "precisely.lastCategory";
 
-export function getLastCategory(): Category {
-  if (typeof window === "undefined") return "straksafgoerelse";
+export function getLastCategory(): Category | null {
+  if (typeof window === "undefined") return null;
   try {
     const v = window.localStorage.getItem(LAST_CATEGORY_KEY);
     if (v && isValidCategory(v)) return v;
   } catch {
     // ignore
   }
-  return "straksafgoerelse";
+  return null;
 }
 
 export function setLastCategory(value: Category) {

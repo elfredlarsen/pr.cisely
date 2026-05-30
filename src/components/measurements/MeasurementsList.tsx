@@ -409,9 +409,8 @@ export function MeasurementsList({
           {sortedItems.map((m) => {
             const rowEditing = isRowEditing(m);
             const editingComment = commentEdit?.id === m.id;
-            const isAndet = m.category === "andet";
             const commentExpanded = expandedComments.has(m.id);
-            const showCommentRow = isAndet && commentExpanded;
+            const showCommentRow = commentExpanded;
             return (
               <React.Fragment key={m.id}>
                 <TableRow
@@ -449,10 +448,9 @@ export function MeasurementsList({
                         {allCategories
                           .filter(
                             (c) =>
-                              !c.hidden &&
-                              (activeFilter === null ||
-                                activeFilter.includes(c.value) ||
-                                c.value === m.category),
+                              activeFilter === null ||
+                              activeFilter.includes(c.value) ||
+                              c.value === m.category,
                           )
                           .map((c) => (
                             <SelectItem key={c.value} value={c.value}>
@@ -464,34 +462,30 @@ export function MeasurementsList({
                   </TableCell>
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0.5">
-                      {isAndet ? (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => toggleCommentExpanded(m.id)}
-                          aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
-                          aria-expanded={commentExpanded}
-                          className="relative h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                        >
-                          <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                          {m.comment && (
-                            <span
-                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
-                              aria-hidden="true"
-                            />
-                          )}
-                          <ChevronRight
-                            className={cn(
-                              "h-3 w-3 transition-transform duration-150",
-                              commentExpanded && "rotate-90",
-                            )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleCommentExpanded(m.id)}
+                        aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
+                        aria-expanded={commentExpanded}
+                        className="relative h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                      >
+                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                        {m.comment && (
+                          <span
+                            className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
                             aria-hidden="true"
                           />
-                        </Button>
-                      ) : (
-                        <span className="h-9 w-9" aria-hidden="true" />
-                      )}
+                        )}
+                        <ChevronRight
+                          className={cn(
+                            "h-3 w-3 transition-transform duration-150",
+                            commentExpanded && "rotate-90",
+                          )}
+                          aria-hidden="true"
+                        />
+                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
@@ -600,18 +594,6 @@ export function MeasurementsList({
                   const patch: Partial<Omit<Measurement, "id">> = {
                     category: pendingCategoryChange.to,
                   };
-                  if (
-                    pendingCategoryChange.from === "andet" &&
-                    pendingCategoryChange.to !== "andet"
-                  ) {
-                    patch.comment = undefined;
-                    setExpandedComments((prev) => {
-                      if (!prev.has(pendingCategoryChange.id)) return prev;
-                      const next = new Set(prev);
-                      next.delete(pendingCategoryChange.id);
-                      return next;
-                    });
-                  }
                   onUpdate(pendingCategoryChange.id, patch);
                 }
                 setPendingCategoryChange(null);

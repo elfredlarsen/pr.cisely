@@ -5,6 +5,14 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
@@ -23,6 +31,9 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   // Hvis allerede logget ind, redirect til /
   useEffect(() => {
@@ -57,6 +68,25 @@ function LoginPage() {
       toast.error(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Tjek din mail for et link til at nulstille adgangskoden.");
+      setForgotOpen(false);
+      setForgotEmail("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Kunne ikke sende mail");
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -105,6 +135,22 @@ function LoginPage() {
             {loading ? "Vent..." : mode === "signin" ? "Log ind" : "Opret konto"}
           </Button>
         </form>
+
+        {mode === "signin" && (
+          <div className="mt-3 text-center text-xs">
+            <button
+              type="button"
+              className="text-muted-foreground underline-offset-2 hover:underline"
+              onClick={() => {
+                setForgotEmail(email);
+                setForgotOpen(true);
+              }}
+            >
+              Glemt adgangskode?
+            </button>
+          </div>
+        )}
+
         <div className="mt-4 text-center text-xs text-muted-foreground">
           {mode === "signin" ? (
             <button
@@ -125,6 +171,43 @@ function LoginPage() {
           )}
         </div>
       </div>
+
+      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Nulstil adgangskode</DialogTitle>
+            <DialogDescription>
+              Indtast din e-mail, så sender vi et link til at vælge en ny adgangskode.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgot} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="forgot-email">E-mail</Label>
+              <Input
+                id="forgot-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setForgotOpen(false)}
+                disabled={forgotLoading}
+              >
+                Annuller
+              </Button>
+              <Button type="submit" disabled={forgotLoading || !forgotEmail}>
+                {forgotLoading ? "Sender..." : "Send link"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

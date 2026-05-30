@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 const schema = z
   .object({
@@ -106,15 +107,39 @@ export function ChangePasswordForm() {
     },
   });
 
-  const onSubmit = async (_values: FormValues) => {
-    // Mock: ingen backend tilkoblet endnu. Når Lovable Cloud auth er på plads,
-    // erstattes denne handler med supabase.auth.updateUser({ password }).
-    await new Promise((r) => setTimeout(r, 300));
-    toast.success("Adgangskode opdateret");
-    form.reset();
-    setShowCurrent(false);
-    setShowNew(false);
-    setShowConfirm(false);
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const { data: userRes, error: userErr } = await supabase.auth.getUser();
+      if (userErr || !userRes.user?.email) {
+        throw new Error("Kunne ikke verificere brugeren. Log ind igen.");
+      }
+
+      // Reauth: bekræft nuværende adgangskode
+      const { error: reauthErr } = await supabase.auth.signInWithPassword({
+        email: userRes.user.email,
+        password: values.currentPassword,
+      });
+      if (reauthErr) {
+        form.setError("currentPassword", {
+          type: "manual",
+          message: "Nuværende adgangskode er forkert",
+        });
+        return;
+      }
+
+      const { error: updateErr } = await supabase.auth.updateUser({
+        password: values.newPassword,
+      });
+      if (updateErr) throw updateErr;
+
+      toast.success("Adgangskode opdateret");
+      form.reset();
+      setShowCurrent(false);
+      setShowNew(false);
+      setShowConfirm(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Kunne ikke opdatere adgangskoden");
+    }
   };
 
   return (

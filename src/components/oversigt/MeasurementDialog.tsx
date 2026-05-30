@@ -107,15 +107,14 @@ export function MeasurementDialog({
   const [start, setStart] = useState("09:00:00");
   const [end, setEnd] = useState("09:30:00");
   const [duration, setDuration] = useState("00:30:00");
-  const [category, setCategory] = useState<Category>("straksafgoerelse");
+  const [category, setCategory] = useState<Category>("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const activeFilter = useActiveCategoriesFilter();
   const { data: allCategories = [] } = useCategories();
   const visibleCategories = allCategories.filter(
     (c) =>
-      !c.hidden &&
-      (activeFilter === null || activeFilter.includes(c.value) || c.value === category),
+      activeFilter === null || activeFilter.includes(c.value) || c.value === category,
   );
 
   useEffect(() => {
@@ -125,7 +124,7 @@ export function MeasurementDialog({
       setStart(toTimeInput(initial.startedAt));
       setEnd(toTimeInput(initial.endedAt));
       setDuration(msToDurationInput(initial.ms));
-      setCategory(initial.category);
+      setCategory(initial.category || "");
       setComment(initial.comment ?? "");
     } else {
       const now = new Date();
@@ -138,10 +137,19 @@ export function MeasurementDialog({
         `${pad(Math.floor(endSec / 3600))}:${pad(Math.floor((endSec % 3600) / 60))}:00`,
       );
       setDuration(msToDurationInput((endSec - startSec) * 1000));
-      setCategory(defaultCategory ?? getLastCategory());
+      setCategory(defaultCategory ?? getLastCategory() ?? "");
       setComment("");
     }
   }, [open, initial, defaultCategory]);
+
+  // Fall back to first available category if current one is missing.
+  useEffect(() => {
+    if (!open) return;
+    if (category && allCategories.some((c) => c.value === category)) return;
+    if (visibleCategories.length > 0) {
+      setCategory(visibleCategories[0].value);
+    }
+  }, [open, category, allCategories, visibleCategories]);
 
   const handleStart = (v: string) => {
     setStart(v);
@@ -193,6 +201,10 @@ export function MeasurementDialog({
       setError("Varighed skal være større end 0");
       return;
     }
+    if (!category) {
+      setError("Vælg en kategori");
+      return;
+    }
     setLastCategory(category);
     const trimmed = comment.trim();
     onSave({
@@ -200,7 +212,7 @@ export function MeasurementDialog({
       endedAt: setTimeOnDate(baseDate, en).toISOString(),
       ms: dur,
       category,
-      comment: category === "andet" && trimmed !== "" ? trimmed : undefined,
+      comment: trimmed !== "" ? trimmed : undefined,
     });
     onOpenChange(false);
   };
@@ -275,20 +287,18 @@ export function MeasurementDialog({
             </Select>
           </div>
 
-          {category === "andet" && (
-            <div className="flex flex-col gap-1">
-              <label htmlFor="md-comment" className="text-xs font-medium text-muted-foreground">
-                Kommentar (valgfri)
-              </label>
-              <textarea
-                id="md-comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows={2}
-                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
-            </div>
-          )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="md-comment" className="text-xs font-medium text-muted-foreground">
+              Kommentar (valgfri)
+            </label>
+            <textarea
+              id="md-comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={2}
+              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+          </div>
 
           {error && (
             <p role="alert" className="text-xs text-destructive">
