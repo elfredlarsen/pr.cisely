@@ -1,5 +1,5 @@
 import React, { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, ChevronRight, MessageSquare, Pencil, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, ChevronRight, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -522,31 +522,54 @@ export function MeasurementsList({
                   <TableRow className="border-border/40 hover:bg-transparent">
                     <TableCell colSpan={5} className="py-1 pl-3 pr-2 text-xs">
                       {editingComment ? (
-                        <input
-                          autoFocus
-                          type="text"
-                          value={commentEdit!.value}
-                          onChange={(e) =>
-                            setCommentEdit({ id: m.id, value: e.target.value })
-                          }
-                          onBlur={() => {
-                            const trimmed = commentEdit!.value.trim();
-                            onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
-                            setCommentEdit(null);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              (e.target as HTMLInputElement).blur();
-                            } else if (e.key === "Escape") {
-                              e.preventDefault();
-                              setCommentEdit(null);
+                        <div className="flex items-center gap-2">
+                          <input
+                            autoFocus
+                            type="text"
+                            value={commentEdit!.value}
+                            onChange={(e) =>
+                              setCommentEdit({ id: m.id, value: e.target.value })
                             }
-                          }}
-                          placeholder="Tilføj kommentar"
-                          aria-label="Kommentar"
-                          className="h-8 w-full rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        />
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                const trimmed = commentEdit!.value.trim();
+                                onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
+                                setCommentEdit(null);
+                              } else if (e.key === "Escape") {
+                                e.preventDefault();
+                                setCommentEdit(null);
+                              }
+                            }}
+                            placeholder="Tilføj kommentar"
+                            aria-label="Kommentar"
+                            className="h-8 flex-1 rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          />
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            aria-label="OK"
+                            onClick={() => {
+                              const trimmed = commentEdit!.value.trim();
+                              onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
+                              setCommentEdit(null);
+                            }}
+                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                          >
+                            <Check className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Annuller"
+                            onClick={() => setCommentEdit(null)}
+                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        </div>
                       ) : (
                         <button
                           type="button"
