@@ -199,7 +199,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
         Stopur
       </h1>
 
-      <div className="mx-auto flex w-full max-w-3xl flex-col items-stretch gap-8 px-4">
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-stretch gap-6 px-4">
         <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
           <TimeDisplay ms={displayMs} />
         </div>
@@ -208,7 +208,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
           <div
             role="group"
             aria-label="Stopur-kontroller"
-            className={`flex w-full flex-wrap items-center gap-6 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
+            className="flex w-full flex-wrap items-center justify-center gap-3"
           >
             {state.status === "idle" && (
               <ShortcutTooltip label="Start" shortcut="Mellemrum">
