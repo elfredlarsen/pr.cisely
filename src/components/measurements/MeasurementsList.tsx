@@ -463,30 +463,30 @@ export function MeasurementsList({
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0.5">
                       {isAndet ? (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => toggleCommentExpanded(m.id)}
-                          aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
-                          aria-expanded={commentExpanded}
-                          className="relative h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                        >
-                          <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                          {m.comment && (
-                            <span
-                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
-                              aria-hidden="true"
-                            />
-                          )}
-                          <ChevronRight
-                            className={cn(
-                              "h-3 w-3 transition-transform duration-150",
-                              commentExpanded && "rotate-90",
-                            )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => toggleCommentExpanded(m.id)}
+                        aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
+                        aria-expanded={commentExpanded}
+                        className="relative h-9 w-9 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                      >
+                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                        {m.comment && (
+                          <span
+                            className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
                             aria-hidden="true"
                           />
-                        </Button>
+                        )}
+                        <ChevronRight
+                          className={cn(
+                            "h-3 w-3 transition-transform duration-150",
+                            commentExpanded && "rotate-90",
+                          )}
+                          aria-hidden="true"
+                        />
+                      </Button>
                       ) : (
                         <span className="h-9 w-9" aria-hidden="true" />
                       )}
