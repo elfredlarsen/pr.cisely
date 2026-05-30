@@ -237,6 +237,7 @@ export function useMeasurements() {
     measurements,
     visibleToday,
     hiddenAll,
+    loaded,
     add,
     update,
     remove,
