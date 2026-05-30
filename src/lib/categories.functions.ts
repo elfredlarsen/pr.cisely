@@ -94,7 +94,7 @@ export const createCategory = createServerFn({ method: "POST" })
     const { data: existing, error: exErr } = await supabase
       .from("categories")
       .select("value");
-    if (exErr) throw new Error(exErr.message);
+    if (exErr) dbError("categories.create", exErr);
     const taken = new Set((existing ?? []).map((r: { value: string }) => r.value));
     let value = base;
     let i = 2;
