@@ -48,6 +48,24 @@ function IndstillingerPage() {
             </div>
           </div>
         </section>
+
+        <section
+          aria-labelledby="data-heading"
+          className="mt-6 rounded-lg border border-border bg-card p-6"
+        >
+          <header className="mb-6 text-center">
+            <h2 id="data-heading" className="text-lg font-semibold">
+              Datahåndtering
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Styr hvordan dine registreringer opbevares og slettes.
+            </p>
+          </header>
+
+          <div className="mx-auto max-w-md">
+            <DataManagementSection />
+          </div>
+        </section>
       </main>
     </div>
   );
