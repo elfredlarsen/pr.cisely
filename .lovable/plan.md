@@ -1,8 +1,10 @@
-Reducer mellemrummet mellem stopur-knapperne og hold stopur, knapper og tabel centreret horisontalt (mx-auto).
+Justeringer i `src/components/stopwatch/Stopwatch.tsx`:
 
-I `src/components/stopwatch/Stopwatch.tsx`:
+1. **Samme start/slut for ur og knapper**: Wrap knapperækken i en indre container med samme bredde som tidsvisningen, og brug `justify-between` så første og sidste knap flugter med urets venstre/højre kant. Når der kun er én knap (idle-state), bruges `justify-center` så Start-knappen ikke sidder klistret i venstre side.
 
-- Linje 202 (wrapper-div): skift `max-w-3xl ... px-4` tilbage til en smallere centreret container: `mx-auto flex w-full max-w-2xl flex-col items-stretch gap-6 px-4`. Den centreres så den ligger pænt over tabellens `max-w-3xl`.
-- Linje 211 (knapraden): erstat den betingede `${... "justify-center" : "justify-between"}` med fast `justify-center` og brug `gap-3` (i stedet for `gap-6`), så knapperne sidder tæt samlet uanset antal.
+2. **Lidt større elementer**:
+   - Knapper (`baseBtn`): `h-12 w-40 text-lg` → `h-14 w-44 text-xl`, ikoner `h-6 w-6` → `h-7 w-7`.
+   - Container `max-w-2xl` → `max-w-3xl` så uret og knaprækken matcher tabellens bredde bedre.
+   - TimeDisplay forstørres en anelse via dens egen tekststørrelse (tjekker filen og bumper én tier op, fx `text-7xl` → `text-8xl`).
 
-Ingen ændringer i knapstørrelser eller funktionalitet.
+Ingen ændringer i logik, keyboard shortcuts eller funktionalitet.
