@@ -97,6 +97,8 @@ export function MeasurementsList({
   actionsColWidthClass = "w-16",
   stickyHeader = false,
   headerRowProps,
+  sortable = true,
+
 }: Props) {
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
   const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
