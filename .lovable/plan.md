@@ -1,7 +1,8 @@
-Juster stopur-containerens bredde og padding så den matcher historiktabellen (`max-w-3xl` + `px-4`):
+Reducer mellemrummet mellem stopur-knapperne og hold stopur, knapper og tabel centreret horisontalt (mx-auto).
 
 I `src/components/stopwatch/Stopwatch.tsx`:
-- Linje 196: skift `<section>` className fra `... px-6 py-8 ...` til `... py-8 ...` (fjern `px-6`).
-- Linje 202: skift wrapper-div fra `flex w-[36rem] max-w-full flex-col items-stretch gap-8` til `mx-auto flex w-full max-w-3xl flex-col items-stretch gap-8 px-4`.
 
-Resultat: ved `running`/`paused` med `justify-between` ligger venstre knap præcis i tabellens venstre kant og højre knap i højre kant. Tidsdisplay strækker sig samme bredde. Start-knappen ved `idle` forbliver centreret (ingen ændring i knapadfærd).
+- Linje 202 (wrapper-div): skift `max-w-3xl ... px-4` tilbage til en smallere centreret container: `mx-auto flex w-full max-w-2xl flex-col items-stretch gap-6 px-4`. Den centreres så den ligger pænt over tabellens `max-w-3xl`.
+- Linje 211 (knapraden): erstat den betingede `${... "justify-center" : "justify-between"}` med fast `justify-center` og brug `gap-3` (i stedet for `gap-6`), så knapperne sidder tæt samlet uanset antal.
+
+Ingen ændringer i knapstørrelser eller funktionalitet.
