@@ -66,7 +66,7 @@ export function MeasurementsTable({
           <Collapsible
             open={open}
             onOpenChange={handleOpenChange}
-            className="flex min-h-0 flex-col rounded-lg border border-border bg-card data-[state=open]:h-full"
+            className="flex flex-col rounded-lg border border-border bg-card"
           >
             <CollapsibleTrigger asChild>
               <button
@@ -91,8 +91,8 @@ export function MeasurementsTable({
                 </span>
               </button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="data-[state=open]:flex data-[state=open]:min-h-0 data-[state=open]:flex-1 data-[state=open]:flex-col">
-              <div className="scrollbar-purple flex-1 min-h-0 overflow-y-auto border-t border-border px-2 pb-2">
+            <CollapsibleContent>
+              <div className="scrollbar-purple max-h-80 overflow-y-auto border-t border-border px-2 pb-2">
                 <MeasurementsList
                   items={measurements}
                   onUpdate={onUpdate}
