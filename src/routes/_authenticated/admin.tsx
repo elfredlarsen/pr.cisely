@@ -279,7 +279,7 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annullér</AlertDialogCancel>
+              <AlertDialogCancel>Annuller</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
