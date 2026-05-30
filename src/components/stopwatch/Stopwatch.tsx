@@ -65,7 +65,7 @@ function computeMs(state: State, now: number) {
 }
 
 const baseBtn =
-  "inline-flex h-14 w-44 items-center justify-center gap-3 rounded-lg px-6 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
+  "inline-flex h-12 w-40 items-center justify-center gap-2.5 rounded-lg px-5 py-2.5 text-lg font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
 const startBtn = `${baseBtn} bg-success text-success-foreground`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
