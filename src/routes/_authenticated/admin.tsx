@@ -266,7 +266,7 @@ function CategoryAdminRow({ row }: { row: CategoryRow }) {
                 type="button"
                 size="icon"
                 variant="ghost"
-                className="h-8 w-11 text-muted-foreground hover:text-destructive"
+                className="h-8 w-14 text-muted-foreground hover:text-destructive"
                 disabled={saving || deleting || editing}
                 aria-label={`Slet ${row.label}`}
               >
