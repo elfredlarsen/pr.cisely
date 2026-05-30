@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndstillingerRouteImport } from './routes/indstillinger'
 import { Route as ArkivRouteImport } from './routes/arkiv'
 import { Route as IndexRouteImport } from './routes/index'
 
+const IndstillingerRoute = IndstillingerRouteImport.update({
+  id: '/indstillinger',
+  path: '/indstillinger',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArkivRoute = ArkivRouteImport.update({
   id: '/arkiv',
   path: '/arkiv',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arkiv': typeof ArkivRoute
+  '/indstillinger': typeof IndstillingerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arkiv': typeof ArkivRoute
+  '/indstillinger': typeof IndstillingerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/arkiv': typeof ArkivRoute
+  '/indstillinger': typeof IndstillingerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/arkiv'
+  fullPaths: '/' | '/arkiv' | '/indstillinger'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arkiv'
-  id: '__root__' | '/' | '/arkiv'
+  to: '/' | '/arkiv' | '/indstillinger'
+  id: '__root__' | '/' | '/arkiv' | '/indstillinger'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArkivRoute: typeof ArkivRoute
+  IndstillingerRoute: typeof IndstillingerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/indstillinger': {
+      id: '/indstillinger'
+      path: '/indstillinger'
+      fullPath: '/indstillinger'
+      preLoaderRoute: typeof IndstillingerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/arkiv': {
       id: '/arkiv'
       path: '/arkiv'
@@ -71,7 +88,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArkivRoute: ArkivRoute,
+  IndstillingerRoute: IndstillingerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
