@@ -55,7 +55,7 @@ function isSameDay(a: Date, b: Date): boolean {
 }
 
 function OversigtPage() {
-  const { measurements, add, update, remove, removeAllToday, removeAll } = useMeasurements();
+  const { measurements, loaded, add, update, remove, removeAllToday, removeAll } = useMeasurements();
   const [date, setDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
