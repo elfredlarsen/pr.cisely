@@ -448,10 +448,9 @@ export function MeasurementsList({
                         {allCategories
                           .filter(
                             (c) =>
-                              !c.hidden &&
-                              (activeFilter === null ||
-                                activeFilter.includes(c.value) ||
-                                c.value === m.category),
+                              activeFilter === null ||
+                              activeFilter.includes(c.value) ||
+                              c.value === m.category,
                           )
                           .map((c) => (
                             <SelectItem key={c.value} value={c.value}>
