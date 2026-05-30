@@ -201,6 +201,10 @@ export function MeasurementDialog({
       setError("Varighed skal være større end 0");
       return;
     }
+    if (!category) {
+      setError("Vælg en kategori");
+      return;
+    }
     setLastCategory(category);
     const trimmed = comment.trim();
     onSave({
@@ -208,7 +212,7 @@ export function MeasurementDialog({
       endedAt: setTimeOnDate(baseDate, en).toISOString(),
       ms: dur,
       category,
-      comment: category === "andet" && trimmed !== "" ? trimmed : undefined,
+      comment: trimmed !== "" ? trimmed : undefined,
     });
     onOpenChange(false);
   };
