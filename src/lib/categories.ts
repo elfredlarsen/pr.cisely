@@ -1,40 +1,13 @@
-export type Category =
-  | "straksafgoerelse"
-  | "arbejdstager"
-  | "tilstraekkelige_midler"
-  | "studerende"
-  | "tidsubegraenset_ophold"
-  | "eu_familiemedlem"
-  | "tredjelandsfamiliemedlem"
-  | "selvstaendig_erhvervsdrivende"
-  | "eu_vejledning"
-  | "et_g_sekundaer_bevaegelighed"
-  | "tub_sekundaer_bevaegelighed"
-  | "biometri"
-  | "andet";
+// Kategorierne ligger i databasen og redigeres af administratorer.
+// Denne fil indeholder typedefinitioner og lokale storage-helpers
+// (sidste valgte kategori + per-bruger filter på "aktive" kategorier).
+//
+// Listen af kategorier hentes via useCategories() / useCategoryLabel() hooks.
 
-export const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "straksafgoerelse", label: "Straksafgørelse" },
-  { value: "arbejdstager", label: "Arbejdstager" },
-  { value: "tilstraekkelige_midler", label: "Tilstrækkelige midler" },
-  { value: "studerende", label: "Studerende" },
-  { value: "tidsubegraenset_ophold", label: "Tidsubegrænset ophold" },
-  { value: "eu_familiemedlem", label: "EU-familiemedlem" },
-  { value: "tredjelandsfamiliemedlem", label: "Tredjelandsfamiliemedlem" },
-  { value: "selvstaendig_erhvervsdrivende", label: "Selvstændig erhvervsdrivende" },
-  { value: "eu_vejledning", label: "EU-vejledning" },
-  { value: "et_g_sekundaer_bevaegelighed", label: "1G Sekundær bevægelighed" },
-  { value: "tub_sekundaer_bevaegelighed", label: "TUB Sekundær bevægelighed" },
-  { value: "biometri", label: "Biometri" },
-  { value: "andet", label: "Andet" },
-];
-
-export function categoryLabel(value: Category): string {
-  return CATEGORIES.find((c) => c.value === value)?.label ?? value;
-}
+export type Category = string;
 
 export function isValidCategory(value: unknown): value is Category {
-  return typeof value === "string" && CATEGORIES.some((c) => c.value === value);
+  return typeof value === "string" && value.length > 0;
 }
 
 const LAST_CATEGORY_KEY = "precisely.lastCategory";
@@ -62,23 +35,24 @@ export function setLastCategory(value: Category) {
 export const ACTIVE_CATEGORIES_KEY = "precisely.activeCategories";
 export const ACTIVE_CATEGORIES_EVENT = "precisely:active-categories-changed";
 
-const ALL_VALUES: Category[] = CATEGORIES.map((c) => c.value);
-
-export function getActiveCategories(): Category[] {
-  if (typeof window === "undefined") return ALL_VALUES;
+/**
+ * Returnerer per-bruger filter (lokal). `null` betyder "alle".
+ */
+export function getActiveCategoriesFilter(): Category[] | null {
+  if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(ACTIVE_CATEGORIES_KEY);
-    if (!raw) return ALL_VALUES;
+    if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return ALL_VALUES;
+    if (!Array.isArray(parsed)) return null;
     const filtered = parsed.filter(isValidCategory) as Category[];
-    return filtered.length > 0 ? filtered : ALL_VALUES;
+    return filtered.length > 0 ? filtered : null;
   } catch {
-    return ALL_VALUES;
+    return null;
   }
 }
 
-export function setActiveCategories(values: Category[]) {
+export function setActiveCategoriesFilter(values: Category[]) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(ACTIVE_CATEGORIES_KEY, JSON.stringify(values));
@@ -88,3 +62,25 @@ export function setActiveCategories(values: Category[]) {
   }
 }
 
+// Bagudkompatibel fallback til komponenter der ikke har fået kategori-listen
+// fra hooken endnu (fx ved første render). Indeholder samme værdier som
+// seedet i databasen, så `categoryLabel(value)` altid har et fornuftigt fald-tilbage.
+export const FALLBACK_CATEGORY_LABELS: Record<string, string> = {
+  straksafgoerelse: "Straksafgørelse",
+  arbejdstager: "Arbejdstager",
+  tilstraekkelige_midler: "Tilstrækkelige midler",
+  studerende: "Studerende",
+  tidsubegraenset_ophold: "Tidsubegrænset ophold",
+  eu_familiemedlem: "EU-familiemedlem",
+  tredjelandsfamiliemedlem: "Tredjelandsfamiliemedlem",
+  selvstaendig_erhvervsdrivende: "Selvstændig erhvervsdrivende",
+  eu_vejledning: "EU-vejledning",
+  et_g_sekundaer_bevaegelighed: "1G Sekundær bevægelighed",
+  tub_sekundaer_bevaegelighed: "TUB Sekundær bevægelighed",
+  biometri: "Biometri",
+  andet: "Andet",
+};
+
+export function fallbackCategoryLabel(value: Category): string {
+  return FALLBACK_CATEGORY_LABELS[value] ?? value;
+}

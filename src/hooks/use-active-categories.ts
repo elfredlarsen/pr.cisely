@@ -2,16 +2,20 @@ import { useEffect, useState } from "react";
 import {
   ACTIVE_CATEGORIES_EVENT,
   ACTIVE_CATEGORIES_KEY,
-  getActiveCategories,
+  getActiveCategoriesFilter,
   type Category,
 } from "@/lib/categories";
 
-export function useActiveCategories(): Category[] {
-  const [active, setActive] = useState<Category[]>(() => getActiveCategories());
+/**
+ * Returnerer per-bruger filter (`null` = alle kategorier vises).
+ */
+export function useActiveCategoriesFilter(): Category[] | null {
+  const [active, setActive] = useState<Category[] | null>(() =>
+    getActiveCategoriesFilter(),
+  );
 
   useEffect(() => {
-    const sync = () => setActive(getActiveCategories());
-    // Initial sync (covers SSR mismatch)
+    const sync = () => setActive(getActiveCategoriesFilter());
     sync();
     const onStorage = (e: StorageEvent) => {
       if (e.key === ACTIVE_CATEGORIES_KEY) sync();
