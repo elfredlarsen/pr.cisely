@@ -1,8 +1,7 @@
-Knapperækken skal aldrig være bredere end urets faktiske visuelle bredde (kanten af første "0" til kanten af sidste ciffer).
+Begræns historik-scrollområdet til ca. 7 rækker.
 
-**Løsning** i `src/components/stopwatch/Stopwatch.tsx`:
-- Tilføj en `ref` på `TimeDisplay`-wrapperen og mål dens faktiske bredde med `ResizeObserver`.
-- Sæt knapperækkens `maxWidth` til den målte bredde via inline style, og behold `mx-auto justify-between` så de tre knapper fordeles inden for præcis den bredde.
-- Når der kun er én knap (idle), bruges `justify-center` så Start-knappen står midt under uret.
+**Ændring** i `src/components/stopwatch/MeasurementsTable.tsx`:
+- På scroll-containeren (linje 95) erstattes `flex-1 min-h-0` med en fast `max-h` svarende til ~7 rækker. Rækker er `h-8` med `py-1` ≈ 40 px hver, plus sticky header på ~40 px → `max-h-[20rem]` (320 px) rummer header + 7 rækker. Overflow forbliver `overflow-y-auto` med eksisterende `scrollbar-purple`.
+- Fjerner `data-[state=open]:h-full` og `data-[state=open]:flex-1` så Collapsible-indholdet ikke længere prøver at fylde hele forældrehøjden — den kollapser naturligt til content-højden, op til max.
 
-Ingen ændringer i `TimeDisplay`, knapstørrelser eller funktionalitet.
+Ingen ændringer i logik, sortering eller styling af selve tabellen.
