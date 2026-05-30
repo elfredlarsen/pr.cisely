@@ -24,6 +24,7 @@ async function assertAdmin(supabase: SupabaseClient, userId: string) {
     _role: "administrator",
   });
   if (error) dbError("categories", error);
+  if (error) throw new Error(error.message);
   if (!isAdmin) throw new Error("Forbidden: administrator role required");
 }
 
@@ -46,6 +47,7 @@ export const listCategories = createServerFn({ method: "GET" })
       .select("id, value, label, sort_order, hidden")
       .order("sort_order", { ascending: true });
     if (error) dbError("categories", error);
+    if (error) throw new Error(error.message);
     return data ?? [];
   });
 
@@ -73,6 +75,7 @@ export const updateCategory = createServerFn({ method: "POST" })
       .update(patch)
       .eq("id", data.id);
     if (error) dbError("categories", error);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 
@@ -95,6 +98,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .from("categories")
       .select("value");
     if (exErr) dbError("categories.create", exErr);
+    if (exErr) throw new Error(exErr.message);
     const taken = new Set((existing ?? []).map((r: { value: string }) => r.value));
     let value = base;
     let i = 2;
@@ -110,6 +114,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .limit(1)
       .maybeSingle();
     if (maxErr) dbError("categories.create", maxErr);
+    if (maxErr) throw new Error(maxErr.message);
     const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
     const { data: inserted, error } = await supabase
@@ -118,6 +123,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .select("id, value, label, sort_order, hidden")
       .single();
     if (error) dbError("categories", error);
+    if (error) throw new Error(error.message);
     return inserted as CategoryRow;
   });
 
@@ -135,5 +141,6 @@ export const deleteCategory = createServerFn({ method: "POST" })
       .delete()
       .eq("id", data.id);
     if (error) dbError("categories", error);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });

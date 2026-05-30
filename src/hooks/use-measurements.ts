@@ -14,6 +14,7 @@ import {
   updateMeasurement,
   type MeasurementRow,
 } from "@/lib/measurements.functions";
+import { isValidCategory, type Category } from "@/lib/categories";
 
 export type Measurement = {
   id: string;
@@ -47,6 +48,8 @@ function rowToMeasurement(row: MeasurementRow): Measurement | null {
     comment: row.comment ?? undefined,
   };
 }
+const STORAGE_KEY = "precisely.measurements";
+const SEED_KEY = "precisely.measurements.seeded";
 
 function newId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -79,6 +82,72 @@ function previewRead(): Measurement[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = window.localStorage.getItem(PREVIEW_KEY);
+function migrate(raw: unknown): Measurement[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item): Measurement | null => {
+      if (!item || typeof item !== "object") return null;
+      const r = item as Record<string, unknown>;
+      const ms = typeof r.ms === "number" ? r.ms : 0;
+      const endedAt = typeof r.endedAt === "string" ? r.endedAt : new Date().toISOString();
+      const startedAt =
+        typeof r.startedAt === "string"
+          ? r.startedAt
+          : new Date(new Date(endedAt).getTime() - ms).toISOString();
+      if (!isValidCategory(r.category)) return null;
+      const category = r.category;
+      const hidden = typeof r.hidden === "boolean" ? r.hidden : false;
+      const id = typeof r.id === "string" ? r.id : newId();
+      const comment =
+        typeof r.comment === "string" && r.comment.trim() !== "" ? r.comment : undefined;
+      return { id, startedAt, endedAt, ms, category, hidden, comment };
+    })
+    .filter((x): x is Measurement => x !== null);
+}
+
+function buildSeed(): Measurement[] {
+  const today = new Date();
+  const make = (
+    startH: number,
+    startM: number,
+    durMin: number,
+    category: Category,
+  ): Measurement => {
+    const start = new Date(today);
+    start.setHours(startH, startM, 0, 0);
+    const ms = durMin * 60 * 1000;
+    const end = new Date(start.getTime() + ms);
+    return {
+      id: newId(),
+      startedAt: start.toISOString(),
+      endedAt: end.toISOString(),
+      ms,
+      category,
+      hidden: false,
+    };
+  };
+  return [
+    make(8, 30, 45, "straksafgoerelse"),
+    make(9, 20, 60, "straksafgoerelse"),
+    make(13, 0, 45, "straksafgoerelse"),
+    make(10, 30, 30, "biometri"),
+    make(14, 0, 45, "biometri"),
+    make(11, 15, 30, "eu_vejledning"),
+    make(15, 0, 30, "eu_vejledning"),
+  ];
+}
+
+function read(): Measurement[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const seeded = window.localStorage.getItem(SEED_KEY);
+    if (!raw && !seeded) {
+      const seed = buildSeed();
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+      window.localStorage.setItem(SEED_KEY, "1");
+      return seed;
+    }
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -98,11 +167,44 @@ function previewWrite(items: Measurement[]) {
 }
 
 function usePreviewMeasurements() {
+function isSameLocalDay(iso: string, ref: Date): boolean {
+  const d = new Date(iso);
+  return (
+    d.getFullYear() === ref.getFullYear() &&
+    d.getMonth() === ref.getMonth() &&
+    d.getDate() === ref.getDate()
+  );
+}
+
+const AUTO_DELETE_KEY = "precisely.autoDeleteDays";
+
+function pruneOld(items: Measurement[]): Measurement[] {
+  if (typeof window === "undefined") return items;
+  let days: number | null = null;
+  try {
+    const v = window.localStorage.getItem(AUTO_DELETE_KEY);
+    if (v && v !== "never") {
+      const n = Number(v);
+      if (Number.isFinite(n) && n > 0) days = n;
+    }
+  } catch {
+    return items;
+  }
+  if (days === null) return items;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return items.filter((m) => new Date(m.endedAt).getTime() >= cutoff);
+}
+
+export function useMeasurements() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setMeasurements(previewRead());
+    const initial = read();
+    const pruned = pruneOld(initial);
+    if (pruned.length !== initial.length) write(pruned);
+    setMeasurements(pruned);
     setLoaded(true);
   }, []);
 
@@ -139,6 +241,14 @@ function usePreviewMeasurements() {
     (id: string) => persist((prev) => prev.filter((m) => m.id !== id)),
     [persist],
   );
+
+  const remove = useCallback(
+    (id: string) => {
+      persist((prev) => prev.filter((m) => m.id !== id));
+    },
+    [persist],
+  );
+
   const hide = useCallback(
     (id: string) =>
       persist((prev) => prev.map((m) => (m.id === id ? { ...m, hidden: true } : m))),
@@ -158,6 +268,18 @@ function usePreviewMeasurements() {
     );
   }, [persist]);
   const removeAllToday = useCallback(() => {
+
+  const removeAllToday = useCallback(() => {
+    const today = new Date();
+    persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
+  }, [persist]);
+
+  const removeAll = useCallback(() => {
+    persist(() => []);
+  }, [persist]);
+
+
+  const visibleToday = useMemo(() => {
     const today = new Date();
     persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
   }, [persist]);
@@ -262,6 +384,8 @@ function useSupabaseMeasurements(enabled: boolean) {
 
   return {
     measurements,
+    visibleToday,
+    hiddenAll,
     loaded,
     add,
     update,
