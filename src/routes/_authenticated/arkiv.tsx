@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMeasurements, type Measurement } from "@/hooks/use-measurements";
 import { type Category } from "@/lib/categories";
 import { useCategories } from "@/hooks/use-categories";
