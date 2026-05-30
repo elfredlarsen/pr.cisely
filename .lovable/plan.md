@@ -1,20 +1,19 @@
-## Plan
+## Problem
+Når man holder musen over historik-headeren på `/`, dukker et lille lilla tooltip "Seneste registreringer" op. Tilsvarende headere på `/arkiv` (CategoryGroup) har ikke et tooltip — så det bryder 1:1-matchet og virker malplaceret.
 
-Match historiktabellens visuelle styling 1:1 med oversigttabellen (CategoryGroup), fjern opaciteten, men behold sticky header og ikke-sortérbare overskrifter.
+## Løsning
+Fjern tooltippet helt fra historik-headeren, så den opfører sig som kategori-headerne på oversigten.
 
-### Ændringer
-Fil: `src/components/stopwatch/MeasurementsTable.tsx`
+### Ændringer i `src/components/stopwatch/MeasurementsTable.tsx`
+- Fjern state og refs: `tipPos`, `tipVisible`, `showTimerRef`, `hideTimerRef`.
+- Fjern handler-funktionerne: `clearShowTimer`, `clearHideTimer`, `handleHeaderEnter`, `handleHeaderMove`, `handleHeaderLeave`.
+- Fjern `headerRowProps={{ onMouseEnter, onMouseMove, onMouseLeave }}` fra `<MeasurementsList />`.
+- Fjern det flydende tooltip-`<div role="tooltip">` nederst i JSX og det omsluttende `<>` fragment (returnér `<section>` direkte).
+- Fjern de nu ubrugte imports (`useRef`, `useState`, `MouseEvent`) hvis de ikke længere bruges (behold `useEffect`/`useState` til `format` og `open`).
 
-- Fjern `opacity-75` fra `<section>` (historikken vises nu med fuld opacitet).
-- Skift `border-border/60` → `border-border` på:
-  - Empty-state-containeren (`rounded-lg border ...`).
-  - `<Collapsible>` wrapper-klasser.
-  - `<CollapsibleContent>`'s indre div (`border-t border-border/60` → `border-t border-border`).
-- Behold alt andet uændret: sticky header, `sortable={false}`, `headerRowProps` (tooltip), localStorage-state for åben/lukket, samlet tid + antal i headeren.
+### Uændret
+- Sticky header, ikke-sortérbare overskrifter, foldbar `Collapsible`, localStorage-state, totaltid + antal i headeren.
 
-### Opdater hukommelse
-- Den tidligere regel "behold opacity-75 på historikken" er nu omgjort af brugeren. Opdater `mem://` så fremtidige sessioner ved, at historikken IKKE skal have nedsat opacitet, og at den visuelt skal følge CategoryGroup-stilen.
-
-### Verificering
-- Tjek `/`: historikkens container og fold-out header har samme border-farve, baggrund og padding som CategoryGroup på `/arkiv`.
-- Bekræft at sticky header stadig virker ved scroll og at overskrifterne ikke er klikbare.
+## Verifikation
+- Hover over historik-headeren på `/` viser intet tooltip længere.
+- Headeren opfører sig visuelt og interaktivt som CategoryGroup-headeren på `/arkiv`.
