@@ -17,9 +17,10 @@ export function useVisibleCategories() {
   const q = useCategories();
   return {
     ...q,
-    data: (q.data ?? []).filter((c) => !c.hidden),
+    data: q.data ?? [],
   };
 }
+
 
 export function useCategoryLabel(value: Category | undefined | null): string {
   const { data } = useCategories();

@@ -13,7 +13,8 @@ import { useCategories } from "@/hooks/use-categories";
 
 export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
-  const visible = (categories ?? []).filter((c) => !c.hidden);
+  const visible = categories ?? [];
+
 
   // active er sættet af kategorier brugeren vil have vist; null = alle (afledt fra synlige)
   const [filter, setFilter] = useState<Set<Category> | null>(() => {
