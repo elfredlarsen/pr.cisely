@@ -7,7 +7,6 @@ type Props = {
   format: SummaryFormat;
   onFormatChange: (f: SummaryFormat) => void;
   leftSlot?: ReactNode;
-  rightSlot?: ReactNode;
 };
 
 export function DaySummary({
@@ -15,8 +14,8 @@ export function DaySummary({
   format,
   onFormatChange,
   leftSlot,
-  rightSlot,
 }: Props) {
+
   return (
     <div className="flex flex-col gap-2">
       <div className="relative flex min-h-9 items-center justify-center">
