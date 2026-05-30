@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Label } from "@/components/ui/label";
@@ -15,10 +15,28 @@ export function CategoriesSection() {
     () => new Set(getActiveCategories()),
   );
   const didMountRef = useRef(false);
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
 
   useEffect(() => {
-    // Re-read on mount in case localStorage was hydrated after first render
     setActive(new Set(getActiveCategories()));
+  }, []);
+
+  useLayoutEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const update = () => {
+      setCanScrollUp(el.scrollTop > 0);
+      setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   const toggle = (value: Category, next: boolean) => {
@@ -40,29 +58,46 @@ export function CategoriesSection() {
   };
 
   return (
-    <ul className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border">
-      {CATEGORIES.map((c) => {
-        const isActive = active.has(c.value);
-        const isLastActive = isActive && active.size === 1;
-        const id = `category-toggle-${c.value}`;
-        return (
-          <li
-            key={c.value}
-            className="flex min-h-11 items-center justify-between gap-4 px-4 py-2"
-          >
-            <Label htmlFor={id} className="cursor-pointer text-sm font-normal">
-              {c.label}
-            </Label>
-            <Switch
-              id={id}
-              checked={isActive}
-              disabled={isLastActive}
-              onCheckedChange={(v) => toggle(c.value, v)}
-              aria-label={`Aktivér ${c.label}`}
-            />
-          </li>
-        );
-      })}
-    </ul>
+    <div className="relative">
+      <ul
+        ref={listRef}
+        className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border"
+      >
+        {CATEGORIES.map((c) => {
+          const isActive = active.has(c.value);
+          const isLastActive = isActive && active.size === 1;
+          const id = `category-toggle-${c.value}`;
+          return (
+            <li
+              key={c.value}
+              className="flex min-h-11 items-center justify-between gap-4 px-4 py-2"
+            >
+              <Label htmlFor={id} className="cursor-pointer text-sm font-normal">
+                {c.label}
+              </Label>
+              <Switch
+                id={id}
+                checked={isActive}
+                disabled={isLastActive}
+                onCheckedChange={(v) => toggle(c.value, v)}
+                aria-label={`Aktivér ${c.label}`}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      {canScrollUp && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-6 rounded-t-md bg-gradient-to-b from-card to-transparent"
+        />
+      )}
+      {canScrollDown && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-6 rounded-b-md bg-gradient-to-t from-card to-transparent"
+        />
+      )}
+    </div>
   );
 }
