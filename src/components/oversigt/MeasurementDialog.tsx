@@ -107,7 +107,7 @@ export function MeasurementDialog({
   const [start, setStart] = useState("09:00:00");
   const [end, setEnd] = useState("09:30:00");
   const [duration, setDuration] = useState("00:30:00");
-  const [category, setCategory] = useState<Category>("straksafgoerelse");
+  const [category, setCategory] = useState<Category>("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const activeFilter = useActiveCategoriesFilter();
