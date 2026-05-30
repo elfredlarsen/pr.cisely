@@ -277,7 +277,7 @@ function useSupabaseMeasurements(enabled: boolean) {
 export function useMeasurements() {
   const preview = usePreviewMode();
   const previewApi = usePreviewMeasurements();
-  const supaApi = useSupabaseMeasurements();
+  const supaApi = useSupabaseMeasurements(!preview);
 
   const api = preview ? previewApi : supaApi;
 
