@@ -594,18 +594,6 @@ export function MeasurementsList({
                   const patch: Partial<Omit<Measurement, "id">> = {
                     category: pendingCategoryChange.to,
                   };
-                  if (
-                    pendingCategoryChange.from === "andet" &&
-                    pendingCategoryChange.to !== "andet"
-                  ) {
-                    patch.comment = undefined;
-                    setExpandedComments((prev) => {
-                      if (!prev.has(pendingCategoryChange.id)) return prev;
-                      const next = new Set(prev);
-                      next.delete(pendingCategoryChange.id);
-                      return next;
-                    });
-                  }
                   onUpdate(pendingCategoryChange.id, patch);
                 }
                 setPendingCategoryChange(null);
