@@ -1,37 +1,26 @@
-export type Category =
-  | "straksafgoerelse"
-  | "eu_ansoegning"
-  | "biometri"
-  | "biometri_inkl_ansoegning"
-  | "tilbagerejsetilladelse"
-  | "forkert_myndighed"
-  | "andet";
+// Kategorierne ligger i databasen og redigeres af administratorer.
+// Denne fil indeholder typedefinitioner og lokale storage-helpers
+// (sidste valgte kategori + per-bruger filter på "aktive" kategorier).
+//
+// Listen af kategorier hentes via useCategories() / useCategoryLabel() hooks.
 
-export const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "straksafgoerelse", label: "Straksafgørelse" },
-  { value: "eu_ansoegning", label: "EU-ansøgning modtaget" },
-  { value: "biometri", label: "Biometri" },
-  { value: "biometri_inkl_ansoegning", label: "Biometri inkl. indgivelse af ansøgning" },
-  { value: "tilbagerejsetilladelse", label: "Tilbagerejsetilladelse" },
-  { value: "forkert_myndighed", label: "Forkert myndighed" },
-  { value: "andet", label: "Andet" },
-];
+export type Category = string;
 
-export function categoryLabel(value: Category): string {
-  return CATEGORIES.find((c) => c.value === value)?.label ?? value;
+export function isValidCategory(value: unknown): value is Category {
+  return typeof value === "string" && value.length > 0;
 }
 
 const LAST_CATEGORY_KEY = "precisely.lastCategory";
 
-export function getLastCategory(): Category {
-  if (typeof window === "undefined") return "straksafgoerelse";
+export function getLastCategory(): Category | null {
+  if (typeof window === "undefined") return null;
   try {
     const v = window.localStorage.getItem(LAST_CATEGORY_KEY);
-    if (v && CATEGORIES.some((c) => c.value === v)) return v as Category;
+    if (v && isValidCategory(v)) return v;
   } catch {
     // ignore
   }
-  return "straksafgoerelse";
+  return null;
 }
 
 export function setLastCategory(value: Category) {
@@ -41,4 +30,57 @@ export function setLastCategory(value: Category) {
   } catch {
     // ignore
   }
+}
+
+export const ACTIVE_CATEGORIES_KEY = "precisely.activeCategories";
+export const ACTIVE_CATEGORIES_EVENT = "precisely:active-categories-changed";
+
+/**
+ * Returnerer per-bruger filter (lokal). `null` betyder "alle".
+ */
+export function getActiveCategoriesFilter(): Category[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(ACTIVE_CATEGORIES_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    const filtered = parsed.filter(isValidCategory) as Category[];
+    return filtered.length > 0 ? filtered : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setActiveCategoriesFilter(values: Category[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(ACTIVE_CATEGORIES_KEY, JSON.stringify(values));
+    window.dispatchEvent(new Event(ACTIVE_CATEGORIES_EVENT));
+  } catch {
+    // ignore
+  }
+}
+
+// Bagudkompatibel fallback til komponenter der ikke har fået kategori-listen
+// fra hooken endnu (fx ved første render). Indeholder samme værdier som
+// seedet i databasen, så `categoryLabel(value)` altid har et fornuftigt fald-tilbage.
+export const FALLBACK_CATEGORY_LABELS: Record<string, string> = {
+  straksafgoerelse: "Straksafgørelse",
+  arbejdstager: "Arbejdstager",
+  tilstraekkelige_midler: "Tilstrækkelige midler",
+  studerende: "Studerende",
+  tidsubegraenset_ophold: "Tidsubegrænset ophold",
+  eu_familiemedlem: "EU-familiemedlem",
+  tredjelandsfamiliemedlem: "Tredjelandsfamiliemedlem",
+  selvstaendig_erhvervsdrivende: "Selvstændig erhvervsdrivende",
+  eu_vejledning: "EU-vejledning",
+  et_g_sekundaer_bevaegelighed: "1G Sekundær bevægelighed",
+  tub_sekundaer_bevaegelighed: "TUB Sekundær bevægelighed",
+  biometri: "Biometri",
+  andet: "Andet",
+};
+
+export function fallbackCategoryLabel(value: Category): string {
+  return FALLBACK_CATEGORY_LABELS[value] ?? value;
 }

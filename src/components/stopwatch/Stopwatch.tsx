@@ -1,12 +1,7 @@
-import { useEffect, useReducer, useRef, useState, useCallback, type ReactNode } from "react";
+import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
 import { TimeDisplay } from "./TimeDisplay";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { IconTooltip } from "@/components/ui/icon-tooltip";
 
 type Status = "idle" | "running" | "paused";
 
@@ -65,37 +60,13 @@ function computeMs(state: State, now: number) {
 }
 
 const baseBtn =
-  "inline-flex h-14 w-44 items-center justify-center gap-3 rounded-lg px-6 py-3 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
+  "inline-flex h-14 w-56 items-center justify-center gap-2.5 rounded-lg px-5 py-2.5 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
 const startBtn = `${baseBtn} bg-success text-success-foreground`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
 const pauseBtn = `${baseBtn} bg-warning text-warning-foreground`;
 const resetBtn = `${baseBtn} bg-info text-info-foreground`;
 const resumeBtn = `${baseBtn} bg-success text-success-foreground`;
-
-type ShortcutTooltipProps = {
-  label: string;
-  shortcut: string;
-  children: ReactNode;
-};
-
-function ShortcutTooltip({ label, shortcut, children }: ShortcutTooltipProps) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent
-        side="top"
-        sideOffset={6}
-        className="flex items-center gap-1.5 rounded border border-border/30 bg-background/60 px-2 py-0.5 text-[11px] text-muted-foreground/80 shadow-none backdrop-blur-sm zoom-in-100 data-[state=closed]:zoom-out-100"
-      >
-        <span>{label}</span>
-        <kbd className="rounded border border-border/30 bg-muted/40 px-1 py-0 font-mono text-[10px] text-muted-foreground/70">
-          {shortcut}
-        </kbd>
-      </TooltipContent>
-    </Tooltip>
-  );
-}
 
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
@@ -107,6 +78,21 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
   const [state, dispatch] = useReducer(reducer, initialState);
   const [displayMs, setDisplayMs] = useState(0);
   const rafRef = useRef<number | null>(null);
+  const clockRef = useRef<HTMLDivElement | null>(null);
+  const [clockWidth, setClockWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!clockRef.current) return;
+    const el = clockRef.current;
+    const update = () => {
+      const inner = el.firstElementChild as HTMLElement | null;
+      setClockWidth(inner ? inner.getBoundingClientRect().width : el.getBoundingClientRect().width);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (state.status !== "running") {
@@ -193,25 +179,29 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     <section
       aria-labelledby="stopur-overskrift"
       aria-hidden={finishOpen || undefined}
-      className={`flex w-full flex-col items-center justify-center px-6 py-12 ${finishOpen ? "pointer-events-none" : ""}`}
+      className={`flex w-full flex-col items-center justify-center py-8 ${finishOpen ? "pointer-events-none" : ""}`}
     >
       <h1 id="stopur-overskrift" className="sr-only">
         Stopur
       </h1>
 
-      <div className="flex w-[36rem] max-w-full flex-col items-stretch gap-12">
-        <div className={`w-full transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}>
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 px-4">
+        <div
+          ref={clockRef}
+          className={`flex w-full justify-center transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}
+        >
           <TimeDisplay ms={displayMs} />
         </div>
 
-        <TooltipProvider delayDuration={1000}>
+        
           <div
             role="group"
             aria-label="Stopur-kontroller"
-            className={`flex w-full flex-wrap items-center gap-6 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
+            style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
+            className={`flex flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
           >
             {state.status === "idle" && (
-              <ShortcutTooltip label="Start" shortcut="Mellemrum">
+              <IconTooltip label="Start" shortcut="Mellemrum">
                 <button
                   type="button"
                   onClick={onStart}
@@ -221,12 +211,12 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                   <Play className="h-7 w-7" aria-hidden="true" />
                   Start
                 </button>
-              </ShortcutTooltip>
+              </IconTooltip>
             )}
 
             {state.status === "running" && (
               <>
-                <ShortcutTooltip label="Nulstil" shortcut="N">
+                <IconTooltip label="Nulstil" shortcut="N">
                   <button
                     type="button"
                     onClick={onReset}
@@ -236,8 +226,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Afslut" shortcut="A">
+                </IconTooltip>
+                <IconTooltip label="Afslut" shortcut="A">
                   <button
                     type="button"
                     onClick={onFinish}
@@ -247,8 +237,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Pause" shortcut="Mellemrum">
+                </IconTooltip>
+                <IconTooltip label="Pause" shortcut="Mellemrum">
                   <button
                     type="button"
                     onClick={onPause}
@@ -258,13 +248,13 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Pause className="h-7 w-7" aria-hidden="true" />
                     Pause
                   </button>
-                </ShortcutTooltip>
+                </IconTooltip>
               </>
             )}
 
             {state.status === "paused" && (
               <>
-                <ShortcutTooltip label="Nulstil" shortcut="N">
+                <IconTooltip label="Nulstil" shortcut="N">
                   <button
                     type="button"
                     onClick={onReset}
@@ -274,8 +264,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Afslut" shortcut="A">
+                </IconTooltip>
+                <IconTooltip label="Afslut" shortcut="A">
                   <button
                     type="button"
                     onClick={onFinish}
@@ -285,8 +275,8 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
-                </ShortcutTooltip>
-                <ShortcutTooltip label="Fortsæt" shortcut="Mellemrum">
+                </IconTooltip>
+                <IconTooltip label="Fortsæt" shortcut="Mellemrum">
                   <button
                     type="button"
                     onClick={onResume}
@@ -296,11 +286,11 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     <FastForward className="h-7 w-7" aria-hidden="true" />
                     Fortsæt
                   </button>
-                </ShortcutTooltip>
+                </IconTooltip>
               </>
             )}
           </div>
-        </TooltipProvider>
+        
       </div>
     </section>
   );
