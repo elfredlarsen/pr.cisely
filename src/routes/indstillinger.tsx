@@ -53,7 +53,7 @@ function IndstillingerPage() {
 
           <section
             aria-labelledby="kategorier-heading"
-            className="rounded-lg border border-border bg-card p-6"
+            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
           >
             <header className="mb-6 text-center">
               <h2 id="kategorier-heading" className="text-lg font-semibold">
