@@ -71,7 +71,7 @@ function IndstillingerPage() {
 
           <section
             aria-labelledby="mine-data-heading"
-            className="rounded-lg border border-border bg-card p-6"
+            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
           >
             <header className="mb-6 text-center">
               <h2 id="mine-data-heading" className="text-lg font-semibold">
