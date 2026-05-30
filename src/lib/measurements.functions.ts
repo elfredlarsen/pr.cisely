@@ -110,6 +110,21 @@ export const removeMeasurementsInRange = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const hideMeasurementsInRange = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => dayBoundsSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { error } = await supabase
+      .from("measurements")
+      .update({ hidden: true })
+      .gte("ended_at", data.from)
+      .lt("ended_at", data.to)
+      .eq("hidden", false);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const removeAllMeasurements = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -118,3 +133,4 @@ export const removeAllMeasurements = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
