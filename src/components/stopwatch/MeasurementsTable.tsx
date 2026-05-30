@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Timer } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Measurement } from "@/hooks/use-measurements";
 import { MeasurementsList } from "@/components/measurements/MeasurementsList";
 import { formatTotal, type SummaryFormat } from "@/components/oversigt/format";
@@ -14,6 +15,7 @@ type Props = {
   measurements: Measurement[];
   onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
   onDelete: (id: string) => void;
+  loaded?: boolean;
 };
 
 const FORMAT_KEY = "precisely.summaryFormat";
