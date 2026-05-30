@@ -32,7 +32,7 @@ function IndstillingerPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <section
             aria-labelledby="konto-heading"
-            className="rounded-lg border border-border bg-card p-6"
+            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
           >
             <header className="mb-6 text-center">
               <h2 id="konto-heading" className="text-lg font-semibold">
