@@ -4,6 +4,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+function dbError(scope: string, error: { message: string }): never {
+  console.error(`[${scope}] DB error:`, error.message);
+  throw new Error("Databasefejl. Prøv igen.");
+}
+
+
 export type CategoryRow = {
   id: string;
   value: string;
@@ -17,6 +23,7 @@ async function assertAdmin(supabase: SupabaseClient, userId: string) {
     _user_id: userId,
     _role: "administrator",
   });
+  if (error) dbError("categories", error);
   if (error) throw new Error(error.message);
   if (!isAdmin) throw new Error("Forbidden: administrator role required");
 }
@@ -39,6 +46,7 @@ export const listCategories = createServerFn({ method: "GET" })
       .from("categories")
       .select("id, value, label, sort_order, hidden")
       .order("sort_order", { ascending: true });
+    if (error) dbError("categories", error);
     if (error) throw new Error(error.message);
     return data ?? [];
   });
@@ -66,6 +74,7 @@ export const updateCategory = createServerFn({ method: "POST" })
       .from("categories")
       .update(patch)
       .eq("id", data.id);
+    if (error) dbError("categories", error);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -88,6 +97,7 @@ export const createCategory = createServerFn({ method: "POST" })
     const { data: existing, error: exErr } = await supabase
       .from("categories")
       .select("value");
+    if (exErr) dbError("categories.create", exErr);
     if (exErr) throw new Error(exErr.message);
     const taken = new Set((existing ?? []).map((r: { value: string }) => r.value));
     let value = base;
@@ -103,6 +113,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .order("sort_order", { ascending: false })
       .limit(1)
       .maybeSingle();
+    if (maxErr) dbError("categories.create", maxErr);
     if (maxErr) throw new Error(maxErr.message);
     const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
@@ -111,6 +122,7 @@ export const createCategory = createServerFn({ method: "POST" })
       .insert({ value, label, sort_order: nextOrder, hidden: false })
       .select("id, value, label, sort_order, hidden")
       .single();
+    if (error) dbError("categories", error);
     if (error) throw new Error(error.message);
     return inserted as CategoryRow;
   });
@@ -128,6 +140,7 @@ export const deleteCategory = createServerFn({ method: "POST" })
       .from("categories")
       .delete()
       .eq("id", data.id);
+    if (error) dbError("categories", error);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

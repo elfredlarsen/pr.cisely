@@ -10,6 +10,10 @@ export const getMyRoleInfo = createServerFn({ method: "GET" })
       .from("user_roles")
       .select("role")
       .eq("user_id", userId);
+    if (error) {
+      console.error("[auth.roles] DB error:", error.message);
+      throw new Error("Databasefejl. Prøv igen.");
+    }
     if (error) throw new Error(error.message);
     const roles = (data ?? []).map((r) => r.role);
     return {
