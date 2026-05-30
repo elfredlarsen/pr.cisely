@@ -495,7 +495,7 @@ export function MeasurementsList({
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="h-9 w-12 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                              className="h-9 w-16 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
                               aria-label="Slet registrering"
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />
