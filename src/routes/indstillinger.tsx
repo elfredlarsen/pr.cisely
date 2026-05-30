@@ -26,65 +26,67 @@ function IndstillingerPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
         <h1 className="sr-only">Indstillinger</h1>
 
-        <section
-          aria-labelledby="konto-heading"
-          className="mt-8 rounded-lg border border-border bg-card p-6"
-        >
-          <header className="mb-6 text-center">
-            <h2 id="konto-heading" className="text-lg font-semibold">
-              Konto
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Administrer din adgangskode og kontooplysninger.
-            </p>
-          </header>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <section
+            aria-labelledby="konto-heading"
+            className="rounded-lg border border-border bg-card p-6"
+          >
+            <header className="mb-6 text-center">
+              <h2 id="konto-heading" className="text-lg font-semibold">
+                Konto
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Administrer din adgangskode og kontooplysninger.
+              </p>
+            </header>
 
-          <div>
-            <h3 className="text-center text-sm font-semibold">Skift adgangskode</h3>
-            <div className="mx-auto mt-4 max-w-md">
-              <ChangePasswordForm />
+            <div>
+              <h3 className="text-center text-sm font-semibold">Skift adgangskode</h3>
+              <div className="mx-auto mt-4 max-w-md">
+                <ChangePasswordForm />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section
-          aria-labelledby="kategorier-heading"
-          className="mt-6 rounded-lg border border-border bg-card p-6"
-        >
-          <header className="mb-6 text-center">
-            <h2 id="kategorier-heading" className="text-lg font-semibold">
-              Kategorier
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Vælg hvilke kategorier der vises, når du gemmer en registrering.
-            </p>
-          </header>
+          <section
+            aria-labelledby="kategorier-heading"
+            className="rounded-lg border border-border bg-card p-6"
+          >
+            <header className="mb-6 text-center">
+              <h2 id="kategorier-heading" className="text-lg font-semibold">
+                Kategorier
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Vælg hvilke kategorier der vises, når du gemmer en registrering.
+              </p>
+            </header>
 
-          <div className="mx-auto max-w-md">
-            <CategoriesSection />
-          </div>
-        </section>
+            <div className="mx-auto max-w-md">
+              <CategoriesSection />
+            </div>
+          </section>
 
-        <section
-          aria-labelledby="mine-data-heading"
-          className="mt-6 rounded-lg border border-border bg-card p-6"
-        >
-          <header className="mb-6 text-center">
-            <h2 id="mine-data-heading" className="text-lg font-semibold">
-              Mine data
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Styr hvordan dine registreringer opbevares og slettes.
-            </p>
-          </header>
+          <section
+            aria-labelledby="mine-data-heading"
+            className="rounded-lg border border-border bg-card p-6"
+          >
+            <header className="mb-6 text-center">
+              <h2 id="mine-data-heading" className="text-lg font-semibold">
+                Mine data
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Styr hvordan dine registreringer opbevares og slettes.
+              </p>
+            </header>
 
-          <div className="mx-auto max-w-md">
-            <DataManagementSection />
-          </div>
-        </section>
+            <div className="mx-auto max-w-md">
+              <DataManagementSection />
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   );
