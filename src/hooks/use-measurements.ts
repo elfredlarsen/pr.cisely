@@ -119,11 +119,33 @@ function isSameLocalDay(iso: string, ref: Date): boolean {
   );
 }
 
+const AUTO_DELETE_KEY = "precisely.autoDeleteDays";
+
+function pruneOld(items: Measurement[]): Measurement[] {
+  if (typeof window === "undefined") return items;
+  let days: number | null = null;
+  try {
+    const v = window.localStorage.getItem(AUTO_DELETE_KEY);
+    if (v && v !== "never") {
+      const n = Number(v);
+      if (Number.isFinite(n) && n > 0) days = n;
+    }
+  } catch {
+    return items;
+  }
+  if (days === null) return items;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return items.filter((m) => new Date(m.endedAt).getTime() >= cutoff);
+}
+
 export function useMeasurements() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
 
   useEffect(() => {
-    setMeasurements(read());
+    const initial = read();
+    const pruned = pruneOld(initial);
+    if (pruned.length !== initial.length) write(pruned);
+    setMeasurements(pruned);
   }, []);
 
   const persist = useCallback((updater: (prev: Measurement[]) => Measurement[]) => {
