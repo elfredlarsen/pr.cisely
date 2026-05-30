@@ -9,7 +9,7 @@ import { getLastCategory } from "@/lib/categories";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
 
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "pr:cisely · Stopur" },

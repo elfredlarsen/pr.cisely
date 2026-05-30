@@ -25,7 +25,7 @@ import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
 import type { SummaryFormat } from "@/components/oversigt/format";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
-export const Route = createFileRoute("/arkiv")({
+export const Route = createFileRoute("/_authenticated/arkiv")({
   head: () => ({
     meta: [
       { title: "Oversigt · pr:cisely" },
