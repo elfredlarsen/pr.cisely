@@ -4,8 +4,10 @@ import { toast } from "sonner";
 import { Stopwatch } from "@/components/stopwatch/Stopwatch";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { MeasurementsTable } from "@/components/stopwatch/MeasurementsTable";
-import { FinishPanel } from "@/components/stopwatch/FinishPanel";
+import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
+import { getLastCategory } from "@/lib/categories";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -65,19 +67,27 @@ function Index() {
             finishOpen={pending !== null}
             resetKey={resetKey}
           />
-          {pending && (
-            <div className="pointer-events-none absolute inset-x-0 bottom-12 z-20 flex justify-center">
-              <div className="pointer-events-auto">
-                <FinishPanel
-                  startedAt={pending.startedAt}
-                  endedAt={pending.endedAt}
-                  onCancel={handleCancel}
-                  onSave={handleSave}
-                />
-              </div>
-            </div>
-          )}
         </div>
+        <MeasurementDialog
+          open={pending !== null}
+          onOpenChange={(o) => {
+            if (!o) handleCancel();
+          }}
+          baseDate={pending?.startedAt ?? new Date()}
+          initial={
+            pending
+              ? {
+                  startedAt: pending.startedAt.toISOString(),
+                  endedAt: pending.endedAt.toISOString(),
+                  ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
+                  category: getLastCategory(),
+                }
+              : undefined
+          }
+          onSave={handleSave}
+          title="Gem registrering"
+        />
+
         <div className="min-h-0 flex-1 pt-12">
           <MeasurementsTable
             measurements={visibleToday}
