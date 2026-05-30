@@ -1,62 +1,70 @@
 import { Link } from "@tanstack/react-router";
-import { Timer, CalendarDays, Settings, HelpCircle, LogOut } from "lucide-react";
 
-const items = [
-  { label: "Stopur", icon: Timer, to: "/" as const },
-  { label: "Oversigt", icon: CalendarDays, to: "/arkiv" as const },
-  { label: "Indstillinger", icon: Settings, to: "/indstillinger" as const },
-  { label: "Hjælp", icon: HelpCircle, to: null },
-  { label: "Log ud", icon: LogOut, to: null },
+const navItems = [
+  { label: "Stopur", to: "/" as const },
+  { label: "Oversigt", to: "/arkiv" as const },
+  { label: "Indstillinger", to: "/indstillinger" as const },
 ];
+
+const itemClass = [
+  "relative inline-flex min-h-11 items-center px-1 py-2 text-sm font-medium tracking-wide transition-colors",
+  "text-muted-foreground hover:text-foreground",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
+].join(" ");
+
+const activeItemClass =
+  "text-foreground after:absolute after:left-0 after:right-0 after:-bottom-0.5 after:h-0.5 after:bg-primary after:rounded-full";
 
 export function TopNav() {
   return (
     <nav
       aria-label="Hovednavigation"
-      className="w-full border-b border-border bg-card/60 backdrop-blur"
+      className="sticky top-0 z-40 w-full border-b border-border bg-background"
     >
-      <ul className="mx-auto flex max-w-6xl flex-wrap items-center gap-1 px-4 py-2">
-        <li className="mr-4">
-          <span
-            className="font-sans text-lg font-semibold tracking-tight"
-            style={{
-              background: "var(--brand-gradient)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
+      <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-4">
+        <div className="justify-self-start">
+          <Link
+            to="/"
+            className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            pr:cisely
-          </span>
-        </li>
-        {items.map(({ label, icon: Icon, to }) => {
-          const className = [
-            "inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            "text-muted-foreground hover:bg-secondary hover:text-foreground",
-          ].join(" ");
-          return (
+            <span
+              className="font-sans text-xl font-semibold tracking-tight"
+              style={{
+                background: "var(--brand-gradient)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              pr:cisely
+            </span>
+          </Link>
+        </div>
+
+        <ul className="flex items-center gap-10 justify-self-center">
+          {navItems.map(({ label, to }) => (
             <li key={label}>
-              {to ? (
-                <Link
-                  to={to}
-                  className={className}
-                  activeProps={{ className: `${className} bg-secondary text-foreground` }}
-                  activeOptions={{ exact: true }}
-                >
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                  {label}
-                </Link>
-              ) : (
-                <button type="button" className={className}>
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                  {label}
-                </button>
-              )}
+              <Link
+                to={to}
+                className={itemClass}
+                activeProps={{ className: `${itemClass} ${activeItemClass}` }}
+                activeOptions={{ exact: true }}
+              >
+                {label}
+              </Link>
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+
+        <div className="justify-self-end">
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center px-1 py-2 text-sm font-medium tracking-wide text-muted-foreground transition-colors hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          >
+            Log ud
+          </button>
+        </div>
+      </div>
     </nav>
   );
 }
