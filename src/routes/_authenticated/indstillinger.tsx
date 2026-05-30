@@ -4,7 +4,7 @@ import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordFor
 import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
 import { CategoriesSection } from "@/components/indstillinger/CategoriesSection";
 
-export const Route = createFileRoute("/indstillinger")({
+export const Route = createFileRoute("/_authenticated/indstillinger")({
   head: () => ({
     meta: [
       { title: "Indstillinger · pr:cisely" },

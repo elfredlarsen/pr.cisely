@@ -9,86 +9,155 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndstillingerRouteImport } from './routes/indstillinger'
-import { Route as ArkivRouteImport } from './routes/arkiv'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
+import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
-const IndstillingerRoute = IndstillingerRouteImport.update({
-  id: '/indstillinger',
-  path: '/indstillinger',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ArkivRoute = ArkivRouteImport.update({
-  id: '/arkiv',
-  path: '/arkiv',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedIndstillingerRoute =
+  AuthenticatedIndstillingerRouteImport.update({
+    id: '/indstillinger',
+    path: '/indstillinger',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
+  id: '/arkiv',
+  path: '/arkiv',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/arkiv': typeof ArkivRoute
-  '/indstillinger': typeof IndstillingerRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/arkiv': typeof AuthenticatedArkivRoute
+  '/indstillinger': typeof AuthenticatedIndstillingerRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/arkiv': typeof ArkivRoute
-  '/indstillinger': typeof IndstillingerRoute
+  '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/arkiv': typeof AuthenticatedArkivRoute
+  '/indstillinger': typeof AuthenticatedIndstillingerRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/arkiv': typeof ArkivRoute
-  '/indstillinger': typeof IndstillingerRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/arkiv': typeof AuthenticatedArkivRoute
+  '/_authenticated/indstillinger': typeof AuthenticatedIndstillingerRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/arkiv' | '/indstillinger'
+  fullPaths: '/' | '/login' | '/admin' | '/arkiv' | '/indstillinger'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arkiv' | '/indstillinger'
-  id: '__root__' | '/' | '/arkiv' | '/indstillinger'
+  to: '/login' | '/admin' | '/arkiv' | '/indstillinger' | '/'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/_authenticated/admin'
+    | '/_authenticated/arkiv'
+    | '/_authenticated/indstillinger'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ArkivRoute: typeof ArkivRoute
-  IndstillingerRoute: typeof IndstillingerRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/indstillinger': {
-      id: '/indstillinger'
-      path: '/indstillinger'
-      fullPath: '/indstillinger'
-      preLoaderRoute: typeof IndstillingerRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/arkiv': {
-      id: '/arkiv'
-      path: '/arkiv'
-      fullPath: '/arkiv'
-      preLoaderRoute: typeof ArkivRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/indstillinger': {
+      id: '/_authenticated/indstillinger'
+      path: '/indstillinger'
+      fullPath: '/indstillinger'
+      preLoaderRoute: typeof AuthenticatedIndstillingerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/arkiv': {
+      id: '/_authenticated/arkiv'
+      path: '/arkiv'
+      fullPath: '/arkiv'
+      preLoaderRoute: typeof AuthenticatedArkivRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedArkivRoute: typeof AuthenticatedArkivRoute
+  AuthenticatedIndstillingerRoute: typeof AuthenticatedIndstillingerRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedArkivRoute: AuthenticatedArkivRoute,
+  AuthenticatedIndstillingerRoute: AuthenticatedIndstillingerRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ArkivRoute: ArkivRoute,
-  IndstillingerRoute: IndstillingerRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

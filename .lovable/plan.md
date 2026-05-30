@@ -1,41 +1,70 @@
 ## Mål
-Erstat nuværende `TopNav` med designet fra `navbar.html` — luftig 64 px bar, glasbaggrund, gradient-kolon-logo i ren tekst, hover-pill på links, gradient-underline på aktiv, Log ud-knap med ikon + outline.
+Tilføj rigtig login + en `/admin`-rute hvor administratorer kan omdøbe og skjule kategorier. Almindelige brugere ser hverken ruten eller nav-linket.
 
-## Det jeg porterer 1:1 (visuelt)
+## 1. Backend (Lovable Cloud)
 
-### `src/components/stopwatch/TopNav.tsx`
-- **Højde/baggrund:** `h-16`, `px-8`, `bg-background/92 backdrop-blur-md`, `border-b border-border/60`, sticky.
-- **Logo:** Drop SVG-filen. Render i stedet ren tekst (Poppins, 26 px, weight 500, letter-spacing −0.9 px):
-  ```
-  <span>pr</span><span class="bg-gradient-to-br from-[#f64f59] via-[#c471ed] to-[#12c2e9] bg-clip-text text-transparent">:</span><span>cisely</span>
-  ```
-  Det giver "plads til at ånde" igen og matcher prototypen præcist. SVG-logoet beholdes i `src/assets/` men bruges ikke i nav (kan stadig bruges som hero/auth-skærm).
-- **Nav-links:** `px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground`, hover → `text-foreground bg-foreground/5`. Gradient-underline via `::after` (bottom-2, scaleX 0.4→0.7 på hover, full + opacity 1 på aktiv). Implementeres med en lille CSS-klasse i `styles.css` eller inline med Tailwind arbitrary values + en `data-active` attribut.
-- **Log ud:** Outline-knap (`border border-border/60 rounded-lg px-4 py-1.5 text-sm`) med Lucide `LogOut`-ikon (15 px, opacity 60 → 100 på hover). På mobil (`<640px`) skjules tekst, kun ikon vises.
-- **Layout:** `flex justify-between` (logo venstre, center-gruppe, actions højre) — ikke det nuværende 3-kolonne grid.
-- **Poppins:** Tilføj Google Fonts-link i `src/routes/__root.tsx` `head()` (weight 400/500/600). Brug `font-family: 'Poppins', system-ui` enten via en utility-klasse på navbaren eller som global body-font.
+Aktivér Cloud, og opret følgende skema via migration:
 
-### `src/styles.css`
-- Tilføj gradient-tokens hvis vi vil genbruge:
-  ```css
-  --gradient-brand: linear-gradient(135deg, #f64f59, #c471ed, #12c2e9);
-  ```
-- Tilføj små regler for `.nav-link::after` (gradient-underline animation) — Tailwind kan ikke gøre dette rent på pseudo-elementer uden en klasse.
+**`profiles`** — auto-oprettes ved signup (trigger på `auth.users`):
+- `id uuid PK → auth.users(id) on delete cascade`
+- `email text`, `created_at timestamptz default now()`
 
-## Det jeg IKKE inkluderer (kræver beslutninger)
+**`app_role` enum**: `'administrator' | 'user'`
 
-Prototypen har to features som er mere end visuelt design:
+**`user_roles`** — adskilt fra profiles (ingen privilege escalation):
+- `id uuid PK`, `user_id uuid → auth.users`, `role app_role`, unique(user_id, role)
 
-1. **Live timer-pille i navbaren** (`#navTimer`) — viser kørende stopur på alle sider.
-   Kræver at stopur-state løftes ud af `Stopwatch.tsx` til en global store (Context / Zustand) så `TopNav` kan læse den. Det er en arkitektur-ændring, ikke et nav-design.
+**`has_role(_user_id, _role)`** SECURITY DEFINER-funktion (forhindrer rekursiv RLS).
 
-2. **Log ud-bekræftelses-modal** med advarsel hvis timer kører.
-   Der er ingen rigtig auth endnu — `Log ud` er en placeholder uden handler. Modal giver først mening når auth er på plads.
+**`categories`** — erstatter den hardcoded liste:
+- `id uuid PK`, `value text unique not null` (stabil nøgle brugt af registreringer),
+- `label text not null`, `sort_order int not null default 0`,
+- `hidden boolean not null default false`,
+- `created_at`, `updated_at`.
+- Seedes med de 13 nuværende værdier i samme migration.
 
-**Forslag:** Vi laver visuel port nu. Live timer + logout-modal tages som separate opgaver når (a) vi løfter stopur-state, og (b) auth er koblet til. Sig til hvis du vil have en af dem med i denne omgang.
+GRANTs + RLS:
+- `categories`: alle authenticated kan `SELECT`; kun admin kan `UPDATE` (`has_role(auth.uid(),'administrator')`). Ingen INSERT/DELETE (jf. beslutning: kun omdøbe + skjule).
+- `profiles`: bruger kan læse/opdatere egen række.
+- `user_roles`: bruger kan læse egne roller; kun service_role kan skrive (admins tildeles manuelt i DB indtil videre).
+
+Auth-konfiguration: email/adgangskode, `emailRedirectTo: window.location.origin`. HIBP-tjek aktiveret.
+
+## 2. Auth-flow i frontend
+
+- `/login` (offentlig): email + password, sign-in/sign-up toggle. Bruger `supabase.auth.signInWithPassword` / `signUp`.
+- Root `__root.tsx`: registrer `onAuthStateChange` én gang, opdater router-context med `{ isAuthenticated, userId, isAdmin }`. `isAdmin` hentes via server-fn der kalder `has_role`.
+- `_authenticated` pathless layout: `beforeLoad` redirecter til `/login` hvis ikke logget ind. Flyt `/`, `/arkiv`, `/indstillinger` under `_authenticated/`.
+- `_authenticated/admin.tsx`: `beforeLoad` redirecter til `/` hvis `!isAdmin`.
+- Eksisterende "Log ud"-knap i `TopNav` får handler: `supabase.auth.signOut()` + navigate til `/login`.
+
+## 3. /admin-siden
+
+Egen rute med samme layout som `/indstillinger` (TopNav + centreret card):
+- **Kategorier-tabel** med kolonner: Navn (inline-redigerbar input), Synlig (switch), Rækkefølge (drag handle eller op/ned-knapper).
+- "Gem"-knap pr. række eller debounce-autosave; toast ved succes.
+- Server-fn `updateCategory({ id, label?, hidden?, sort_order? })` beskyttet med `requireSupabaseAuth` + admin-tjek i handler.
+
+## 4. Migrér frontend fra hardcoded kategorier
+
+`src/lib/categories.ts` ændres:
+- `CATEGORIES` udfases. I stedet ny hook `useCategories()` der bruger TanStack Query mod en server-fn `listCategories()` (returnerer ikke-skjulte kategorier sorteret efter `sort_order`).
+- `categoryLabel(value)`: opslag i den hentede liste (med fallback til værdien).
+- `Category`-typen bliver `string` (ikke længere en union), da kategorier nu er dynamiske. Registreringer gemmer fortsat `value`-strengen.
+- `getActiveCategories`/`setActiveCategories` (per-bruger filter i Indstillinger) beholdes men filtreres mod den dynamiske liste.
+
+Komponenter der skal opdateres til at bruge hooken: `CategoriesSection`, `MeasurementDialog`, `CategoryGroup`, `Stopwatch` (kategori-vælger), og evt. format/filter-helpers.
+
+## 5. TopNav
+
+Vis "Admin"-link i nav-listen kun hvis `auth.isAdmin`. Ellers uændret design.
 
 ## Verifikation
-- `/`, `/arkiv`, `/indstillinger` viser ny nav med korrekt aktiv underline.
-- Logo læselig, gradient-kolon synlig.
-- Log ud-knap har ikon + outline, kun ikon på smal viewport.
-- Tastatur-fokus-ring synlig på links og knapper.
+- Ikke-logget-ind bruger på `/` → redirectes til `/login`.
+- Almindelig bruger ser ikke "Admin"-link og kan ikke tilgå `/admin` direkte (redirect).
+- Admin kan omdøbe "Biometri" → ændringen slår igennem i alle kategori-dropdowns uden reload (query invalidation).
+- Admin kan skjule en kategori → forsvinder fra dropdowns; eksisterende registreringer med den værdi viser stadig det gemte navn.
+- "Log ud" virker og rydder session.
+
+## Åbne spørgsmål (kan håndteres efter implementering)
+- Hvordan udnævnes den første administrator? Forslag: manuelt SQL-insert i `user_roles` efter du har oprettet din konto — jeg giver dig kommandoen efter login virker.

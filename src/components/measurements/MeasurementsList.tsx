@@ -27,8 +27,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
-import { useActiveCategories } from "@/hooks/use-active-categories";
+import { type Category, fallbackCategoryLabel } from "@/lib/categories";
+import { useActiveCategoriesFilter } from "@/hooks/use-active-categories";
+import { useCategories } from "@/hooks/use-categories";
 import type { Measurement } from "@/hooks/use-measurements";
 import {
   fmtDuration,
@@ -111,7 +112,11 @@ export function MeasurementsList({
     field: "start",
     dir: sortable ? "asc" : "desc",
   });
-  const activeCategoryValues = useActiveCategories();
+  const activeFilter = useActiveCategoriesFilter();
+  const { data: categoriesData } = useCategories();
+  const allCategories = useMemo(() => categoriesData ?? [], [categoriesData]);
+  const categoryLabel = (value: Category) =>
+    allCategories.find((c) => c.value === value)?.label ?? fallbackCategoryLabel(value);
 
 
   const toggleCommentExpanded = (id: string) => {
@@ -441,15 +446,19 @@ export function MeasurementsList({
                         <SelectValue className="truncate" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORIES.filter(
-                          (c) =>
-                            activeCategoryValues.includes(c.value) ||
-                            c.value === m.category,
-                        ).map((c) => (
-                          <SelectItem key={c.value} value={c.value}>
-                            {c.label}
-                          </SelectItem>
-                        ))}
+                        {allCategories
+                          .filter(
+                            (c) =>
+                              !c.hidden &&
+                              (activeFilter === null ||
+                                activeFilter.includes(c.value) ||
+                                c.value === m.category),
+                          )
+                          .map((c) => (
+                            <SelectItem key={c.value} value={c.value}>
+                              {c.label}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </TableCell>

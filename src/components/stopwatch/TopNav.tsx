@@ -1,7 +1,13 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-const navItems = [
+import { supabase } from "@/integrations/supabase/client";
+import { useSupabaseSession } from "@/hooks/use-supabase-session";
+import { useMyRoleInfo } from "@/hooks/use-my-role";
+
+const baseItems = [
   { label: "Stopur", to: "/" as const },
   { label: "Oversigt", to: "/arkiv" as const },
   { label: "Indstillinger", to: "/indstillinger" as const },
@@ -13,6 +19,23 @@ const linkBase =
 const linkActive = "text-foreground";
 
 export function TopNav() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { status } = useSupabaseSession();
+  const role = useMyRoleInfo(status === "authenticated");
+  const isAdmin = role.data?.isAdmin ?? false;
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      queryClient.clear();
+      toast.success("Logget ud");
+      navigate({ to: "/login", replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Kunne ikke logge ud");
+    }
+  };
+
   return (
     <nav
       aria-label="Hovednavigation"
@@ -35,7 +58,7 @@ export function TopNav() {
       </Link>
 
       <ul className="flex items-center gap-1">
-        {navItems.map(({ label, to }) => (
+        {baseItems.map(({ label, to }) => (
           <li key={label}>
             <Link
               to={to}
@@ -50,10 +73,26 @@ export function TopNav() {
             </Link>
           </li>
         ))}
+        {isAdmin && (
+          <li>
+            <Link
+              to="/admin"
+              className={linkBase}
+              activeProps={{
+                className: `${linkBase} ${linkActive}`,
+                "data-active": "true",
+              }}
+              activeOptions={{ exact: true }}
+            >
+              Admin
+            </Link>
+          </li>
+        )}
       </ul>
 
       <button
         type="button"
+        onClick={handleLogout}
         aria-label="Log ud"
         className="group inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-transparent px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:px-2.5"
       >
