@@ -448,7 +448,7 @@ export function MeasurementsList({
                   </TableCell>
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0.5">
-                      {isAndet && (
+                      {isAndet ? (
                         <Button
                           type="button"
                           variant="ghost"
@@ -473,6 +473,8 @@ export function MeasurementsList({
                             aria-hidden="true"
                           />
                         </Button>
+                      ) : (
+                        <span className="h-9 w-9" aria-hidden="true" />
                       )}
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
