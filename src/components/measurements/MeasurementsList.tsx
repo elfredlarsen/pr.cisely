@@ -550,30 +550,34 @@ export function MeasurementsList({
                             aria-label="Kommentar"
                             className="h-8 flex-1 rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           />
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            aria-label="OK"
-                            onClick={() => {
-                              const trimmed = commentEdit!.value.trim();
-                              onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
-                              setCommentEdit(null);
-                            }}
-                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                          >
-                            <Check className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                          <Button
-                            type="button"
-                            size="icon"
-                            variant="ghost"
-                            aria-label="Annuller"
-                            onClick={() => setCommentEdit(null)}
-                            className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
-                          >
-                            <X className="h-4 w-4" aria-hidden="true" />
-                          </Button>
+                          <IconTooltip label="Gem (Enter)">
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              aria-label="OK"
+                              onClick={() => {
+                                const trimmed = commentEdit!.value.trim();
+                                onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
+                                setCommentEdit(null);
+                              }}
+                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
+                            >
+                              <Check className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </IconTooltip>
+                          <IconTooltip label="Annuller (Esc)">
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Annuller"
+                              onClick={() => setCommentEdit(null)}
+                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                            >
+                              <X className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </IconTooltip>
                         </div>
                       ) : (
                         <button
