@@ -44,7 +44,11 @@ export const updateCategory = createServerFn({ method: "POST" })
     if (roleErr) throw new Error(roleErr.message);
     if (!isAdmin) throw new Error("Forbidden: administrator role required");
 
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      label?: string;
+      hidden?: boolean;
+      sort_order?: number;
+    } = {};
     if (data.label !== undefined) patch.label = data.label;
     if (data.hidden !== undefined) patch.hidden = data.hidden;
     if (data.sort_order !== undefined) patch.sort_order = data.sort_order;
