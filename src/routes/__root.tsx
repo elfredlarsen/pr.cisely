@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -10,6 +11,27 @@ import {
 
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
+
+const LOCALSTORAGE_CLEANUP_KEY = "precisely.localstorage-cleared.v1";
+
+function useClearLegacyLocalStorage() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (window.localStorage.getItem(LOCALSTORAGE_CLEANUP_KEY) === "1") return;
+      const keys: string[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const k = window.localStorage.key(i);
+        if (k && k.startsWith("precisely.")) keys.push(k);
+      }
+      for (const k of keys) window.localStorage.removeItem(k);
+      window.localStorage.setItem(LOCALSTORAGE_CLEANUP_KEY, "1");
+    } catch {
+      // ignore
+    }
+  }, []);
+}
+
 
 function NotFoundComponent() {
   return (
@@ -129,6 +151,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useClearLegacyLocalStorage();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -137,3 +160,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
