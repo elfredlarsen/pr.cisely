@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      measurements: {
+        Row: {
+          category: string
+          comment: string | null
+          created_at: string
+          ended_at: string
+          hidden: boolean
+          id: string
+          ms: number
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          comment?: string | null
+          created_at?: string
+          ended_at: string
+          hidden?: boolean
+          id?: string
+          ms: number
+          started_at: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          ended_at?: string
+          hidden?: boolean
+          id?: string
+          ms?: number
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
