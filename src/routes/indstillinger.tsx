@@ -50,12 +50,12 @@ function IndstillingerPage() {
         </section>
 
         <section
-          aria-labelledby="data-heading"
+          aria-labelledby="mine-data-heading"
           className="mt-6 rounded-lg border border-border bg-card p-6"
         >
           <header className="mb-6 text-center">
-            <h2 id="data-heading" className="text-lg font-semibold">
-              Datahåndtering
+            <h2 id="mine-data-heading" className="text-lg font-semibold">
+              Mine data
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Styr hvordan dine registreringer opbevares og slettes.
