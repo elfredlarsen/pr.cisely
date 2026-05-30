@@ -110,6 +110,10 @@ export function MeasurementDialog({
   const [category, setCategory] = useState<Category>("straksafgoerelse");
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const activeValues = useActiveCategories();
+  const visibleCategories = CATEGORIES.filter(
+    (c) => activeValues.includes(c.value) || c.value === category,
+  );
 
   useEffect(() => {
     if (!open) return;
