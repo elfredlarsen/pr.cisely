@@ -218,7 +218,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                   className={startBtn}
                   aria-keyshortcuts=" "
                 >
-                  <Play className="h-6 w-6" aria-hidden="true" />
+                  <Play className="h-7 w-7" aria-hidden="true" />
                   Start
                 </button>
               </ShortcutTooltip>
@@ -233,7 +233,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resetBtn}
                     aria-keyshortcuts="N"
                   >
-                    <RotateCcw className="h-6 w-6" aria-hidden="true" />
+                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
                 </ShortcutTooltip>
@@ -244,7 +244,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-6 w-6" aria-hidden="true" />
+                    <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </ShortcutTooltip>
@@ -255,7 +255,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={pauseBtn}
                     aria-keyshortcuts=" "
                   >
-                    <Pause className="h-6 w-6" aria-hidden="true" />
+                    <Pause className="h-7 w-7" aria-hidden="true" />
                     Pause
                   </button>
                 </ShortcutTooltip>
@@ -271,7 +271,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resetBtn}
                     aria-keyshortcuts="N"
                   >
-                    <RotateCcw className="h-6 w-6" aria-hidden="true" />
+                    <RotateCcw className="h-7 w-7" aria-hidden="true" />
                     Nulstil
                   </button>
                 </ShortcutTooltip>
@@ -282,7 +282,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-6 w-6" aria-hidden="true" />
+                    <Square className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </ShortcutTooltip>
@@ -293,7 +293,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                     className={resumeBtn}
                     aria-keyshortcuts=" "
                   >
-                    <FastForward className="h-6 w-6" aria-hidden="true" />
+                    <FastForward className="h-7 w-7" aria-hidden="true" />
                     Fortsæt
                   </button>
                 </ShortcutTooltip>
