@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
