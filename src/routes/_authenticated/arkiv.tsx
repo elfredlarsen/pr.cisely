@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMeasurements, type Measurement } from "@/hooks/use-measurements";
 import { type Category } from "@/lib/categories";
 import { useCategories } from "@/hooks/use-categories";
@@ -54,7 +55,7 @@ function isSameDay(a: Date, b: Date): boolean {
 }
 
 function OversigtPage() {
-  const { measurements, add, update, remove, removeAllToday, removeAll } = useMeasurements();
+  const { measurements, loaded, add, update, remove, removeAllToday, removeAll } = useMeasurements();
   const [date, setDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -204,10 +205,28 @@ function OversigtPage() {
 
 
         <div className="mt-2 space-y-2">
-          {dayMeasurements.length === 0 ? (
-            <p className="py-16 text-center text-sm text-muted-foreground">
-              Ingen registreringer denne dag
-            </p>
+          {!loaded ? (
+            <>
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </>
+          ) : dayMeasurements.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-6 py-12 text-center">
+              <CalendarDays className="h-7 w-7 text-muted-foreground/60" aria-hidden="true" />
+              <p className="text-sm font-medium text-foreground">
+                Ingen registreringer denne dag
+              </p>
+              <Button
+                type="button"
+                onClick={handleAdd}
+                size="sm"
+                className="mt-1 font-semibold"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Tilføj registrering
+              </Button>
+            </div>
           ) : (
             visibleCategories.map((c) => (
               <CategoryGroup

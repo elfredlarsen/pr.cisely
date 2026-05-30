@@ -140,12 +140,14 @@ function pruneOld(items: Measurement[]): Measurement[] {
 
 export function useMeasurements() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const initial = read();
     const pruned = pruneOld(initial);
     if (pruned.length !== initial.length) write(pruned);
     setMeasurements(pruned);
+    setLoaded(true);
   }, []);
 
   const persist = useCallback((updater: (prev: Measurement[]) => Measurement[]) => {
@@ -235,6 +237,7 @@ export function useMeasurements() {
     measurements,
     visibleToday,
     hiddenAll,
+    loaded,
     add,
     update,
     remove,

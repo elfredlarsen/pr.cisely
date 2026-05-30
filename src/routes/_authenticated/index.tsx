@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function Index() {
-  const { visibleToday, add, update, remove } = useMeasurements();
+  const { visibleToday, loaded, add, update, remove } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [resetKey, setResetKey] = useState(0);
 
@@ -93,6 +93,7 @@ function Index() {
             measurements={visibleToday}
             onUpdate={update}
             onDelete={remove}
+            loaded={loaded}
           />
         </div>
       </main>
