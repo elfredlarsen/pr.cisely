@@ -4,8 +4,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-function dbError(scope: string, error: { message: string }): never {
-  console.error(`[${scope}] DB error:`, error.message);
+function dbError(scope: string, error: unknown): never {
+  console.error(`[${scope}] DB error:`, error);
   throw new Error("Databasefejl. Prøv igen.");
 }
 
