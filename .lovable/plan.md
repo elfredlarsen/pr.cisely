@@ -1,21 +1,19 @@
-# Hærd measurements-autorisation (defense-in-depth)
+# Fjern afhængighed af EXECUTE på has_role i assertAdmin
 
-## Status på database
-RLS er allerede aktiveret på `public.measurements`, og de fire policies (select/insert/update/delete) begrænser allerede rækker til `auth.uid() = user_id`. **Ingen migration nødvendig** — kravet er allerede opfyldt.
+## Ændring
+I `src/lib/categories.functions.ts`, omskriv `assertAdmin` så den ikke kalder `supabase.rpc("has_role", ...)`. I stedet:
 
-## Kodeændringer
-Kun én fil: `src/lib/measurements.functions.ts`. Tilføj `.eq("user_id", context.userId)` som ekstra defense-in-depth-lag (oven på RLS) i fem handlers. Ingen ændringer i signaturer, validering, returtyper eller fejlhåndtering.
+- Query `user_roles` direkte med den bruger-scopede klient (RLS-policy "Users can view own roles" tillader dette).
+- Select kun `role`-kolonnen, filter på `user_id = userId`.
+- Ved DB-fejl: kald `dbError("categories", error)` (uændret mønster).
+- Hvis `'administrator'` ikke er blandt rollerne: `throw new Error("Forbidden: administrator role required")` (uændret besked).
 
-### Ændringer
+Samme mønster som `getMyRoleInfo` i `src/lib/auth.functions.ts`.
 
-1. **`listMeasurements`** — tilføj `.eq("user_id", userId)` til select-kæden (destructure `userId` fra context).
-2. **`updateMeasurement`** — tilføj `.eq("user_id", userId)` til update-kæden ud over `.eq("id", id)`.
-3. **`deleteMeasurement`** — tilføj `.eq("user_id", userId)` til delete-kæden ud over `.eq("id", data.id)`.
-4. **`removeMeasurementsInRange`** — tilføj `.eq("user_id", userId)` til delete-kæden.
-5. **`hideMeasurementsInRange`** — tilføj `.eq("user_id", userId)` til update-kæden.
+## Filer
+- `src/lib/categories.functions.ts` — kun `assertAdmin`-funktionen ændres.
 
-`createMeasurement` og `removeAllMeasurements` røres ikke (de bruger allerede `userId` korrekt).
-
-## Effekt
-- UI og funktionalitet uændret.
-- Hvis RLS nogensinde skulle misconfigureres eller en bug giver bredere context, vil queries stadig være låst til ejerens rækker.
+## Ikke rørt
+- RLS-policies på `categories`.
+- `has_role` SQL-funktionen.
+- Alle øvrige handlers og signaturer.
