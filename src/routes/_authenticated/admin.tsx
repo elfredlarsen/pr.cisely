@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -22,8 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCategories } from "@/hooks/use-categories";
-import { useMyRoleInfo } from "@/hooks/use-my-role";
-import { useSupabaseSession } from "@/hooks/use-supabase-session";
+import { getMyRoleInfo } from "@/lib/auth.functions";
 import {
   createCategory,
   deleteCategory,
@@ -38,34 +37,22 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Administrer kategorier." },
     ],
   }),
-  component: AdminPage,
+  // Server-side admin-gate: forhindrer flash af admin-UI for ikke-admins.
+  // _authenticated layout har allerede sikret at brugeren er logget ind.
+  beforeLoad: async () => {
+    try {
+      const info = await getMyRoleInfo();
+      if (!info.isAdmin) {
+        throw redirect({ to: "/" });
+      }
+    } catch (err) {
+      // redirect kaster — lad det boble videre
+      if (err && typeof err === "object" && "isRedirect" in err) throw err;
+      throw redirect({ to: "/" });
+    }
+  },
+  component: AdminContent,
 });
-
-function AdminPage() {
-  const { status } = useSupabaseSession();
-  const role = useMyRoleInfo(status === "authenticated");
-
-  if (status === "loading" || role.isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <TopNav />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
-          <Skeleton className="h-8 w-40" />
-          <div className="mt-6 space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (!role.data?.isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <AdminContent />;
-}
 
 function AdminContent() {
   return (
