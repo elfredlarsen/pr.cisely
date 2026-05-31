@@ -274,6 +274,7 @@ export function MeasurementsList({
           autoFocus
           type="time"
           step={1}
+          lang="da-DK"
           value={previewValue}
           onChange={(e) =>
             field === "start" ? handleChangeStart(e.target.value) : handleChangeEnd(e.target.value)
