@@ -133,8 +133,10 @@ export function TopNav() {
             <AlertDialogAction onClick={handleLogout}>Log ud</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+        </AlertDialog>
+      </div>
 
     </nav>
+
   );
 }
