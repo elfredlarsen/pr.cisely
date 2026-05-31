@@ -416,12 +416,15 @@ export function MeasurementsList({
               <React.Fragment key={m.id}>
                 <TableRow
                   data-state={rowEditing ? "selected" : undefined}
-                  className={
+                  className={cn(
                     rowEditing
                       ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                      : "border-border/40 hover:bg-[#c471ed]/10"
-                  }
+                      : "border-border/40 hover:bg-[#c471ed]/10",
+                    m.pending && "opacity-60",
+                  )}
+                  title={m.pending ? "Venter på synk" : undefined}
                 >
+
                   <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
                   <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                   <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
