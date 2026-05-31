@@ -180,6 +180,23 @@ function useSupabaseMeasurements(enabled: boolean) {
   const removeRangeFn = useServerFn(removeMeasurementsInRange);
   const hideRangeFn = useServerFn(hideMeasurementsInRange);
   const removeAllFn = useServerFn(removeAllMeasurements);
+  const applyRetentionFn = useServerFn(applyRetention);
+
+  // Doven oprydning: kør én gang per mount, ikke ved hver refetch.
+  const retentionRanRef = useRef(false);
+  useEffect(() => {
+    if (!enabled || retentionRanRef.current) return;
+    retentionRanRef.current = true;
+    applyRetentionFn()
+      .then((res) => {
+        if (res.deleted > 0) {
+          qc.invalidateQueries({ queryKey: QUERY_KEY });
+        }
+      })
+      .catch((err) => {
+        console.warn("[retention] apply failed:", err);
+      });
+  }, [enabled, applyRetentionFn, qc]);
 
   const query = useQuery({
     queryKey: QUERY_KEY,
