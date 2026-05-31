@@ -24,15 +24,18 @@ function ResetPasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Supabase lægger en recovery-session i URL-hashen og emitter PASSWORD_RECOVERY.
+  // Supabase emitter PASSWORD_RECOVERY når recovery-linket sætter sessionen.
+  // Vi accepterer KUN det event — ellers kunne en hvilken som helst indlogget
+  // bruger ramme siden og ændre password uden recovery-flow.
   useEffect(() => {
+    // Hvis siden allerede er åbnet via recovery-link, ligger type=recovery i hashen.
+    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+      setReady(true);
+    }
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+      if (event === "PASSWORD_RECOVERY") {
         setReady(true);
       }
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
     });
     return () => sub.subscription.unsubscribe();
   }, []);

@@ -112,14 +112,14 @@ export function clearQueue() {
 export function subscribeQueue(cb: () => void): () => void {
   if (typeof window === "undefined") return () => {};
   const handler = () => cb();
-  window.addEventListener(EVENT, handler);
-  window.addEventListener("storage", (e) => {
+  const storageHandler = (e: StorageEvent) => {
     if (e.key === KEY) handler();
-  });
+  };
+  window.addEventListener(EVENT, handler);
+  window.addEventListener("storage", storageHandler);
   return () => {
     window.removeEventListener(EVENT, handler);
-    // 'storage' listener fjernes når komponenten unmounter — anonyme handlere
-    // er OK her fordi vi alligevel bytter dem ud ved næste mount.
+    window.removeEventListener("storage", storageHandler);
   };
 }
 

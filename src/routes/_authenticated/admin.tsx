@@ -45,19 +45,10 @@ function AdminPage() {
   const { status } = useSupabaseSession();
   const role = useMyRoleInfo(status === "authenticated");
 
-  if (status === "loading" || role.isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <TopNav />
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
-          <Skeleton className="h-8 w-40" />
-          <div className="mt-6 space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        </main>
-      </div>
-    );
+  // Vent stille mens vi tjekker rollen — undgår at flashe admin-skeletonen
+  // for ikke-admins, der alligevel bliver redirected væk.
+  if (status === "loading" || role.isLoading || role.isFetching) {
+    return null;
   }
 
   if (!role.data?.isAdmin) {

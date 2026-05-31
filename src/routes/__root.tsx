@@ -13,6 +13,11 @@ import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 const LOCALSTORAGE_CLEANUP_KEY = "precisely.localstorage-cleared.v1";
+// Nøgler der ALDRIG må ryddes — indeholder data der ikke er synkroniseret til serveren.
+const PRESERVE_KEYS = new Set<string>([
+  "precisely.offline-queue.v1",
+  LOCALSTORAGE_CLEANUP_KEY,
+]);
 
 function useClearLegacyLocalStorage() {
   useEffect(() => {
@@ -22,7 +27,7 @@ function useClearLegacyLocalStorage() {
       const keys: string[] = [];
       for (let i = 0; i < window.localStorage.length; i++) {
         const k = window.localStorage.key(i);
-        if (k && k.startsWith("precisely.")) keys.push(k);
+        if (k && k.startsWith("precisely.") && !PRESERVE_KEYS.has(k)) keys.push(k);
       }
       for (const k of keys) window.localStorage.removeItem(k);
       window.localStorage.setItem(LOCALSTORAGE_CLEANUP_KEY, "1");
