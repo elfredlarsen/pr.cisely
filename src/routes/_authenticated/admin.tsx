@@ -45,11 +45,10 @@ function AdminPage() {
   const { status } = useSupabaseSession();
   const role = useMyRoleInfo(status === "authenticated");
 
-  // Vent stille mens vi tjekker rollen — undgår at flashe admin-skeletonen
-  // for ikke-admins, der alligevel bliver redirected væk.
-  if (status === "loading" || role.isLoading || role.isFetching) {
-    return null;
-  }
+  // Vent kun ved initial load — baggrunds-refetch må ikke unmounte siden,
+  // ellers blinker hele admin-UI'et hver gang fx kategori-mutationer eller
+  // window-focus trigger en refetch.
+  if (role.isLoading) return null;
 
   if (!role.data?.isAdmin) {
     return <Navigate to="/" replace />;
