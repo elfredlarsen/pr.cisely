@@ -265,6 +265,7 @@ export function MeasurementDialog({
                 id="md-start"
                 type="time"
                 step={1}
+                lang="da-DK"
                 value={start}
                 onChange={(e) => handleStart(e.target.value)}
                 className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -278,6 +279,7 @@ export function MeasurementDialog({
                 id="md-end"
                 type="time"
                 step={1}
+                lang="da-DK"
                 value={end}
                 onChange={(e) => handleEnd(e.target.value)}
                 className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -291,6 +293,7 @@ export function MeasurementDialog({
                 id="md-dur"
                 type="time"
                 step={1}
+                lang="da-DK"
                 value={duration}
                 onChange={(e) => handleDuration(e.target.value)}
                 className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

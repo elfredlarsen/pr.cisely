@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -12,30 +12,12 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
-const LOCALSTORAGE_CLEANUP_KEY = "precisely.localstorage-cleared.v1";
-// Nøgler der ALDRIG må ryddes — indeholder data der ikke er synkroniseret til serveren.
-const PRESERVE_KEYS = new Set<string>([
-  "precisely.offline-queue.v1",
-  LOCALSTORAGE_CLEANUP_KEY,
-]);
+// Bemærk: den tidligere `useClearLegacyLocalStorage`-hook er fjernet bevidst.
+// Den ryddede alle `precisely.*`-nøgler én gang per browser og var en latent
+// risiko for at slette ikke-synkroniseret offline-kø ved næste deploy hvis en
+// ny nøgle ved en fejl blev glemt i whitelisten. Legacy-oprydningen har for
+// længst kørt på eksisterende klienter, så hooken er ikke længere nødvendig.
 
-function useClearLegacyLocalStorage() {
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      if (window.localStorage.getItem(LOCALSTORAGE_CLEANUP_KEY) === "1") return;
-      const keys: string[] = [];
-      for (let i = 0; i < window.localStorage.length; i++) {
-        const k = window.localStorage.key(i);
-        if (k && k.startsWith("precisely.") && !PRESERVE_KEYS.has(k)) keys.push(k);
-      }
-      for (const k of keys) window.localStorage.removeItem(k);
-      window.localStorage.setItem(LOCALSTORAGE_CLEANUP_KEY, "1");
-    } catch {
-      // ignore
-    }
-  }, []);
-}
 
 
 function NotFoundComponent() {
@@ -164,7 +146,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useClearLegacyLocalStorage();
+
+
 
   return (
     <QueryClientProvider client={queryClient}>
