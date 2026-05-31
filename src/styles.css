@@ -56,13 +56,13 @@
   --muted-foreground: #666666;
   --accent: #f2f2f5;
   --accent-foreground: #1a1a1a;
-  --destructive: #ff5a7a;
+  --destructive: #c0344d;
   --destructive-foreground: #ffffff;
-  --success: #3ec98a;
+  --success: #15803d;
   --success-foreground: #ffffff;
   --warning: #ffd23a;
-  --warning-foreground: #ffffff;
-  --info: #12c2e9;
+  --warning-foreground: #1a1a1a;
+  --info: #0e7490;
   --info-foreground: #ffffff;
   --border: #e6e6ea;
   --input: #e6e6ea;
