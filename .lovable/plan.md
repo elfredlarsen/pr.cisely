@@ -1,39 +1,52 @@
-## Hvad bygges
+## Offline-tolerance for timer'en
 
-To små, lavrisiko forbedringer. Ingen ændringer i database, auth eller backend-logik.
+Mål: stopuret kan startes og stoppes uden netforbindelse. Når brugeren trykker "Gem" i dialogen og kaldet til serveren fejler (eller browseren er offline), bliver målingen lagt i en lokal kø og synkroniseret automatisk når forbindelsen er tilbage.
 
-### 1. Tal-genveje til kategorivalg
+Resten af appen (historik, redigering, sletning, arkiv) ligger udenfor scope — den kræver fortsat netforbindelse.
 
-Når stopuret afsluttes og **"Gem registrering"**-dialogen åbner, kan tasterne `1`–`9` vælge en kategori direkte.
+### Adfærd
 
-- Mapper til de første 9 synlige (ikke-skjulte) kategorier i den rækkefølge brugeren ser dem i dialogens dropdown — typisk styret af `sort_order` og brugerens "aktive kategorier"-filter, så genvejene matcher det du faktisk har på listen.
-- `0` (valgfrit) = ryd valg.
-- Genveje virker **kun** når dialogen er åben og fokus ikke er i kommentar-feltet.
-- Visuelt hint: lille tal-badge ved siden af hver kategori i dropdown'en (`1`, `2`, …).
-- Genvejene listes i en lille "?" tooltip eller helptekst i dialogen.
+1. **Online (uændret)**: gem → server-kald → toast "Registrering gemt".
+2. **Offline eller server-kald fejler**: målingen gemmes i en kø i `localStorage`, og brugeren får en toast: *"Gemt offline — synkroniseres når du er online igen (N i kø)"*.
+3. **Optimistisk visning**: køens målinger vises i "i dag"-listen med et lille "venter"-badge (gråt ur-ikon eller "⏳ synker"), så brugeren kan se at de findes.
+4. **Auto-sync**: så snart `navigator.onLine` bliver `true` (eller næste vellykkede server-kald), tømmes køen én ad gangen. Ved succes fjernes posten fra køen og listen invalideres. Ved fejl: prøv igen senere (med backoff).
+5. **Manuel sync-knap**: lille "Synk nu (N)" i top-nav når køen ikke er tom, så brugeren kan tvinge et forsøg.
+6. **Statusindikator i TopNav**: lille prik — grøn (online, tom kø), gul (offline eller venter), rød (sync fejlede gentagne gange).
 
-Eksisterende stopur-genveje (mellemrum/N/A/Esc) røres ikke.
+### Hvad sker der IKKE
 
-### 2. PWA-installation (manifest-only)
+- Ingen offline-redigering eller -sletning af eksisterende målinger.
+- Ingen service worker (manifest-only PWA forbliver).
+- Ingen offline historik-visning — listen forbliver tom uden net (men køen vises optimistisk).
+- Ingen konfliktshåndtering — alle nye målinger får friske IDs serverside ved sync.
 
-Gør appen installerbar via "Føj til hjemmeskærm" på iOS/Android og som desktop-app i Chrome/Edge. **Ingen service worker**, ingen offline-cache — undgår de problemer service workers giver i Lovable-preview og stale-cache hovedpine.
+### Teknisk
 
-- `public/manifest.webmanifest` med navn, korte navn, ikoner, `theme_color`, `background_color`, `display: "standalone"`, `start_url: "/"`.
-- Ikoner i 192px og 512px (PNG, genereres ud fra eksisterende `precisely-logo.svg`) + maskable-variant.
-- Link i `__root.tsx` `<head>`: `<link rel="manifest" href="/manifest.webmanifest">` + Apple-specifikke tags (`apple-touch-icon`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`).
-- Theme color matcher app-baggrunden så status-baren ser rigtig ud.
+**Ny fil**: `src/lib/offline-queue.ts`
+- `enqueue(draft)`, `dequeue(id)`, `list()`, `subscribe(cb)` — wrapper om `localStorage` med `precisely.offline-queue` nøgle.
+- Hver post: `{ tempId, draft, queuedAt, attempts, lastError? }`.
+- Eksporterer React-hook `useOfflineQueue()` der returnerer `{ queue, syncNow, isSyncing }`.
 
-### Hvad sker der IKKE i denne omgang
+**Ændret**: `src/hooks/use-measurements.ts`
+- `add()` i Supabase-grenen forsøger server-kald først; ved netværksfejl eller `!navigator.onLine` → `enqueue()` i stedet.
+- Listen `measurements` flettes med køens optimistiske poster (med `tempId` i stedet for rigtig `id` og `pending: true`-flag i `Measurement`-typen).
+- Bag-til-bag retry: lytter på `window.addEventListener("online", ...)` + fokus-event, og kører `syncNow()`.
 
-- Ingen offline-tolerance for timer'en (gemt til en senere runde).
-- Ingen 2FA.
-- Ingen service worker (bevidst — kræver mere arbejde for at undgå stale cache).
+**Ændret**: `src/hooks/use-measurements.ts` `Measurement`-type
+- Tilføj `pending?: boolean` så UI kan vise badge.
+
+**Ændret**: `src/components/measurements/MeasurementsList.tsx` (eller den række-komponent der bruges)
+- Vis et lille "⏳" eller spinner-badge for `pending`-rækker. Deaktiver redigerings-handlers for dem (de eksisterer jo ikke i DB endnu).
+
+**Ny komponent**: `src/components/stopwatch/SyncStatus.tsx`
+- Lille prik + tæller, vises i `TopNav` når der er noget i kø.
+
+**Robusthed**
+- Køen er kapacitets-begrænset (fx 200 poster) for at undgå løbsk localStorage.
+- Backoff ved gentagne fejl: 5s, 15s, 60s, derefter manuel.
+- Hvis server svarer med valideringsfejl (4xx, ikke netværk), fjernes posten fra køen og brugeren får en toast med fejlen — vi prøver ikke evigt med dårlig data.
 
 ## Filer
 
-- **Ny**: `public/manifest.webmanifest`, `public/icons/icon-192.png`, `public/icons/icon-512.png`, `public/icons/icon-maskable-512.png`.
-- **Rediger**: `src/routes/__root.tsx` (manifest + Apple meta-tags i head), `src/components/oversigt/MeasurementDialog.tsx` (digit-keybinding + badge), evt. `src/hooks/use-categories.ts` hvis vi skal eksponere "synlig rækkefølge" pænt.
-
-## Bemærk efter publicering
-
-PWA-installation virker kun på den **publicerede** URL — ikke i Lovable's preview-iframe. Test ved at åbne den publicerede side på din telefon → "Føj til hjemmeskærm".
+- **Ny**: `src/lib/offline-queue.ts`, `src/components/stopwatch/SyncStatus.tsx`
+- **Rediger**: `src/hooks/use-measurements.ts`, `src/components/measurements/MeasurementsList.tsx`, `src/components/stopwatch/TopNav.tsx`, `src/routes/_authenticated/index.tsx` (for at vise pending i dag-listen)

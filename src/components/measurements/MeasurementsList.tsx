@@ -1,5 +1,5 @@
 import React, { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Check, ChevronRight, MessageSquare, Pencil, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, ChevronRight, Loader2, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -416,13 +416,27 @@ export function MeasurementsList({
               <React.Fragment key={m.id}>
                 <TableRow
                   data-state={rowEditing ? "selected" : undefined}
-                  className={
+                  className={cn(
                     rowEditing
                       ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                      : "border-border/40 hover:bg-[#c471ed]/10"
-                  }
+                      : "border-border/40 hover:bg-[#c471ed]/10",
+                    m.pending && "opacity-60",
+                  )}
+                  title={m.pending ? "Venter på synk" : undefined}
                 >
-                  <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
+
+                  <TableCell className="py-1 text-xs">
+                    <div className="flex items-center gap-1">
+                      {m.pending && (
+                        <Loader2
+                          className="h-3 w-3 shrink-0 animate-spin text-muted-foreground"
+                          aria-label="Venter på synk"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">{renderTimeCell(m, "start")}</div>
+                    </div>
+                  </TableCell>
+
                   <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                   <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
                   <TableCell className="py-1 text-xs">

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSupabaseSession } from "@/hooks/use-supabase-session";
 import { useMyRoleInfo } from "@/hooks/use-my-role";
+import { SyncStatus } from "@/components/stopwatch/SyncStatus";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 
 
 const baseItems = [
@@ -102,8 +104,11 @@ export function TopNav() {
         )}
       </ul>
 
-      <AlertDialog>
+      <div className="flex items-center gap-2">
+        <SyncStatus />
+        <AlertDialog>
         <AlertDialogTrigger asChild>
+
           <button
             type="button"
             aria-label="Log ud"
@@ -128,8 +133,10 @@ export function TopNav() {
             <AlertDialogAction onClick={handleLogout}>Log ud</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+        </AlertDialog>
+      </div>
 
     </nav>
+
   );
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 
 import { isValidCategory, type Category } from "@/lib/categories";
 import { usePreviewMode } from "@/lib/preview-mode";
@@ -15,6 +16,15 @@ import {
   type MeasurementRow,
 } from "@/lib/measurements.functions";
 import { applyRetention } from "@/lib/retention.functions";
+import {
+  dequeueDraft,
+  enqueueDraft,
+  markAttempt,
+  TEMP_ID_PREFIX,
+  useOfflineQueue,
+  type QueuedDraft,
+} from "@/lib/offline-queue";
+
 
 export type Measurement = {
   id: string;
@@ -24,7 +34,10 @@ export type Measurement = {
   category: Category;
   hidden: boolean;
   comment?: string;
+  /** True hvis posten endnu kun findes i den lokale offline-kø. */
+  pending?: boolean;
 };
+
 
 export type MeasurementDraft = {
   startedAt: string;
@@ -207,26 +220,117 @@ function useSupabaseMeasurements(enabled: boolean) {
     enabled,
   });
 
-  const measurements = query.data ?? [];
+  const serverMeasurements = query.data ?? [];
   const loaded = enabled ? query.isFetched : true;
 
   const invalidate = useCallback(() => {
     qc.invalidateQueries({ queryKey: QUERY_KEY });
   }, [qc]);
 
-  const addMut = useMutation({
-    mutationFn: (draft: MeasurementDraft) =>
-      createFn({
-        data: {
-          started_at: draft.startedAt,
-          ended_at: draft.endedAt,
-          ms: draft.ms,
-          category: draft.category,
-          comment: draft.comment,
-        },
-      }),
-    onSuccess: invalidate,
-  });
+  // ----- Offline-kø -----
+  const queuedDrafts = useOfflineQueue();
+  const queuedAsMeasurements = useMemo<Measurement[]>(
+    () =>
+      queuedDrafts
+        .filter((q) => isValidCategory(q.draft.category))
+        .map((q) => ({
+          id: q.tempId,
+          startedAt: q.draft.startedAt,
+          endedAt: q.draft.endedAt,
+          ms: q.draft.ms,
+          category: q.draft.category,
+          hidden: false,
+          comment: q.draft.comment,
+          pending: true,
+        })),
+    [queuedDrafts],
+  );
+
+  const measurements = useMemo<Measurement[]>(
+    () => [...queuedAsMeasurements, ...serverMeasurements],
+    [queuedAsMeasurements, serverMeasurements],
+  );
+
+  // Synker én post fra køen. Returnerer true ved succes, false ved netværksfejl
+  // (post bliver), eller hvis posten allerede er fjernet.
+  const syncOne = useCallback(
+    async (item: QueuedDraft): Promise<boolean> => {
+      try {
+        await createFn({
+          data: {
+            started_at: item.draft.startedAt,
+            ended_at: item.draft.endedAt,
+            ms: item.draft.ms,
+            category: item.draft.category,
+            comment: item.draft.comment,
+          },
+        });
+        dequeueDraft(item.tempId);
+        return true;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        const online = typeof navigator === "undefined" ? true : navigator.onLine;
+        const looksNetwork =
+          !online ||
+          err instanceof TypeError ||
+          /fetch|network|load failed|connection/i.test(msg);
+        if (looksNetwork) {
+          markAttempt(item.tempId, msg);
+          return false;
+        }
+        // Permanent fejl (fx validering) — drop posten, vi vil ikke loope.
+        console.error("[offline-queue] permanent fejl, dropper post:", msg);
+        dequeueDraft(item.tempId);
+        toast.error("En offline-måling kunne ikke gemmes og blev fjernet", {
+          description: msg,
+        });
+        return true;
+      }
+    },
+    [createFn],
+  );
+
+  const syncingRef = useRef(false);
+  const syncAll = useCallback(async () => {
+    if (syncingRef.current) return;
+    syncingRef.current = true;
+    try {
+      const now = Date.now();
+      const ready = queuedDrafts.filter((q) => q.nextAttemptAt <= now);
+      let anySuccess = false;
+      for (const item of ready) {
+        const ok = await syncOne(item);
+        if (ok) anySuccess = true;
+      }
+      if (anySuccess) invalidate();
+    } finally {
+      syncingRef.current = false;
+    }
+  }, [queuedDrafts, syncOne, invalidate]);
+
+  // Trigger sync når vi kommer online, ved tab-fokus og ved mount.
+  useEffect(() => {
+    if (!enabled) return;
+    if (queuedDrafts.length === 0) return;
+    void syncAll();
+    const onOnline = () => void syncAll();
+    const onFocus = () => void syncAll();
+    window.addEventListener("online", onOnline);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [enabled, queuedDrafts.length, syncAll]);
+
+  // Periodisk retry (backoff): tjek hvert 5. sekund om noget er klar.
+  useEffect(() => {
+    if (!enabled || queuedDrafts.length === 0) return;
+    const interval = window.setInterval(() => {
+      void syncAll();
+    }, 5_000);
+    return () => window.clearInterval(interval);
+  }, [enabled, queuedDrafts.length, syncAll]);
 
   const updateMut = useMutation({
     mutationFn: ({ id, patch }: { id: string; patch: Partial<Omit<Measurement, "id">> }) =>
@@ -264,18 +368,57 @@ function useSupabaseMeasurements(enabled: boolean) {
     onSuccess: invalidate,
   });
 
-  const add = useCallback((draft: MeasurementDraft) => addMut.mutate(draft), [addMut]);
+  const add = useCallback(
+    (draft: MeasurementDraft) => {
+      const item = enqueueDraft(draft);
+      if (!item) {
+        toast.error("Offline-kø er fuld — kunne ikke gemme");
+        return;
+      }
+      // Forsøg straks; lykkes det fjernes posten fra køen i syncOne.
+      void syncOne(item).then((ok) => {
+        if (ok) {
+          invalidate();
+        } else {
+          toast.message("Gemt offline — synkroniseres når du er online igen");
+        }
+      });
+    },
+    [syncOne, invalidate],
+  );
+
   const update = useCallback(
-    (id: string, patch: Partial<Omit<Measurement, "id">>) => updateMut.mutate({ id, patch }),
+    (id: string, patch: Partial<Omit<Measurement, "id">>) => {
+      if (id.startsWith(TEMP_ID_PREFIX)) {
+        toast.message("Venter på synk — prøv igen om et øjeblik");
+        return;
+      }
+      updateMut.mutate({ id, patch });
+    },
     [updateMut],
   );
-  const remove = useCallback((id: string) => deleteMut.mutate(id), [deleteMut]);
+  const remove = useCallback(
+    (id: string) => {
+      if (id.startsWith(TEMP_ID_PREFIX)) {
+        dequeueDraft(id);
+        return;
+      }
+      deleteMut.mutate(id);
+    },
+    [deleteMut],
+  );
   const hide = useCallback(
-    (id: string) => updateMut.mutate({ id, patch: { hidden: true } }),
+    (id: string) => {
+      if (id.startsWith(TEMP_ID_PREFIX)) return;
+      updateMut.mutate({ id, patch: { hidden: true } });
+    },
     [updateMut],
   );
   const unhide = useCallback(
-    (id: string) => updateMut.mutate({ id, patch: { hidden: false } }),
+    (id: string) => {
+      if (id.startsWith(TEMP_ID_PREFIX)) return;
+      updateMut.mutate({ id, patch: { hidden: false } });
+    },
     [updateMut],
   );
   const hideAllToday = useCallback(() => hideRangeMut.mutate(todayBounds()), [hideRangeMut]);
@@ -287,6 +430,7 @@ function useSupabaseMeasurements(enabled: boolean) {
 
   return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeAllToday, removeAll };
 }
+
 
 export function useMeasurements() {
   const preview = usePreviewMode();
