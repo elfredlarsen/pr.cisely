@@ -17,7 +17,7 @@ Signaturgradient:
 	- Cyan: #12c2e9
 Gradienten må ikke bruges til almindelige knapper eller baggrunde.
 
-	- Primær accentfarve (knapper, fokus, aktiv tilstand): #c471ed (lilla)
+	- Primær accentfarve (knapper, fokus, aktiv tilstand): #9333ea (lilla)
 	- Baggrund: #fafafa (lys grå)
 	- Tekst primær: #1a1a1a
 	- Tekst sekundær: #666666
