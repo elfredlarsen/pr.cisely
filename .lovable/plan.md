@@ -1,11 +1,16 @@
-Opdater fem tokens i `:root` i `src/styles.css` for at opfylde WCAG AA-kontrast på status-farver. Brand-gradienten (`#f64f59`, `#c471ed`, `#12c2e9`) og alt der bruger den (logo, favicon, `--brand-primary`, `--brand-gradient`, `--gradient-brand`, `.nav-link::after`, scrollbar) røres ikke.
+UI'et bruger allerede semantiske tokens (`bg-destructive`, `bg-success`, `bg-warning`, `bg-info`) overalt — knapper, dialoger, fejlbeskeder og badges får automatisk de nye farver. Det eneste sted statusfarverne stadig ignoreres er sonner-toasts, som i dag tvinges til neutral `bg-background`. Det retter jeg, så feedback bliver visuelt konsistent med resten af UI'et.
 
-## Ændringer i `src/styles.css` (`:root`)
+## Ændring i `src/components/ui/sonner.tsx`
 
-- `--destructive`: `#ff5a7a` → `#c0344d`
-- `--success`: `#3ec98a` → `#15803d`
-- `--warning`: uændret (`#ffd23a`)
-- `--warning-foreground`: `#ffffff` → `#1a1a1a` (mørk tekst på gul)
-- `--info`: `#12c2e9` → `#0e7490` (kun brugt på Nulstil-knappen; brand-cyan i gradienten er hardcodet og uberørt)
+Fjern `!bg-background !text-foreground !border-border` overrides på `success` og tilføj tilsvarende klasser for `error`, `warning` og `info`, så de fire toast-typer bruger status-tokens:
 
-Ingen andre filer, komponenter eller policies ændres.
+- `success`: `bg-success text-success-foreground border-success`
+- `error`: `bg-destructive text-destructive-foreground border-destructive`
+- `warning`: `bg-warning text-warning-foreground border-warning` (gul med mørk tekst — matcher det opdaterede `--warning-foreground`)
+- `info`: `bg-info text-info-foreground border-info`
+
+`description` og `closeButton` opdateres så de bliver læsbare på den farvede baggrund (fx `text-current/80` på description, gennemsigtig closeButton der arver farve).
+
+Standard `toast` (uden type) beholder neutral baggrund.
+
+Ingen andre filer ændres. Brand-gradient, primær-knap og alle andre tokens er uberørte.

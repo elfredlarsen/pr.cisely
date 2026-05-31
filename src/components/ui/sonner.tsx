@@ -14,12 +14,18 @@ const Toaster = ({ ...props }: ToasterProps) => {
           toast:
             "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:p-2 group-[.toaster]:text-xs group-[.toaster]:min-h-0",
           success:
-            "group-[.toaster]:!bg-background group-[.toaster]:!text-foreground group-[.toaster]:!border-border",
-          description: "group-[.toast]:text-muted-foreground group-[.toast]:text-xs",
+            "group-[.toaster]:!bg-success group-[.toaster]:!text-success-foreground group-[.toaster]:!border-success",
+          error:
+            "group-[.toaster]:!bg-destructive group-[.toaster]:!text-destructive-foreground group-[.toaster]:!border-destructive",
+          warning:
+            "group-[.toaster]:!bg-warning group-[.toaster]:!text-warning-foreground group-[.toaster]:!border-warning",
+          info:
+            "group-[.toaster]:!bg-info group-[.toaster]:!text-info-foreground group-[.toaster]:!border-info",
+          description: "group-[.toast]:!text-current group-[.toast]:opacity-80 group-[.toast]:text-xs",
           actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
           cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
           closeButton:
-            "group-[.toast]:bg-background group-[.toast]:text-foreground group-[.toast]:border-border",
+            "group-[.toast]:!bg-transparent group-[.toast]:!text-current group-[.toast]:!border-current/30",
         },
       }}
       {...props}
