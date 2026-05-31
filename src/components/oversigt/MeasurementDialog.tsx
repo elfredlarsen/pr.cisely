@@ -151,6 +151,35 @@ export function MeasurementDialog({
     }
   }, [open, category, allCategories, visibleCategories]);
 
+  // Tastatur-genveje: 1–9 vælger en af de første ni kategorier, 0 rydder valg.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tgt = e.target as HTMLElement | null;
+      if (
+        tgt instanceof HTMLInputElement ||
+        tgt instanceof HTMLTextAreaElement ||
+        tgt?.isContentEditable
+      ) {
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key >= "1" && e.key <= "9") {
+        const idx = Number(e.key) - 1;
+        const target = visibleCategories[idx];
+        if (target) {
+          e.preventDefault();
+          setCategory(target.value);
+        }
+      } else if (e.key === "0") {
+        e.preventDefault();
+        setCategory("");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, visibleCategories]);
+
   const handleStart = (v: string) => {
     setStart(v);
     const s = parseHms(v);
