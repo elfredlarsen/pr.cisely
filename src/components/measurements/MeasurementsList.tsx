@@ -317,6 +317,7 @@ export function MeasurementsList({
           autoFocus
           type="time"
           step={1}
+          lang="da-DK"
           value={previewValue}
           onChange={(e) => handleChangeDuration(e.target.value)}
           onBlur={() => commit(m)}
