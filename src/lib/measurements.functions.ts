@@ -29,10 +29,11 @@ const MAX_MS = 1000 * 60 * 60 * 24 * 30;
 export const listMeasurements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<MeasurementRow[]> => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("measurements")
       .select("id, started_at, ended_at, ms, category, hidden, comment")
+      .eq("user_id", userId)
       .order("ended_at", { ascending: false })
       .limit(1000);
     if (error) dbError("measurements.list", error);
@@ -100,10 +101,14 @@ export const updateMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { id, ...patch } = data;
     if (Object.keys(patch).length === 0) return { ok: true };
-    const { error } = await supabase.from("measurements").update(patch).eq("id", id);
+    const { error } = await supabase
+      .from("measurements")
+      .update(patch)
+      .eq("id", id)
+      .eq("user_id", userId);
     if (error) dbError("measurements.update", error);
     return { ok: true };
   });
@@ -114,8 +119,12 @@ export const deleteMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => deleteSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
-    const { error } = await supabase.from("measurements").delete().eq("id", data.id);
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("measurements")
+      .delete()
+      .eq("id", data.id)
+      .eq("user_id", userId);
     if (error) dbError("measurements.delete", error);
     return { ok: true };
   });
@@ -129,10 +138,11 @@ export const removeMeasurementsInRange = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => dayBoundsSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { error } = await supabase
       .from("measurements")
       .delete()
+      .eq("user_id", userId)
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
       .eq("hidden", false);
@@ -144,10 +154,11 @@ export const hideMeasurementsInRange = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => dayBoundsSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { error } = await supabase
       .from("measurements")
       .update({ hidden: true })
+      .eq("user_id", userId)
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
       .eq("hidden", false);
