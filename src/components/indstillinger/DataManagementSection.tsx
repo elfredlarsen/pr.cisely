@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useMeasurements } from "@/hooks/use-measurements";
-
-const AUTO_DELETE_KEY = "precisely.autoDeleteDays";
+import { getRetentionDays, setRetentionDays } from "@/lib/retention.functions";
 
 type AutoDeleteValue = "30" | "60" | "90" | "180" | "365" | "never";
 
@@ -36,32 +36,50 @@ const OPTIONS: { value: AutoDeleteValue; label: string }[] = [
   { value: "never", label: "Aldrig" },
 ];
 
-function isAutoDeleteValue(v: string): v is AutoDeleteValue {
-  return ["30", "60", "90", "180", "365", "never"].includes(v);
+const RETENTION_KEY = ["retention-days"] as const;
+
+function daysToValue(days: number | null): AutoDeleteValue {
+  if (days === null) return "never";
+  const s = String(days);
+  if (s === "30" || s === "60" || s === "90" || s === "180" || s === "365") return s;
+  return "never";
+}
+
+function valueToDays(v: AutoDeleteValue): number | null {
+  if (v === "never") return null;
+  return Number(v);
 }
 
 export function DataManagementSection() {
   const { removeAll } = useMeasurements();
-  const [autoDelete, setAutoDelete] = useState<AutoDeleteValue>("never");
+  const qc = useQueryClient();
+  const getFn = useServerFn(getRetentionDays);
+  const setFn = useServerFn(setRetentionDays);
 
-  useEffect(() => {
-    try {
-      const v = window.localStorage.getItem(AUTO_DELETE_KEY);
-      if (v && isAutoDeleteValue(v)) setAutoDelete(v);
-    } catch {
-      // ignore
-    }
-  }, []);
+  const query = useQuery({
+    queryKey: RETENTION_KEY,
+    queryFn: () => getFn(),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (retentionDays: number | null) => setFn({ data: { retentionDays } }),
+    onSuccess: (_res, retentionDays) => {
+      qc.setQueryData(RETENTION_KEY, { retentionDays });
+      toast.success("Auto-slet opdateret");
+    },
+    onError: () => {
+      toast.error("Kunne ikke gemme. Prøv igen.");
+      qc.invalidateQueries({ queryKey: RETENTION_KEY });
+    },
+  });
+
+  const currentValue: AutoDeleteValue = daysToValue(query.data?.retentionDays ?? null);
+  const disabled = query.isLoading || mutation.isPending;
 
   const handleChange = (v: string) => {
-    if (!isAutoDeleteValue(v)) return;
-    setAutoDelete(v);
-    try {
-      window.localStorage.setItem(AUTO_DELETE_KEY, v);
-    } catch {
-      // ignore
-    }
-    toast.success("Auto-slet opdateret");
+    const next = v as AutoDeleteValue;
+    if (!OPTIONS.some((o) => o.value === next)) return;
+    mutation.mutate(valueToDays(next));
   };
 
   const handleDeleteAll = () => {
@@ -75,7 +93,7 @@ export function DataManagementSection() {
         <Label htmlFor="auto-delete-select" className="text-sm font-medium">
           Auto-slet
         </Label>
-        <Select value={autoDelete} onValueChange={handleChange}>
+        <Select value={currentValue} onValueChange={handleChange} disabled={disabled}>
           <SelectTrigger
             id="auto-delete-select"
             className="h-11 w-full rounded-md"
