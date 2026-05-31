@@ -104,8 +104,11 @@ export function TopNav() {
         )}
       </ul>
 
-      <AlertDialog>
+      <div className="flex items-center gap-2">
+        <SyncStatus />
+        <AlertDialog>
         <AlertDialogTrigger asChild>
+
           <button
             type="button"
             aria-label="Log ud"
