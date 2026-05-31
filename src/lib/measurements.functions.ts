@@ -101,10 +101,14 @@ export const updateMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { id, ...patch } = data;
     if (Object.keys(patch).length === 0) return { ok: true };
-    const { error } = await supabase.from("measurements").update(patch).eq("id", id);
+    const { error } = await supabase
+      .from("measurements")
+      .update(patch)
+      .eq("id", id)
+      .eq("user_id", userId);
     if (error) dbError("measurements.update", error);
     return { ok: true };
   });
