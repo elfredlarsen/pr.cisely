@@ -25,7 +25,7 @@ export const signUpWithKey = createServerFn({ method: "POST" })
     z
       .object({
         email: z.string().trim().email().max(255),
-        password: z.string().min(6).max(128),
+        password: z.string().min(8).max(128),
         key: z.string().max(512),
       })
       .parse(input)
