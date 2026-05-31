@@ -1,23 +1,42 @@
-# WCAG AA-kontrast på primærknapper
+# Opbevaringsbegrænsning serverside, dovent ved indlæsning
 
-## Mål
-Hvid tekst på primær skal opnå mindst 4.5:1. Nuværende `#c471ed` mod hvid giver ~2.6:1 (fejler AA). Ny værdi `#9333ea` mod hvid giver ~5.4:1 ✓.
+## 1) DB-migration
+Tilføj kolonne `retention_days` (smallint, nullable, default null, CHECK `> 0`) til `public.profiles`. `NULL` betyder "aldrig". Ingen rettighedsændringer — eksisterende RLS-policies på `profiles` dækker allerede select/update for egen række.
 
-## Ændringer
+## 2) Server functions — ny fil `src/lib/retention.functions.ts`
+- `getRetentionDays` (GET, `requireSupabaseAuth`): læser `profiles.retention_days` for `userId`. Returnerer `{ retentionDays: number | null }`. Hvis profilrækken mangler → returner `null` (defensive).
+- `setRetentionDays` (POST, `requireSupabaseAuth`): zod-valideret input `{ retentionDays: number | null }` (når sat: int, min 1, max 36500). Opdaterer `profiles` med `.eq("id", userId)`. Returnerer `{ ok: true }`.
+- `applyRetention` (POST, `requireSupabaseAuth`): læser `retention_days` for brugeren. Hvis `null` → return `{ deleted: 0 }` uden DB-skrivning. Ellers beregn cutoff = `now - retention_days dage` (ISO), kald `supabase.from("measurements").delete().eq("user_id", userId).lt("ended_at", cutoff).select("id")` for at få antal. Returnér `{ deleted: rows.length }`.
 
-### `src/styles.css`
-- Linje 51: `--primary: #c471ed;` → `--primary: #9333ea;`
-- Linje 69: `--ring: #c471ed;` → `--ring: #9333ea;`
+Defense-in-depth: alle tre handlers bruger `.eq("user_id", userId)` / `.eq("id", userId)`. Server function kan kun slette egne rækker (RLS + eksplicit filter).
 
-### `DESIGN.md`
-- Linje 20: opdater "Primær accentfarve (knapper, fokus, aktiv tilstand)" fra `#c471ed (lilla)` til `#9333ea (lilla)`.
+## 3) `useMeasurements` — kald `applyRetention` én gang ved mount
+I `useSupabaseMeasurements`: tilføj `useEffect` der kører én gang (guarded med `useRef`) når `enabled === true`. Kalder `applyRetention()` og — hvis `deleted > 0` — invaliderer `QUERY_KEY` så listen genhentes. Fejl swallowed med `console.warn`; UI er ikke afhængig af resultatet. Preview-mode (localStorage) påvirkes ikke.
 
-## Urørt
-- `--brand-primary`, `--brand-gradient`, `--gradient-brand` (linje 71–72, 132)
-- `.nav-link::after`-gradient (linje 147)
-- Scrollbar-styling (linje 117, 124) — bruger `#c471ed` men er ikke nævnt af brugeren og er ikke tekst-på-baggrund, så lades urørt jf. "ingen andre ændringer".
-- Logo, favicon
-- DESIGN.md linje 16 ("Lilla: #c471ed" under brand-paletten) — beskriver brand-gradienten, ikke primær-accenten.
+Vigtigt: ingen automatisk re-run ved hver query/refetch — kun én gang per mount. Det matcher "dovent ved indlæsning" og forhindrer race-conditions hvor brugeren får slettet rækker igen og igen.
 
-## Verifikation
-Kontrast `#9333ea` (L≈0.146) mod `#ffffff` (L=1): `(1+0.05)/(0.146+0.05) ≈ 5.36:1` ≥ 4.5:1 ✓.
+## 4) `DataManagementSection`
+- Fjern `AUTO_DELETE_KEY` og al `localStorage`-læsning/-skrivning.
+- Bevar UI 1:1 (samme `Select` med samme labels og samme "Slet al historik"-knap).
+- Mapping: `"never"` ⇄ `null`; `"30"|"60"|"90"|"180"|"365"` ⇄ tilsvarende `number`.
+- Brug `useQuery` på `getRetentionDays` til at hydrere initial state. Disable `Select` indtil query er færdig (men bevar UI — kun `disabled`-attribut på `SelectTrigger`).
+- `useMutation` på `setRetentionDays`. Ved success: invalider retention-query og vis "Auto-slet opdateret" (uændret tekst). Ved fejl: `toast.error`.
+- "Slet al historik" rører ikke retention — kalder fortsat `removeAll()`.
+
+## 5) Sikkerhedskontroller før vi går videre
+Inden vi anser arbejdet for færdigt:
+- Verificér via direkte SQL-tjek at `applyRetention` med `retentionDays = null` ikke skriver i `measurements`.
+- Verificér at `applyRetention` med fx `retentionDays = 365` kun rammer rækker hvor `ended_at < now - interval '365 days'` for den indloggede bruger (manuel test med `select count(*) ... where ended_at < now() - interval '365 days'` før og efter).
+- Bekræft i koden at server function altid bruger `.eq("user_id", userId)` og at `getRetentionDays` returnerer `null` første gang en bruger lander på siden (ingen utilsigtet default på fx 30).
+
+## Filer berørt
+- `supabase/migrations/...` (ny)
+- `src/lib/retention.functions.ts` (ny)
+- `src/hooks/use-measurements.ts` (tilføj useEffect i Supabase-grenen + import)
+- `src/components/indstillinger/DataManagementSection.tsx` (erstat localStorage med server functions)
+
+## Ikke ændret
+- Andet UI, layout, andre indstillinger
+- Preview-mode adfærd
+- RLS-policies, andre tabeller
+- `removeAll`-flowet
