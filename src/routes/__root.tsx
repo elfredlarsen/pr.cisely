@@ -146,7 +146,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useClearLegacyLocalStorage();
+
+
 
   return (
     <QueryClientProvider client={queryClient}>
