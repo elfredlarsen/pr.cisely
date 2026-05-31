@@ -64,8 +64,8 @@ const baseBtn =
 
 const startBtn = `${baseBtn} bg-success text-success-foreground`;
 const finishBtn = `${baseBtn} bg-destructive text-destructive-foreground`;
-const pauseBtn = `${baseBtn} bg-warning text-warning-foreground`;
-const resetBtn = `${baseBtn} bg-info text-info-foreground`;
+const pauseBtn = `${baseBtn} bg-[#7c3aed] text-white`;
+const resetBtn = `${baseBtn} bg-[#374151] text-white`;
 const resumeBtn = `${baseBtn} bg-success text-success-foreground`;
 
 type Props = {
