@@ -154,10 +154,11 @@ export const hideMeasurementsInRange = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => dayBoundsSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { error } = await supabase
       .from("measurements")
       .update({ hidden: true })
+      .eq("user_id", userId)
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
       .eq("hidden", false);
