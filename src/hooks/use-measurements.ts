@@ -462,5 +462,3 @@ export function useMeasurements() {
     hiddenAll,
   };
 }
-
-export { isSameLocalDay };

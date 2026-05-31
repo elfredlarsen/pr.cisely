@@ -29,13 +29,6 @@ export function useCategories() {
   });
 }
 
-export function useVisibleCategories() {
-  const q = useCategories();
-  return {
-    ...q,
-    data: q.data ?? [],
-  };
-}
 
 
 export function useCategoryLabel(value: Category | undefined | null): string {

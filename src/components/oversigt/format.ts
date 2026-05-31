@@ -57,15 +57,3 @@ export function parseDuration(value: string): number | null {
   return (h * 3600 + mi * 60 + s) * 1000;
 }
 
-export function maskDuration(input: string): string {
-  const digits = input.replace(/\D/g, "").slice(0, 7);
-  if (digits.length === 0) return "";
-  const h = digits.slice(0, Math.max(1, digits.length - 4));
-  const rest = digits.slice(h.length);
-  const m = rest.slice(0, 2);
-  const s = rest.slice(2, 4);
-  let result = h;
-  if (rest.length > 0) result += ":" + m;
-  if (rest.length > 2) result += ":" + s;
-  return result;
-}
