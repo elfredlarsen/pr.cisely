@@ -62,9 +62,6 @@ function write(items: QueuedDraft[]) {
   }
 }
 
-export function listQueue(): QueuedDraft[] {
-  return read();
-}
 
 export function enqueueDraft(draft: MeasurementDraft): QueuedDraft | null {
   const current = read();
@@ -105,11 +102,7 @@ export function markAttempt(tempId: string, error?: string) {
   write(next);
 }
 
-export function clearQueue() {
-  write([]);
-}
-
-export function subscribeQueue(cb: () => void): () => void {
+function subscribeQueue(cb: () => void): () => void {
   if (typeof window === "undefined") return () => {};
   const handler = () => cb();
   const storageHandler = (e: StorageEvent) => {

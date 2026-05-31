@@ -63,9 +63,6 @@ export function isPreviewMode(): boolean {
   return readSession() && isTrustedEmbed();
 }
 
-export function enablePreview() {
-  writeSession(true);
-}
 
 export function disablePreview() {
   writeSession(false);
