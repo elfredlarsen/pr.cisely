@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -22,7 +22,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCategories } from "@/hooks/use-categories";
-import { getMyRoleInfo } from "@/lib/auth.functions";
+import { useMyRoleInfo } from "@/hooks/use-my-role";
+import { useSupabaseSession } from "@/hooks/use-supabase-session";
 import {
   createCategory,
   deleteCategory,
@@ -37,22 +38,25 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Administrer kategorier." },
     ],
   }),
-  // Server-side admin-gate: forhindrer flash af admin-UI for ikke-admins.
-  // _authenticated layout har allerede sikret at brugeren er logget ind.
-  beforeLoad: async () => {
-    try {
-      const info = await getMyRoleInfo();
-      if (!info.isAdmin) {
-        throw redirect({ to: "/" });
-      }
-    } catch (err) {
-      // redirect kaster — lad det boble videre
-      if (err && typeof err === "object" && "isRedirect" in err) throw err;
-      throw redirect({ to: "/" });
-    }
-  },
-  component: AdminContent,
+  component: AdminPage,
 });
+
+function AdminPage() {
+  const { status } = useSupabaseSession();
+  const role = useMyRoleInfo(status === "authenticated");
+
+  // Vent stille mens vi tjekker rollen — undgår at flashe admin-skeletonen
+  // for ikke-admins, der alligevel bliver redirected væk.
+  if (status === "loading" || role.isLoading || role.isFetching) {
+    return null;
+  }
+
+  if (!role.data?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <AdminContent />;
+}
 
 function AdminContent() {
   return (
