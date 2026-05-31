@@ -19,12 +19,15 @@ export type CategoryRow = {
 };
 
 async function assertAdmin(supabase: SupabaseClient, userId: string) {
-  const { data: isAdmin, error } = await supabase.rpc("has_role", {
-    _user_id: userId,
-    _role: "administrator",
-  });
+  const { data, error } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
   if (error) dbError("categories", error);
-  if (!isAdmin) throw new Error("Forbidden: administrator role required");
+  const roles = (data ?? []).map((r: { role: string }) => r.role);
+  if (!roles.includes("administrator")) {
+    throw new Error("Forbidden: administrator role required");
+  }
 }
 
 function slugify(input: string): string {
