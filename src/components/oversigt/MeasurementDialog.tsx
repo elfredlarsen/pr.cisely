@@ -151,6 +151,35 @@ export function MeasurementDialog({
     }
   }, [open, category, allCategories, visibleCategories]);
 
+  // Tastatur-genveje: 1–9 vælger en af de første ni kategorier, 0 rydder valg.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tgt = e.target as HTMLElement | null;
+      if (
+        tgt instanceof HTMLInputElement ||
+        tgt instanceof HTMLTextAreaElement ||
+        tgt?.isContentEditable
+      ) {
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key >= "1" && e.key <= "9") {
+        const idx = Number(e.key) - 1;
+        const target = visibleCategories[idx];
+        if (target) {
+          e.preventDefault();
+          setCategory(target.value);
+        }
+      } else if (e.key === "0") {
+        e.preventDefault();
+        setCategory("");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, visibleCategories]);
+
   const handleStart = (v: string) => {
     setStart(v);
     const s = parseHms(v);
@@ -271,16 +300,23 @@ export function MeasurementDialog({
 
           <div className="flex flex-col gap-1">
             <label htmlFor="md-cat" className="text-xs font-medium text-muted-foreground">
-              Kategori
+              Kategori <span className="text-muted-foreground/70">· tryk 1–9</span>
             </label>
             <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
               <SelectTrigger id="md-cat" className="h-10">
                 <SelectValue placeholder="Vælg kategori" />
               </SelectTrigger>
               <SelectContent>
-                {visibleCategories.map((c) => (
+                {visibleCategories.map((c, i) => (
                   <SelectItem key={c.value} value={c.value}>
-                    {c.label}
+                    <span className="flex items-center gap-2">
+                      {i < 9 && (
+                        <kbd className="inline-flex h-5 w-5 items-center justify-center rounded border border-border bg-muted text-[10px] font-mono text-muted-foreground">
+                          {i + 1}
+                        </kbd>
+                      )}
+                      <span>{c.label}</span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
