@@ -251,10 +251,16 @@ function useSupabaseMeasurements(enabled: boolean) {
     [queuedAsMeasurements, serverMeasurements],
   );
 
+  // Tracker tempIds der allerede er under POST, så samme post ikke sendes to gange
+  // (fx hvis add() kalder syncOne direkte mens useEffect også trigger syncAll).
+  const inFlightRef = useRef<Set<string>>(new Set());
+
   // Synker én post fra køen. Returnerer true ved succes, false ved netværksfejl
   // (post bliver), eller hvis posten allerede er fjernet.
   const syncOne = useCallback(
     async (item: QueuedDraft): Promise<boolean> => {
+      if (inFlightRef.current.has(item.tempId)) return false;
+      inFlightRef.current.add(item.tempId);
       try {
         await createFn({
           data: {
@@ -285,6 +291,8 @@ function useSupabaseMeasurements(enabled: boolean) {
           description: msg,
         });
         return true;
+      } finally {
+        inFlightRef.current.delete(item.tempId);
       }
     },
     [createFn],
@@ -296,7 +304,9 @@ function useSupabaseMeasurements(enabled: boolean) {
     syncingRef.current = true;
     try {
       const now = Date.now();
-      const ready = queuedDrafts.filter((q) => q.nextAttemptAt <= now);
+      const ready = queuedDrafts.filter(
+        (q) => q.nextAttemptAt <= now && !inFlightRef.current.has(q.tempId),
+      );
       let anySuccess = false;
       for (const item of ready) {
         const ok = await syncOne(item);
