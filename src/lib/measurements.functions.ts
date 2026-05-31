@@ -29,10 +29,11 @@ const MAX_MS = 1000 * 60 * 60 * 24 * 30;
 export const listMeasurements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<MeasurementRow[]> => {
-    const { supabase } = context;
+    const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("measurements")
       .select("id, started_at, ended_at, ms, category, hidden, comment")
+      .eq("user_id", userId)
       .order("ended_at", { ascending: false })
       .limit(1000);
     if (error) dbError("measurements.list", error);
