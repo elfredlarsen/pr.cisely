@@ -1,30 +1,40 @@
-## Plan: Tilføj testdata til begge brugere
+## Mål
 
-Indsæt realistiske stopur-målinger for de sidste 14 dage til begge eksisterende brugere (`elfredlarsen@gmail.com` og `coslarsen@gmail.com`), så historik, oversigt, arkiv og skjul/vis-funktionerne kan demonstreres.
+Kun personer med et hemmeligt link kan oprette en konto. Ingen administration, ingen godkendelse — du deler bare ét link med dem du vil give adgang.
 
-### Hvad indsættes
+## Sådan fungerer det
 
-Per bruger, per hverdag (mandag–fredag, sidste 14 dage = ca. 10 hverdage):
-- **4–7 målinger om dagen** fordelt på arbejdsdagen kl. 8:30–16:00
-- **Varigheder** mellem 3 min og 95 min — realistisk variation
-- **Kategorier** trækkes vægtet fra de eksisterende 12, så `Arbejdstager`, `Studerende`, `EU-familiemedlem`, `Biometri` og `EU-vejledning` optræder ofte, mens resten optræder spredt
-- **Kommentarer** på ca. 30 % af målingerne (korte, fx "telefonisk opfølgning", "dokumentation modtaget")
-- **Skjulte målinger**: ca. 10 % markeres `hidden = true`, spredt ud over perioden — så skjul/vis kan testes
-- Et par weekend-målinger (lørdag) for variation
+- Du får ét hemmeligt link, fx:
+  `https://din-app.lovable.app/login?key=xK9mP2vL8nQ4`
+- Alle med linket kan oprette sig frit.
+- `/login` uden eller med forkert kode → kun **log ind**-formularen vises. "Opret konto"-knappen er skjult.
+- Eksisterende brugere kan stadig logge ind på `/login` uden koden.
+- Hvis koden lækker, ændrer du den ét sted, og det gamle link holder op med at virke.
 
-I alt ca. **50–70 målinger per bruger** (~100–140 rækker samlet).
+## Hvad der ændres
 
-### Sådan gøres det
+**Ny hemmelighed (secret)**
+- `SIGNUP_ACCESS_KEY` — den hemmelige streng. Du vælger selv værdien (fx 12+ tilfældige tegn). Kan ændres når som helst.
 
-- Genereres deterministisk via en SQL `INSERT ... SELECT` med `generate_series` + et fast seed, så `ms` præcis matcher `ended_at - started_at` (overholder Zods ±2s-tjek hvis nogen senere editerer dem via serverfn)
-- `user_id` sættes eksplicit til hver af de to bruger-ID'er
-- Kører via `supabase--insert`-værktøjet (data-ændring, ingen skemaændring)
-- Ingen kodeændringer i frontend/backend — kun data
+**Ny server-funktion** `src/lib/signup.functions.ts`
+- `checkSignupKey(key)` → returnerer `{ valid: true/false }`. Sammenligner serverside med `SIGNUP_ACCESS_KEY` så koden aldrig ligger i klient-bundlen.
 
-### Bagefter
+**`/login`-siden**
+- Læser `?key=` fra URL'en ved load
+- Kalder `checkSignupKey` én gang
+- Hvis ugyldig: skjul "Ingen konto? Opret en" + bloker signup-tilstand (hvis nogen prøver at skifte manuelt)
+- Hvis gyldig: signup virker som i dag
 
-Du kan logge ind som hver bruger og se:
-- Historik på `/` med dagens målinger
-- Oversigt/arkiv på `/arkiv` med 14 dages data fordelt på kategorier
-- Skjulte målinger i indstillinger
-- Retention/oprydning på ældre data hvis du sætter `retention_days` lavt
+**Ekstra serverside-tjek**
+- En ny server-funktion `signUpWithKey(email, password, key)` der validerer koden igen på serveren og først derefter kalder Supabase. Det forhindrer at nogen kan omgå frontend-tjekket via browser-konsollen.
+
+## Praktisk
+
+- Når planen er godkendt, beder jeg dig vælge værdien til `SIGNUP_ACCESS_KEY` via en secret-prompt.
+- Du får dit signup-link med det samme — du kan bruge det selv eller dele det.
+- Vil du senere skifte kode: opdater bare secret'en, så er det gamle link dødt.
+
+## Begrænsninger ved denne tilgang
+
+- Alle med linket har adgang — hvis én person deler det videre, kan du ikke spore hvem.
+- Hvis du senere vil have engangslinks eller per-bruger invitationer, kan vi bygge det ovenpå.
