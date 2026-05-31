@@ -119,8 +119,12 @@ export const deleteMeasurement = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => deleteSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
-    const { error } = await supabase.from("measurements").delete().eq("id", data.id);
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("measurements")
+      .delete()
+      .eq("id", data.id)
+      .eq("user_id", userId);
     if (error) dbError("measurements.delete", error);
     return { ok: true };
   });
