@@ -82,11 +82,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "pr:cisely" },
+      { name: "description", content: "Præcis tidsregistrering." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "pr:cisely" },
+      { property: "og:description", content: "Præcis tidsregistrering." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -95,6 +95,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "pr:cisely" },
+      { name: "twitter:title", content: "pr:cisely" },
+      { name: "twitter:description", content: "Præcis tidsregistrering." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fc0330de-dd91-456e-b274-a7fe2cdf26eb/id-preview-dedb565d--93e54db2-ec2a-4e2c-af3b-fbcd243b6b3a.lovable.app-1780266899708.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fc0330de-dd91-456e-b274-a7fe2cdf26eb/id-preview-dedb565d--93e54db2-ec2a-4e2c-af3b-fbcd243b6b3a.lovable.app-1780266899708.png" },
     ],
     links: [
       {
