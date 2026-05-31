@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +16,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { checkSignupKey, signUpWithKey } from "@/lib/signup.functions";
+
+const searchSchema = z.object({ key: z.string().optional() });
 
 export const Route = createFileRoute("/login")({
+  validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Log ind · pr:cisely" },
@@ -27,6 +33,13 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { key: signupKey } = useSearch({ from: "/login" });
+  const checkKey = useServerFn(checkSignupKey);
+  const signUp = useServerFn(signUpWithKey);
+
+  const [keyValid, setKeyValid] = useState<boolean | null>(
+    signupKey ? null : false
+  );
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +47,27 @@ function LoginPage() {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+
+  const keyParam = useMemo(() => signupKey ?? "", [signupKey]);
+
+  // Validér signup-nøgle (hvis nogen er angivet i URL'en)
+  useEffect(() => {
+    if (!keyParam) {
+      setKeyValid(false);
+      return;
+    }
+    let cancelled = false;
+    checkKey({ data: { key: keyParam } })
+      .then((res) => {
+        if (!cancelled) setKeyValid(res.valid);
+      })
+      .catch(() => {
+        if (!cancelled) setKeyValid(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [keyParam, checkKey]);
 
   // Hvis allerede logget ind, redirect til /
   useEffect(() => {
@@ -55,13 +89,12 @@ function LoginPage() {
         if (error) throw error;
         toast.success("Logget ind");
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin },
-        });
-        if (error) throw error;
-        toast.success("Konto oprettet. Tjek din mail for at bekræfte.");
+        if (!keyValid) throw new Error("Du skal bruge et gyldigt link for at oprette en konto.");
+        await signUp({ data: { email, password, key: keyParam } });
+        // Log straks ind efter oprettelse
+        const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInErr) throw signInErr;
+        toast.success("Konto oprettet");
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Noget gik galt";
@@ -151,25 +184,27 @@ function LoginPage() {
           </div>
         )}
 
-        <div className="mt-4 text-center text-xs text-muted-foreground">
-          {mode === "signin" ? (
-            <button
-              type="button"
-              className="underline-offset-2 hover:underline"
-              onClick={() => setMode("signup")}
-            >
-              Ingen konto? Opret en
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="underline-offset-2 hover:underline"
-              onClick={() => setMode("signin")}
-            >
-              Har du allerede en konto? Log ind
-            </button>
-          )}
-        </div>
+        {keyValid && (
+          <div className="mt-4 text-center text-xs text-muted-foreground">
+            {mode === "signin" ? (
+              <button
+                type="button"
+                className="underline-offset-2 hover:underline"
+                onClick={() => setMode("signup")}
+              >
+                Ingen konto? Opret en
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="underline-offset-2 hover:underline"
+                onClick={() => setMode("signin")}
+              >
+                Har du allerede en konto? Log ind
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
