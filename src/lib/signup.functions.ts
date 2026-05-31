@@ -46,6 +46,9 @@ export const signUpWithKey = createServerFn({ method: "POST" })
       email_confirm: true,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[signup] createUser error:", error.message);
+      throw new Error("Kunne ikke oprette konto. Prøv igen.");
+    }
     return { ok: true };
   });
