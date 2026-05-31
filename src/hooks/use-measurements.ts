@@ -34,7 +34,10 @@ export type Measurement = {
   category: Category;
   hidden: boolean;
   comment?: string;
+  /** True hvis posten endnu kun findes i den lokale offline-kø. */
+  pending?: boolean;
 };
+
 
 export type MeasurementDraft = {
   startedAt: string;
