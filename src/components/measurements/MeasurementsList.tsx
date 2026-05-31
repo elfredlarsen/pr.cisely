@@ -425,7 +425,18 @@ export function MeasurementsList({
                   title={m.pending ? "Venter på synk" : undefined}
                 >
 
-                  <TableCell className="py-1 text-xs">{renderTimeCell(m, "start")}</TableCell>
+                  <TableCell className="py-1 text-xs">
+                    <div className="flex items-center gap-1">
+                      {m.pending && (
+                        <Loader2
+                          className="h-3 w-3 shrink-0 animate-spin text-muted-foreground"
+                          aria-label="Venter på synk"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">{renderTimeCell(m, "start")}</div>
+                    </div>
+                  </TableCell>
+
                   <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                   <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
                   <TableCell className="py-1 text-xs">
