@@ -55,6 +55,9 @@ export function CategoryGroup({
             <span className="text-sm font-medium text-foreground">
               {label}
             </span>
+            <span className="text-xs tabular-nums text-muted-foreground">
+              ({items.length})
+            </span>
           </span>
           <span className="text-sm tabular-nums text-muted-foreground">
             <span className="font-semibold text-foreground">
