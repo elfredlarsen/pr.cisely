@@ -98,11 +98,10 @@ export function MeasurementsTable({
                   />
                   <span className="text-sm font-medium text-foreground">Historik</span>
                 </span>
-                <span className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground">
+                <span className="text-sm tabular-nums text-muted-foreground">
                   <span className="font-semibold text-foreground">
                     {formatTotal(total, format)}
                   </span>
-                  <span className="text-xs">({measurements.length})</span>
                 </span>
               </button>
             </CollapsibleTrigger>
