@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Stopwatch } from "@/components/stopwatch/Stopwatch";
+import { useStopwatch } from "@/components/stopwatch/StopwatchContext";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { MeasurementsTable } from "@/components/stopwatch/MeasurementsTable";
 import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
