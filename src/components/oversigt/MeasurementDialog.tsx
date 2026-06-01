@@ -303,23 +303,16 @@ export function MeasurementDialog({
 
           <div className="flex flex-col gap-1">
             <label htmlFor="md-cat" className="text-xs font-medium text-muted-foreground">
-              Kategori <span className="text-muted-foreground/70">· tryk 1–9</span>
+              Kategori
             </label>
             <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
               <SelectTrigger id="md-cat" className="h-10">
                 <SelectValue placeholder="Vælg kategori" />
               </SelectTrigger>
               <SelectContent>
-                {visibleCategories.map((c, i) => (
+                {visibleCategories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
-                    <span className="flex items-center gap-2">
-                      {i < 9 && (
-                        <kbd className="inline-flex h-5 w-5 items-center justify-center rounded border border-border bg-muted text-[10px] font-mono text-muted-foreground">
-                          {i + 1}
-                        </kbd>
-                      )}
-                      <span>{c.label}</span>
-                    </span>
+                    {c.label}
                   </SelectItem>
                 ))}
               </SelectContent>
