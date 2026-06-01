@@ -97,6 +97,9 @@ export function MeasurementsTable({
                     aria-hidden="true"
                   />
                   <span className="text-sm font-medium text-foreground">Historik</span>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    ({measurements.length})
+                  </span>
                 </span>
                 <span className="text-sm tabular-nums text-muted-foreground">
                   <span className="font-semibold text-foreground">
