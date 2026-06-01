@@ -56,11 +56,10 @@ export function CategoryGroup({
               {label}
             </span>
           </span>
-          <span className="flex items-center gap-3 text-sm tabular-nums text-muted-foreground">
+          <span className="text-sm tabular-nums text-muted-foreground">
             <span className="font-semibold text-foreground">
               {formatTotal(total, format)}
             </span>
-            <span className="text-xs">({items.length})</span>
           </span>
         </button>
       </CollapsibleTrigger>
