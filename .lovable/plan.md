@@ -1,28 +1,15 @@
-## Ændring
+## Mål
 
-Opdater knapfarverne i `src/components/stopwatch/Stopwatch.tsx` så de matcher det nye farveskema:
+Visuelt verificere at antals-tallene `(N)` er fjernet fra kategorioverskrifter både på forsiden (`/`) og i oversigten (`/arkiv`), og at spacing/typografi stadig ser korrekt ud.
 
-| Knap | Nuværende | Ny farve |
-|---|---|---|
-| Start / Fortsæt | `bg-success` | `#0e7d35` (grøn) |
-| Afslut | `#b91c1c` | `#dc2626` (rød) |
-| Pause | `#7c3aed` | `#db2777` (magenta) |
-| Nulstil | `#0e7490` | `#2563eb` (blå) |
+## Trin
 
-## Teknisk
+1. `navigate_to_sandbox` til `/` ved nuværende viewport (933×696).
+2. `screenshot` af kategorilisten på forsiden — bekræft at der kun står formateret tid efter kategorinavnet, intet `(N)`.
+3. `navigate_to_url` til `/arkiv`.
+4. `screenshot` af kategorilisten i oversigten — samme kontrol.
+5. Rapportér resultat. Hvis der findes rester af `(N)` eller spacing ser skæv ud, noter det og foreslå rettelse (kræver skift til build mode).
 
-I `Stopwatch.tsx` opdateres de fire klassekonstanter:
+## Bemærkning
 
-```ts
-const startBtn  = `${baseBtn} bg-[#0e7d35] text-white`;
-const resumeBtn = `${baseBtn} bg-[#0e7d35] text-white`;
-const finishBtn = `${baseBtn} bg-[#dc2626] text-white`;
-const pauseBtn  = `${baseBtn} bg-[#db2777] text-white`;
-const resetBtn  = `${baseBtn} bg-[#2563eb] text-white`;
-```
-
-Ingen andre filer ændres. Hover/active-effekter (`brightness-110` / `brightness-90`) på `baseBtn` bevares og virker med de nye farver.
-
-## Verifikation
-
-På `/` startes stopuret og knapperne kontrolleres visuelt i alle tre tilstande (idle, running, paused).
+Kræver at brugeren er logget ind i preview. Hvis login-skærm dukker op, stopper jeg og beder brugeren logge ind.
