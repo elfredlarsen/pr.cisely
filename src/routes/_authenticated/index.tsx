@@ -104,8 +104,26 @@ function Index() {
             onDelete={remove}
             loaded={loaded}
           />
+          <div className="mt-6 flex w-full justify-center">
+            <Button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="min-h-11 px-5 font-semibold"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Tilføj registrering
+            </Button>
+          </div>
         </div>
       </main>
+
+      <MeasurementDialog
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        baseDate={new Date()}
+        onSave={handleAddSave}
+        title="Tilføj registrering"
+      />
     </div>
   );
 }
