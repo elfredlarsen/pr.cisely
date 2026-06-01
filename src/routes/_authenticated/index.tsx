@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Stopwatch } from "@/components/stopwatch/Stopwatch";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { MeasurementsTable } from "@/components/stopwatch/MeasurementsTable";
 import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
+import { Button } from "@/components/ui/button";
 import { getLastCategory } from "@/lib/categories";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
 
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/")({
 function Index() {
   const { visibleToday, loaded, add, update, remove } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
@@ -42,6 +45,12 @@ function Index() {
     setPending(null);
     setResetKey((k) => k + 1);
     toast.success("Registrering gemt");
+  };
+
+  const handleAddSave = (draft: MeasurementDraft) => {
+    add(draft);
+    setAddOpen(false);
+    toast.success("Registrering tilføjet");
   };
 
   const handleCancel = () => {
@@ -95,8 +104,26 @@ function Index() {
             onDelete={remove}
             loaded={loaded}
           />
+          <div className="mt-6 flex w-full justify-center">
+            <Button
+              type="button"
+              onClick={() => setAddOpen(true)}
+              className="min-h-11 px-5 font-semibold"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Tilføj registrering
+            </Button>
+          </div>
         </div>
       </main>
+
+      <MeasurementDialog
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        baseDate={new Date()}
+        onSave={handleAddSave}
+        title="Tilføj registrering"
+      />
     </div>
   );
 }
