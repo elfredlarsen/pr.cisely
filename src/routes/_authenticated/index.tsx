@@ -34,7 +34,7 @@ function Index() {
   const { visibleToday, loaded, add, update, remove } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [addOpen, setAddOpen] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
+  const { reset: resetStopwatch } = useStopwatch();
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
     setPending({ startedAt, endedAt });
@@ -43,7 +43,7 @@ function Index() {
   const handleSave = (draft: MeasurementDraft) => {
     add(draft);
     setPending(null);
-    setResetKey((k) => k + 1);
+    resetStopwatch();
     toast.success("Registrering gemt");
   };
 
@@ -74,7 +74,6 @@ function Index() {
           <Stopwatch
             onRequestFinish={handleRequestFinish}
             finishOpen={pending !== null}
-            resetKey={resetKey}
           />
         </div>
         <MeasurementDialog
