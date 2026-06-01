@@ -205,7 +205,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
                 <button
                   type="button"
                   onClick={onStart}
-                  className={startBtn}
+                  className={`${startBtn} max-w-56`}
                   aria-keyshortcuts=" "
                 >
                   <Play className="h-7 w-7" aria-hidden="true" />
