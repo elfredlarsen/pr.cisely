@@ -1,63 +1,8 @@
-import { useEffect, useReducer, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
-
-type Status = "idle" | "running" | "paused";
-
-type State = {
-  status: Status;
-  elapsed: number;
-  startedAt: number | null;
-  startedAtWall: number | null; // wall-clock ms (Date.now) when first started
-};
-
-type Action =
-  | { type: "START"; now: number; wall: number }
-  | { type: "PAUSE"; now: number }
-  | { type: "RESUME"; now: number }
-  | { type: "RESET" };
-
-const initialState: State = {
-  status: "idle",
-  elapsed: 0,
-  startedAt: null,
-  startedAtWall: null,
-};
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "START":
-      return {
-        status: "running",
-        elapsed: 0,
-        startedAt: action.now,
-        startedAtWall: action.wall,
-      };
-    case "PAUSE":
-      if (state.status !== "running" || state.startedAt === null) return state;
-      return {
-        ...state,
-        status: "paused",
-        elapsed: state.elapsed + (action.now - state.startedAt),
-        startedAt: null,
-      };
-    case "RESUME":
-      if (state.status !== "paused") return state;
-      return { ...state, status: "running", startedAt: action.now };
-    case "RESET":
-      return initialState;
-    default:
-      return state;
-  }
-}
-
-function computeMs(state: State, now: number) {
-  if (state.status === "running" && state.startedAt !== null) {
-    return state.elapsed + (now - state.startedAt);
-  }
-  return state.elapsed;
-}
+import { useStopwatch } from "./StopwatchContext";
 
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-5 py-2.5 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
@@ -71,13 +16,10 @@ const resumeBtn = `${baseBtn} bg-[#0e7d35] text-white`;
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
   finishOpen?: boolean;
-  resetKey?: number;
 };
 
-export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }: Props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [displayMs, setDisplayMs] = useState(0);
-  const rafRef = useRef<number | null>(null);
+export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
+  const { status, displayMs, start, pause, resume, reset, getFinishPayload } = useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
 
@@ -94,47 +36,19 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
     return () => ro.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (state.status !== "running") {
-      setDisplayMs(computeMs(state, performance.now()));
-      return;
-    }
-    const tick = () => {
-      setDisplayMs(computeMs(state, performance.now()));
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [state]);
-
-  const onStart = () =>
-    dispatch({ type: "START", now: performance.now(), wall: Date.now() });
-  const onPause = () => dispatch({ type: "PAUSE", now: performance.now() });
-  const onResume = () => dispatch({ type: "RESUME", now: performance.now() });
-  const onReset = () => dispatch({ type: "RESET" });
+  const onStart = start;
+  const onPause = pause;
+  const onResume = resume;
+  const onReset = reset;
   const onFinish = () => {
     if (finishOpen) return;
-    const now = performance.now();
-    const finalMs = computeMs(state, now);
-    if (finalMs <= 0 || state.startedAtWall === null) {
-      dispatch({ type: "RESET" });
+    const payload = getFinishPayload();
+    if (!payload) {
+      reset();
       return;
     }
-    const startedAt = new Date(state.startedAtWall);
-    const endedAt = new Date(state.startedAtWall + finalMs);
-    onRequestFinish(startedAt, endedAt);
+    onRequestFinish(payload.startedAt, payload.endedAt);
   };
-
-  // Reset only when parent explicitly signals (e.g. after save), not on cancel.
-  const prevResetKeyRef = useRef(resetKey);
-  useEffect(() => {
-    if (prevResetKeyRef.current !== resetKey) {
-      dispatch({ type: "RESET" });
-      prevResetKeyRef.current = resetKey;
-    }
-  }, [resetKey]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -150,24 +64,24 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
         case " ":
         case "Spacebar":
           e.preventDefault();
-          if (state.status === "idle") onStart();
-          else if (state.status === "running") onPause();
-          else if (state.status === "paused") onResume();
+          if (status === "idle") onStart();
+          else if (status === "running") onPause();
+          else if (status === "paused") onResume();
           break;
         case "n":
         case "N":
-          if (state.status === "running" || state.status === "paused") onReset();
+          if (status === "running" || status === "paused") onReset();
           break;
         case "a":
         case "A":
-          if (state.status === "running" || state.status === "paused") onFinish();
+          if (status === "running" || status === "paused") onFinish();
           break;
         case "Escape":
-          if (state.status === "running" || state.status === "paused") onReset();
+          if (status === "running" || status === "paused") onReset();
           break;
       }
     },
-    [state.status, finishOpen],
+    [status, finishOpen, onStart, onPause, onResume, onReset, onFinish],
   );
 
   useEffect(() => {
@@ -198,9 +112,9 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
             role="group"
             aria-label="Stopur-kontroller"
             style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
-            className={`flex flex-wrap items-center gap-3 ${state.status === "idle" ? "justify-center" : "justify-between"}`}
+            className={`flex flex-wrap items-center gap-3 ${status === "idle" ? "justify-center" : "justify-between"}`}
           >
-            {state.status === "idle" && (
+            {status === "idle" && (
               <IconTooltip label="Start" shortcut="Mellemrum">
                 <button
                   type="button"
@@ -214,7 +128,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
               </IconTooltip>
             )}
 
-            {state.status === "running" && (
+            {status === "running" && (
               <>
                 <IconTooltip label="Nulstil" shortcut="N">
                   <button
@@ -252,7 +166,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false, resetKey = 0 }:
               </>
             )}
 
-            {state.status === "paused" && (
+            {status === "paused" && (
               <>
                 <IconTooltip label="Nulstil" shortcut="N">
                   <button
