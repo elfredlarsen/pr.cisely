@@ -33,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/")({
 function Index() {
   const { visibleToday, loaded, add, update, remove } = useMeasurements();
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
@@ -44,6 +45,12 @@ function Index() {
     setPending(null);
     setResetKey((k) => k + 1);
     toast.success("Registrering gemt");
+  };
+
+  const handleAddSave = (draft: MeasurementDraft) => {
+    add(draft);
+    setAddOpen(false);
+    toast.success("Registrering tilføjet");
   };
 
   const handleCancel = () => {
