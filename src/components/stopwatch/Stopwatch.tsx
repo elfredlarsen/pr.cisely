@@ -62,11 +62,11 @@ function computeMs(state: State, now: number) {
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-5 py-2.5 text-xl font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
-const startBtn = `${baseBtn} bg-success text-success-foreground`;
-const finishBtn = `${baseBtn} bg-[#b91c1c] text-white`;
-const pauseBtn = `${baseBtn} bg-[#7c3aed] text-white`;
-const resetBtn = `${baseBtn} bg-[#0e7490] text-white`;
-const resumeBtn = `${baseBtn} bg-success text-success-foreground`;
+const startBtn = `${baseBtn} bg-[#0e7d35] text-white`;
+const finishBtn = `${baseBtn} bg-[#dc2626] text-white`;
+const pauseBtn = `${baseBtn} bg-[#db2777] text-white`;
+const resetBtn = `${baseBtn} bg-[#2563eb] text-white`;
+const resumeBtn = `${baseBtn} bg-[#0e7d35] text-white`;
 
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
