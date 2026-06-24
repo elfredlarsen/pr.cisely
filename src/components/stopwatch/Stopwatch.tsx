@@ -112,7 +112,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
             role="group"
             aria-label="Stopur-kontroller"
             style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
-            className={`flex flex-wrap items-center gap-3 ${status === "idle" ? "justify-center" : "justify-between"}`}
+            className={`flex flex-nowrap items-center gap-2 ${status === "idle" ? "justify-center" : "justify-between"}`}
           >
             {status === "idle" && (
               <IconTooltip label="Start" shortcut="Mellemrum">

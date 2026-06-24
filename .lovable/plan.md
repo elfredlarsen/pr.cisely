@@ -1,15 +1,14 @@
-## Mål
+## Problem
+På `/` viser stopuret tre knapper (Nulstil, Afslut, Pause/Fortsæt) når det kører/er pauset. Knapperne wrapper nu til to rækker (Nulstil + Afslut øverst, Pause nederst) i stedet for at stå pænt fordelt på én række under uret.
 
-Visuelt verificere at antals-tallene `(N)` er fjernet fra kategorioverskrifter både på forsiden (`/`) og i oversigten (`/arkiv`), og at spacing/typografi stadig ser korrekt ud.
+Årsagen er at knap-rækken bruger `flex-wrap` og `flex-1 basis-0` på hver knap. Når knapperne får for meget min-bredde fra deres indhold (ikon + tekst med `text-xl`), wrapper de.
 
-## Trin
+## Løsning
+I `src/components/stopwatch/Stopwatch.tsx`, knap-gruppen (`role="group"`):
 
-1. `navigate_to_sandbox` til `/` ved nuværende viewport (933×696).
-2. `screenshot` af kategorilisten på forsiden — bekræft at der kun står formateret tid efter kategorinavnet, intet `(N)`.
-3. `navigate_to_url` til `/arkiv`.
-4. `screenshot` af kategorilisten i oversigten — samme kontrol.
-5. Rapportér resultat. Hvis der findes rester af `(N)` eller spacing ser skæv ud, noter det og foreslå rettelse (kræver skift til build mode).
+- Skift `flex-wrap` → `flex-nowrap` så de tre knapper altid står på én linje.
+- Behold `flex-1 basis-0 min-w-0` på hver knap, så de deler bredden ligeligt (matcher urets bredde via `clockWidth`).
+- Reducer evt. `gap-3` → `gap-2` og knappens `px-5` → `px-3` for at give plads på smalle viewports.
+- Ingen ændringer til `idle`-tilstanden (kun Start-knap).
 
-## Bemærkning
-
-Kræver at brugeren er logget ind i preview. Hvis login-skærm dukker op, stopper jeg og beder brugeren logge ind.
+Kun præsentation ændres — ingen ændringer i logik, context eller andre filer.
