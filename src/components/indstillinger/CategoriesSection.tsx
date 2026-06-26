@@ -1,12 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getActiveCategoriesFilter,
   setActiveCategoriesFilter,
+  setCategoryOrder,
   type Category,
 } from "@/lib/categories";
 import { useCategories } from "@/hooks/use-categories";
@@ -15,8 +18,6 @@ export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
   const visible = categories ?? [];
 
-
-  // active er sættet af kategorier brugeren vil have vist; null = alle (afledt fra synlige)
   const [filter, setFilter] = useState<Set<Category> | null>(() => {
     const v = getActiveCategoriesFilter();
     return v ? new Set(v) : null;
@@ -26,11 +27,11 @@ export function CategoriesSection() {
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
-  // Hvis filter er null (=alle), behandl alle synlige som aktive
   const isActive = (value: Category) =>
     filter === null ? true : filter.has(value);
 
-  const activeCount = filter === null ? visible.length : visible.filter((c) => filter.has(c.value)).length;
+  const activeCount =
+    filter === null ? visible.length : visible.filter((c) => filter.has(c.value)).length;
 
   useEffect(() => {
     const v = getActiveCategoriesFilter();
@@ -59,7 +60,6 @@ export function CategoriesSection() {
     if (next) updated.add(value);
     else updated.delete(value);
 
-    // Keep order matching the visible sort order
     const ordered = visible.map((c) => c.value).filter((v) => updated.has(v));
     setActiveCategoriesFilter(ordered);
     setFilter(updated);
@@ -69,6 +69,15 @@ export function CategoriesSection() {
     } else {
       didMountRef.current = true;
     }
+  };
+
+  const move = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= visible.length) return;
+    const next = visible.map((c) => c.value);
+    [next[index], next[target]] = [next[target], next[index]];
+    setCategoryOrder(next);
+    toast.success("Rækkefølge opdateret");
   };
 
   if (isLoading) {
@@ -87,16 +96,43 @@ export function CategoriesSection() {
         ref={listRef}
         className="scrollbar-purple max-h-[22rem] divide-y divide-border overflow-y-auto rounded-md border border-border"
       >
-        {visible.map((c) => {
+        {visible.map((c, i) => {
           const active = isActive(c.value);
           const isLastActive = active && activeCount === 1;
           const id = `category-toggle-${c.value}`;
           return (
             <li
               key={c.value}
-              className="flex min-h-11 items-center justify-between gap-4 px-4 py-2"
+              className="flex min-h-11 items-center justify-between gap-2 px-3 py-2"
             >
-              <Label htmlFor={id} className="cursor-pointer text-sm font-normal">
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7"
+                  onClick={() => move(i, -1)}
+                  disabled={i === 0}
+                  aria-label={`Flyt ${c.label} op`}
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7"
+                  onClick={() => move(i, 1)}
+                  disabled={i === visible.length - 1}
+                  aria-label={`Flyt ${c.label} ned`}
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+              </div>
+              <Label
+                htmlFor={id}
+                className="flex-1 cursor-pointer text-sm font-normal"
+              >
                 {c.label}
               </Label>
               <Switch
