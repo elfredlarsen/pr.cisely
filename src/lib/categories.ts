@@ -62,6 +62,36 @@ export function setActiveCategoriesFilter(values: Category[]) {
   }
 }
 
+export const CATEGORY_ORDER_KEY = "precisely.categoryOrder";
+export const CATEGORY_ORDER_EVENT = "precisely:category-order-changed";
+
+/**
+ * Returnerer per-bruger sorteringsrækkefølge (lokal). `null` = brug DB-rækkefølge.
+ */
+export function getCategoryOrder(): Category[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(CATEGORY_ORDER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    const filtered = parsed.filter(isValidCategory) as Category[];
+    return filtered.length > 0 ? filtered : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setCategoryOrder(values: Category[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(values));
+    window.dispatchEvent(new Event(CATEGORY_ORDER_EVENT));
+  } catch {
+    // ignore
+  }
+}
+
 // Bagudkompatibel fallback til komponenter der ikke har fået kategori-listen
 // fra hooken endnu (fx ved første render). Indeholder samme værdier som
 // seedet i databasen, så `categoryLabel(value)` altid har et fornuftigt fald-tilbage.
