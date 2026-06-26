@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 
 import { listCategories, type CategoryRow } from "@/lib/categories.functions";
+import { getCategoryOrder } from "@/lib/category-order.functions";
 import {
-  CATEGORY_ORDER_EVENT,
-  CATEGORY_ORDER_KEY,
   FALLBACK_CATEGORY_LABELS,
   fallbackCategoryLabel,
-  getCategoryOrder,
   type Category,
 } from "@/lib/categories";
 import { usePreviewMode } from "@/lib/preview-mode";
@@ -39,28 +37,28 @@ function applyOrder(
   });
 }
 
-function useCategoryOrder(): Category[] | null {
-  const [order, setOrder] = useState<Category[] | null>(() => getCategoryOrder());
-  useEffect(() => {
-    const sync = () => setOrder(getCategoryOrder());
-    sync();
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === CATEGORY_ORDER_KEY) sync();
-    };
-    window.addEventListener(CATEGORY_ORDER_EVENT, sync);
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener(CATEGORY_ORDER_EVENT, sync);
-      window.removeEventListener("storage", onStorage);
-    };
-  }, []);
-  return order;
+export const CATEGORY_ORDER_QUERY_KEY = ["category-order"] as const;
+
+export function useCategoryOrder() {
+  const fetcher = useServerFn(getCategoryOrder);
+  const preview = usePreviewMode();
+  return useQuery<{ order: string[] | null }>({
+    queryKey: [...CATEGORY_ORDER_QUERY_KEY, preview ? "preview" : "live"],
+    queryFn: () => (preview ? Promise.resolve({ order: null }) : fetcher()),
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useInvalidateCategoryOrder() {
+  const qc = useQueryClient();
+  return () => qc.invalidateQueries({ queryKey: CATEGORY_ORDER_QUERY_KEY });
 }
 
 export function useCategories() {
   const fetcher = useServerFn(listCategories);
   const preview = usePreviewMode();
-  const order = useCategoryOrder();
+  const { data: orderData } = useCategoryOrder();
+  const order = orderData?.order ?? null;
   const query = useQuery<CategoryRow[]>({
     queryKey: ["categories", preview ? "preview" : "live"],
     queryFn: () => (preview ? Promise.resolve(previewCategories()) : fetcher()),
@@ -77,4 +75,13 @@ export function useCategoryLabel(value: Category | undefined | null): string {
   if (!value) return "";
   const found = data?.find((c) => c.value === value);
   return found?.label ?? fallbackCategoryLabel(value);
+}
+
+// Legacy: clear local cached order from older versions so it doesn't override DB.
+if (typeof window !== "undefined") {
+  try {
+    window.localStorage.removeItem("precisely.categoryOrder");
+  } catch {
+    // ignore
+  }
 }

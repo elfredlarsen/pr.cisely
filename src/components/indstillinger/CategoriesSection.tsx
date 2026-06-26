@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,10 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   getActiveCategoriesFilter,
   setActiveCategoriesFilter,
-  setCategoryOrder,
   type Category,
 } from "@/lib/categories";
-import { useCategories } from "@/hooks/use-categories";
+import { useCategories, useInvalidateCategoryOrder } from "@/hooks/use-categories";
+import { setCategoryOrder as setCategoryOrderFn } from "@/lib/category-order.functions";
 
 export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
