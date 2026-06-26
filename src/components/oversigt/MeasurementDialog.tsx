@@ -209,8 +209,9 @@ export function MeasurementDialog({
     }
   };
   const handleDuration = (v: string) => {
-    setDuration(v);
-    const ms = parseDuration(v);
+    const formatted = formatDurationInput(v);
+    setDuration(formatted);
+    const ms = parseDuration(formatted);
     const s = parseHms(start);
     if (ms !== null && s !== null) {
       const newEndSec = s + Math.floor(ms / 1000);
