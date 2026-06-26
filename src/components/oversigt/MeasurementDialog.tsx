@@ -306,11 +306,12 @@ export function MeasurementDialog({
                 id="md-dur"
                 type="text"
                 inputMode="numeric"
-                pattern="[0-9]{1,2}:[0-9]{2}(:[0-9]{2})?"
+                maxLength={8}
                 placeholder="tt:mm:ss"
                 value={duration}
                 onChange={(e) => handleDuration(e.target.value)}
-                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-invalid={parseDuration(duration) === null}
+                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive"
               />
             </div>
           </div>
