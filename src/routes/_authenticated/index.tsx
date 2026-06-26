@@ -96,16 +96,7 @@ function Index() {
             if (!o) handleCancel();
           }}
           baseDate={pending?.startedAt ?? new Date()}
-          initial={
-            pending
-              ? {
-                  startedAt: pending.startedAt.toISOString(),
-                  endedAt: pending.endedAt.toISOString(),
-                  ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
-                  category: getLastCategory() ?? "",
-                }
-              : undefined
-          }
+          initial={pendingInitial}
           onSave={handleSave}
           title="Gem registrering"
         />
