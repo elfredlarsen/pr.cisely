@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -58,6 +58,19 @@ function Index() {
     setPending(null);
   };
 
+  const pendingInitial = useMemo(
+    () =>
+      pending
+        ? {
+            startedAt: pending.startedAt.toISOString(),
+            endedAt: pending.endedAt.toISOString(),
+            ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
+            category: getLastCategory() ?? "",
+          }
+        : undefined,
+    [pending],
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <a
@@ -83,16 +96,7 @@ function Index() {
             if (!o) handleCancel();
           }}
           baseDate={pending?.startedAt ?? new Date()}
-          initial={
-            pending
-              ? {
-                  startedAt: pending.startedAt.toISOString(),
-                  endedAt: pending.endedAt.toISOString(),
-                  ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
-                  category: getLastCategory() ?? "",
-                }
-              : undefined
-          }
+          initial={pendingInitial}
           onSave={handleSave}
           title="Gem registrering"
         />
