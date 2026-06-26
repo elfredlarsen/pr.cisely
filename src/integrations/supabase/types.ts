@@ -85,6 +85,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          category_order: string[] | null
           created_at: string
           email: string | null
           id: string
@@ -92,6 +93,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category_order?: string[] | null
           created_at?: string
           email?: string | null
           id: string
@@ -99,6 +101,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category_order?: string[] | null
           created_at?: string
           email?: string | null
           id?: string
