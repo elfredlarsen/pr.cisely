@@ -291,9 +291,10 @@ export function MeasurementDialog({
               </label>
               <input
                 id="md-dur"
-                type="time"
-                step={1}
-                lang="da-DK"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]{1,2}:[0-9]{2}(:[0-9]{2})?"
+                placeholder="tt:mm:ss"
                 value={duration}
                 onChange={(e) => handleDuration(e.target.value)}
                 className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
