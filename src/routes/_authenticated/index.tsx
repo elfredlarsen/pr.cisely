@@ -58,6 +58,19 @@ function Index() {
     setPending(null);
   };
 
+  const pendingInitial = useMemo(
+    () =>
+      pending
+        ? {
+            startedAt: pending.startedAt.toISOString(),
+            endedAt: pending.endedAt.toISOString(),
+            ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
+            category: getLastCategory() ?? "",
+          }
+        : undefined,
+    [pending],
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <a
