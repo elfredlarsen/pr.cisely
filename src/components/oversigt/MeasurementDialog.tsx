@@ -73,6 +73,18 @@ function msToDurationInput(ms: number): string {
   return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
+// Tag op til 6 cifre og format som HH:MM:SS. Klamp MM/SS til 59.
+function formatDurationInput(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(-6).padStart(6, "0");
+  let h = Number(digits.slice(0, 2));
+  let m = Number(digits.slice(2, 4));
+  let s = Number(digits.slice(4, 6));
+  if (h > 23) h = 23;
+  if (m > 59) m = 59;
+  if (s > 59) s = 59;
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
 function toTimeInput(iso: string): string {
   const d = new Date(iso);
   return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
