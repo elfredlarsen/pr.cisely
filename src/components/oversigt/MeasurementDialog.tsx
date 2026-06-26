@@ -73,18 +73,6 @@ function msToDurationInput(ms: number): string {
   return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
-// Tag op til 6 cifre og format som HH:MM:SS. Klamp MM/SS til 59.
-function formatDurationInput(raw: string): string {
-  const digits = raw.replace(/\D/g, "").slice(-6).padStart(6, "0");
-  let h = Number(digits.slice(0, 2));
-  let m = Number(digits.slice(2, 4));
-  let s = Number(digits.slice(4, 6));
-  if (h > 23) h = 23;
-  if (m > 59) m = 59;
-  if (s > 59) s = 59;
-  return `${pad(h)}:${pad(m)}:${pad(s)}`;
-}
-
 function toTimeInput(iso: string): string {
   const d = new Date(iso);
   return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -209,9 +197,8 @@ export function MeasurementDialog({
     }
   };
   const handleDuration = (v: string) => {
-    const formatted = formatDurationInput(v);
-    setDuration(formatted);
-    const ms = parseDuration(formatted);
+    setDuration(v);
+    const ms = parseDuration(v);
     const s = parseHms(start);
     if (ms !== null && s !== null) {
       const newEndSec = s + Math.floor(ms / 1000);
@@ -304,14 +291,12 @@ export function MeasurementDialog({
               </label>
               <input
                 id="md-dur"
-                type="text"
-                inputMode="numeric"
-                maxLength={8}
-                placeholder="tt:mm:ss"
+                type="time"
+                step={1}
+                lang="da-DK"
                 value={duration}
                 onChange={(e) => handleDuration(e.target.value)}
-                aria-invalid={parseDuration(duration) === null}
-                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive"
+                className="h-10 w-auto min-w-[7rem] rounded-md border border-input bg-background px-2 text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
           </div>
