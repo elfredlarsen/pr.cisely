@@ -72,13 +72,21 @@ export function CategoriesSection() {
     }
   };
 
-  const move = (index: number, direction: -1 | 1) => {
+  const saveOrder = useServerFn(setCategoryOrderFn);
+  const invalidateOrder = useInvalidateCategoryOrder();
+
+  const move = async (index: number, direction: -1 | 1) => {
     const target = index + direction;
     if (target < 0 || target >= visible.length) return;
     const next = visible.map((c) => c.value);
     [next[index], next[target]] = [next[target], next[index]];
-    setCategoryOrder(next);
-    toast.success("Rækkefølge opdateret");
+    try {
+      await saveOrder({ data: { order: next } });
+      await invalidateOrder();
+      toast.success("Rækkefølge opdateret");
+    } catch {
+      toast.error("Kunne ikke gemme rækkefølge");
+    }
   };
 
   if (isLoading) {
