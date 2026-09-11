@@ -65,12 +65,16 @@ function isSameLocalDay(iso: string, ref: Date): boolean {
   );
 }
 
-function todayBounds(): { from: string; to: string } {
-  const start = new Date();
+function dateBounds(ref: Date): { from: string; to: string } {
+  const start = new Date(ref);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
   return { from: start.toISOString(), to: end.toISOString() };
+}
+
+function todayBounds(): { from: string; to: string } {
+  return dateBounds(new Date());
 }
 
 function rowToMeasurement(row: MeasurementRow): Measurement | null {
