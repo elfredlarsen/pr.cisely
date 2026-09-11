@@ -266,7 +266,7 @@ function OversigtPage() {
                     {dayMeasurements.length > 0 && (
                       <AlertDialogAction
                         onClick={() => {
-                          removeAllToday();
+                          removeByDate(date);
                           toast.success("Dagens historik slettet");
                         }}
                         className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
