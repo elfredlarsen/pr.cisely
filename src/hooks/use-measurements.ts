@@ -177,13 +177,17 @@ function usePreviewMeasurements() {
       ),
     );
   }, [persist]);
+  const removeByDate = useCallback(
+    (ref: Date) => persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, ref))),
+    [persist],
+  );
   const removeAllToday = useCallback(() => {
     const today = new Date();
     persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
   }, [persist]);
   const removeAll = useCallback(() => persist(() => []), [persist]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
 }
 
 // ---------------- Supabase-backed implementation ----------------
