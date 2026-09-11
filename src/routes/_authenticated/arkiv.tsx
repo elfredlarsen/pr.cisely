@@ -55,7 +55,7 @@ function isSameDay(a: Date, b: Date): boolean {
 }
 
 function OversigtPage() {
-  const { measurements, loaded, add, update, remove, removeAllToday, removeAll } = useMeasurements();
+  const { measurements, loaded, add, update, remove, removeByDate, removeAll } = useMeasurements();
   const [date, setDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -266,7 +266,7 @@ function OversigtPage() {
                     {dayMeasurements.length > 0 && (
                       <AlertDialogAction
                         onClick={() => {
-                          removeAllToday();
+                          removeByDate(date);
                           toast.success("Dagens historik slettet");
                         }}
                         className="bg-secondary text-secondary-foreground hover:bg-secondary/80"

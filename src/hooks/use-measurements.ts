@@ -65,12 +65,16 @@ function isSameLocalDay(iso: string, ref: Date): boolean {
   );
 }
 
-function todayBounds(): { from: string; to: string } {
-  const start = new Date();
+function dateBounds(ref: Date): { from: string; to: string } {
+  const start = new Date(ref);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
   return { from: start.toISOString(), to: end.toISOString() };
+}
+
+function todayBounds(): { from: string; to: string } {
+  return dateBounds(new Date());
 }
 
 function rowToMeasurement(row: MeasurementRow): Measurement | null {
@@ -173,13 +177,17 @@ function usePreviewMeasurements() {
       ),
     );
   }, [persist]);
+  const removeByDate = useCallback(
+    (ref: Date) => persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, ref))),
+    [persist],
+  );
   const removeAllToday = useCallback(() => {
     const today = new Date();
     persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
   }, [persist]);
   const removeAll = useCallback(() => persist(() => []), [persist]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
 }
 
 // ---------------- Supabase-backed implementation ----------------
@@ -432,13 +440,17 @@ function useSupabaseMeasurements(enabled: boolean) {
     [updateMut],
   );
   const hideAllToday = useCallback(() => hideRangeMut.mutate(todayBounds()), [hideRangeMut]);
+  const removeByDate = useCallback(
+    (ref: Date) => removeRangeMut.mutate(dateBounds(ref)),
+    [removeRangeMut],
+  );
   const removeAllToday = useCallback(
     () => removeRangeMut.mutate(todayBounds()),
     [removeRangeMut],
   );
   const removeAll = useCallback(() => removeAllMut.mutate(), [removeAllMut]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
 }
 
 
