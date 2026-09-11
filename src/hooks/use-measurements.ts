@@ -440,13 +440,17 @@ function useSupabaseMeasurements(enabled: boolean) {
     [updateMut],
   );
   const hideAllToday = useCallback(() => hideRangeMut.mutate(todayBounds()), [hideRangeMut]);
+  const removeByDate = useCallback(
+    (ref: Date) => removeRangeMut.mutate(dateBounds(ref)),
+    [removeRangeMut],
+  );
   const removeAllToday = useCallback(
     () => removeRangeMut.mutate(todayBounds()),
     [removeRangeMut],
   );
   const removeAll = useCallback(() => removeAllMut.mutate(), [removeAllMut]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
 }
 
 
