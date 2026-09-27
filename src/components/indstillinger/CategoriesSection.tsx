@@ -101,7 +101,7 @@ export function CategoriesSection() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || activeLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-10 w-full" />
