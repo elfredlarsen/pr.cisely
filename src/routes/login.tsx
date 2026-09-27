@@ -204,8 +204,7 @@ function LoginPage() {
                 Har du allerede en konto? Log ind
               </button>
             )}
-          </div>
-        )}
+        </div>
 
         <div className="mt-4 text-center text-xs">
           <a href="/privatliv" className="text-muted-foreground underline-offset-2 hover:underline">
