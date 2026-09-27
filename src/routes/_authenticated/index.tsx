@@ -36,6 +36,7 @@ function Index() {
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const { reset: resetStopwatch } = useStopwatch();
+  const lastCategory = useLastCategory();
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
     setPending({ startedAt, endedAt });
@@ -68,7 +69,7 @@ function Index() {
             category: lastCategory ?? "",
           }
         : undefined,
-    [pending],
+    [pending, lastCategory],
   );
 
   return (

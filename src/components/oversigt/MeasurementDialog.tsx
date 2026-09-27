@@ -20,6 +20,7 @@ import {
   type Category,
 } from "@/lib/categories";
 import { useActiveCategoriesFilter } from "@/hooks/use-active-categories";
+import { useLastCategory, useSaveLastCategory } from "@/hooks/use-last-category";
 import { useCategories } from "@/hooks/use-categories";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 
@@ -108,6 +109,8 @@ export function MeasurementDialog({
   const [error, setError] = useState<string | null>(null);
   const activeFilter = useActiveCategoriesFilter();
   const { data: allCategories = [] } = useCategories();
+  const lastCategory = useLastCategory();
+  const saveLastCategory = useSaveLastCategory();
   const visibleCategories = allCategories.filter(
     (c) =>
       activeFilter === null || activeFilter.includes(c.value) || c.value === category,
