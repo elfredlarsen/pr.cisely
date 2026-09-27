@@ -3,7 +3,7 @@
 ## Hvad ændres
 - Feltet "Kommentar (valgfri)" fjernes fra dialogerne "Gem registrering" og "Tilføj registrering".
 - I listerne (forside og oversigt) fjernes pilen "Vis/Skjul kommentar", kommentarikonet og kommentarrækken med "Tilføj kommentar".
-- Eksisterende kommentarer i databasen bliver liggende urørt (ingen data slettes), men vises og redigeres ikke længere.
+- Eksisterende kommentarer slettes permanent fra databasen (kommentarkolonnen fjernes helt fra registreringerne).
 
 ## Tekniske detaljer
 - `src/components/oversigt/MeasurementDialog.tsx`: fjern `comment`-state, textarea og `comment` i `onSave`-draft.
