@@ -124,7 +124,7 @@ export const updateMeasurement = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { id, category, ...rest } = data;
-    const patch: Record<string, unknown> = { ...rest };
+    const patch: { started_at?: string; ended_at?: string; ms?: number; category_id?: string } = { ...rest };
     if (category !== undefined) {
       patch.category_id = await categoryIdFor(supabase, userId, category);
     }
