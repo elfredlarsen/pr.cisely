@@ -205,6 +205,12 @@ function LoginPage() {
             )}
           </div>
         )}
+
+        <div className="mt-4 text-center text-xs">
+          <a href="/privatliv" className="text-muted-foreground underline-offset-2 hover:underline">
+            Privatliv og vilkår
+          </a>
+        </div>
       </div>
 
       <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>

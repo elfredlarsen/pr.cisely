@@ -113,6 +113,12 @@ export function DataManagementSection() {
         <p className="text-sm text-muted-foreground">
           Registreringer ældre end det valgte antal dage slettes automatisk.
         </p>
+        <p className="text-sm text-muted-foreground">
+          Konti uden login i 2 år slettes automatisk.{" "}
+          <a href="/privatliv" className="underline underline-offset-2 hover:text-foreground">
+            Privatliv og vilkår
+          </a>
+        </p>
       </div>
 
       <div className="flex justify-center">
