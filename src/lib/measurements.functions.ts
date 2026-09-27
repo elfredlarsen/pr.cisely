@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -13,8 +15,6 @@ export type MeasurementRow = {
   category: string;
 };
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/integrations/supabase/types";
 type Sb = SupabaseClient<Database>;
 
 async function categoryIdFor(supabase: Sb, userId: string, value: string): Promise<string> {
