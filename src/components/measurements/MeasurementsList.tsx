@@ -1,5 +1,5 @@
 import React, { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Check, Loader2, Pencil, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Pencil, Trash2, X } from "lucide-react";
 import {
   Table,
   TableBody,
