@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { checkSignupKey, signUpWithKey } from "@/lib/signup.functions";
+import { signUpWithKey } from "@/lib/signup.functions";
 
 const searchSchema = z.object({ key: z.string().optional() });
 
