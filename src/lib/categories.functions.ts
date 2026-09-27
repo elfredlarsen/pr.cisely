@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -17,18 +16,6 @@ export type CategoryRow = {
   sort_order: number;
   hidden: boolean;
 };
-
-async function assertAdmin(supabase: SupabaseClient, userId: string) {
-  const { data, error } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", userId);
-  if (error) dbError("categories", error);
-  const roles = (data ?? []).map((r: { role: string }) => r.role);
-  if (!roles.includes("administrator")) {
-    throw new Error("Forbidden: administrator role required");
-  }
-}
 
 function slugify(input: string): string {
   return input
@@ -47,6 +34,7 @@ export const listCategories = createServerFn({ method: "GET" })
     const { data, error } = await supabase
       .from("categories")
       .select("id, value, label, sort_order, hidden")
+      .eq("user_id", context.userId)
       .order("sort_order", { ascending: true });
     if (error) dbError("categories", error);
     return data ?? [];
@@ -63,7 +51,6 @@ export const updateCategory = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase, userId);
 
     const patch: { label?: string; sort_order?: number } = {};
     if (data.label !== undefined) patch.label = data.label;
@@ -74,7 +61,8 @@ export const updateCategory = createServerFn({ method: "POST" })
     const { error } = await supabase
       .from("categories")
       .update(patch)
-      .eq("id", data.id);
+      .eq("id", data.id)
+      .eq("user_id", userId);
     if (error) dbError("categories", error);
     return { ok: true };
   });
@@ -88,7 +76,6 @@ export const createCategory = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => createSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase, userId);
 
     const label = data.label.trim();
     const base = slugify(label) || "kategori";
@@ -96,7 +83,8 @@ export const createCategory = createServerFn({ method: "POST" })
     // Find unik value
     const { data: existing, error: exErr } = await supabase
       .from("categories")
-      .select("value");
+      .select("value")
+      .eq("user_id", userId);
     if (exErr) dbError("categories.create", exErr);
     const taken = new Set((existing ?? []).map((r: { value: string }) => r.value));
     let value = base;
@@ -109,6 +97,7 @@ export const createCategory = createServerFn({ method: "POST" })
     const { data: maxRow, error: maxErr } = await supabase
       .from("categories")
       .select("sort_order")
+      .eq("user_id", userId)
       .order("sort_order", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -117,7 +106,7 @@ export const createCategory = createServerFn({ method: "POST" })
 
     const { data: inserted, error } = await supabase
       .from("categories")
-      .insert({ value, label, sort_order: nextOrder, hidden: false })
+      .insert({ value, label, sort_order: nextOrder, hidden: false, user_id: userId })
       .select("id, value, label, sort_order, hidden")
       .single();
     if (error) dbError("categories", error);
@@ -131,12 +120,12 @@ export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => deleteSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    await assertAdmin(supabase, userId);
 
     const { error } = await supabase
       .from("categories")
       .delete()
-      .eq("id", data.id);
+      .eq("id", data.id)
+      .eq("user_id", userId);
     if (error) dbError("categories", error);
     return { ok: true };
   });
