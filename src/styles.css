@@ -35,8 +35,7 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
-  --color-timer-start: var(--timer-start);
-  --color-timer-pause: var(--timer-pause);
+  --color-timer-primary: var(--timer-primary);
   --color-timer-finish: var(--timer-finish);
   --color-timer-reset: var(--timer-reset);
   --color-timer-foreground: var(--timer-foreground);
@@ -72,11 +71,10 @@
   --input: #e6e6ea;
   --ring: #9333ea;
 
-  --timer-start: #4ade80;
-  --timer-pause: #f64f59;
-  --timer-finish: #c471ed;
-  --timer-reset: #888888;
-  --timer-foreground: #1a1a1a;
+  --timer-primary: #9333ea;
+  --timer-finish: #0f766e;
+  --timer-reset: #64748b;
+  --timer-foreground: #ffffff;
 
   --brand-primary: #c471ed;
   --brand-gradient: linear-gradient(135deg, #f64f59 0%, #c471ed 50%, #12c2e9 100%);
