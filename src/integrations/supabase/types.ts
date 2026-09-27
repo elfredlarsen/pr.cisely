@@ -139,7 +139,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      apply_retention_all: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
