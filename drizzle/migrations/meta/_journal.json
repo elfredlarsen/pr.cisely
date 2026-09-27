@@ -78,6 +78,13 @@
       "when": 1790538359600,
       "tag": "0010_drop_profile_email_copy",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790538625083,
+      "tag": "0011_normalize_category_prefs",
+      "breakpoints": true
     }
   ]
 }

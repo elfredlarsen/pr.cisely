@@ -51,7 +51,11 @@ export function useCategoryOrder() {
 
 export function useInvalidateCategoryOrder() {
   const qc = useQueryClient();
-  return () => qc.invalidateQueries({ queryKey: CATEGORY_ORDER_QUERY_KEY });
+  return () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: CATEGORY_ORDER_QUERY_KEY }),
+      qc.invalidateQueries({ queryKey: ["categories"] }),
+    ]);
 }
 
 export function useCategories() {

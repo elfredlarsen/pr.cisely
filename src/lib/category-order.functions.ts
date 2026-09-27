@@ -8,19 +8,10 @@ function dbError(scope: string, error: unknown): never {
   throw new Error("Databasefejl. Prøv igen.");
 }
 
+// Rækkefølgen ligger nu i categories.sort_order; listCategories sorterer allerede efter den.
 export const getCategoryOrder = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<{ order: string[] | null }> => {
-    const { supabase, userId } = context;
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("category_order")
-      .eq("id", userId)
-      .maybeSingle();
-    if (error) dbError("category-order.get", error);
-    const v = (data as { category_order?: string[] | null } | null)?.category_order ?? null;
-    return { order: v && v.length > 0 ? v : null };
-  });
+  .handler(async (): Promise<{ order: string[] | null }> => ({ order: null }));
 
 const setSchema = z.object({
   order: z.array(z.string().min(1).max(80)).max(200).nullable(),
@@ -31,10 +22,17 @@ export const setCategoryOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => setSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { error } = await supabase
-      .from("profiles")
-      .update({ category_order: data.order })
-      .eq("id", userId);
-    if (error) dbError("category-order.set", error);
+    if (!data.order) return { ok: true };
+    const results = await Promise.all(
+      data.order.map((value, i) =>
+        supabase
+          .from("categories")
+          .update({ sort_order: i })
+          .eq("user_id", userId)
+          .eq("value", value),
+      ),
+    );
+    const failed = results.find((r) => r.error);
+    if (failed?.error) dbError("category-order.set", failed.error);
     return { ok: true };
   });
