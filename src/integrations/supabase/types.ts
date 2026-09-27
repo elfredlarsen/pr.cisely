@@ -111,7 +111,6 @@ export type Database = {
           active_categories: string[] | null
           category_order: string[] | null
           created_at: string
-          email: string | null
           id: string
           last_category: string | null
           retention_days: number | null
@@ -121,7 +120,6 @@ export type Database = {
           active_categories?: string[] | null
           category_order?: string[] | null
           created_at?: string
-          email?: string | null
           id: string
           last_category?: string | null
           retention_days?: number | null
@@ -131,7 +129,6 @@ export type Database = {
           active_categories?: string[] | null
           category_order?: string[] | null
           created_at?: string
-          email?: string | null
           id?: string
           last_category?: string | null
           retention_days?: number | null
