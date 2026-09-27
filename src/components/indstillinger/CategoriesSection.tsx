@@ -7,22 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  getActiveCategoriesFilter,
-  setActiveCategoriesFilter,
-  type Category,
-} from "@/lib/categories";
+import { setActiveCategoriesFilter, type Category } from "@/lib/categories";
 import { useCategories, useInvalidateCategoryOrder } from "@/hooks/use-categories";
+import {
+  useActiveCategoriesQuery,
+  useInvalidateActiveCategories,
+} from "@/hooks/use-active-categories";
 import { setCategoryOrder as setCategoryOrderFn } from "@/lib/category-order.functions";
+import { setActiveCategories as setActiveCategoriesFn } from "@/lib/active-categories.functions";
 
 export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
   const visible = categories ?? [];
 
-  const [filter, setFilter] = useState<Set<Category> | null>(() => {
-    const v = getActiveCategoriesFilter();
-    return v ? new Set(v) : null;
-  });
+  const { data: activeData, isLoading: activeLoading } = useActiveCategoriesQuery();
+  const saveActive = useServerFn(setActiveCategoriesFn);
+  const invalidateActive = useInvalidateActiveCategories();
+
+  const [filter, setFilter] = useState<Set<Category> | null>(null);
   const didMountRef = useRef(false);
   const listRef = useRef<HTMLUListElement | null>(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
@@ -35,9 +37,9 @@ export function CategoriesSection() {
     filter === null ? visible.length : visible.filter((c) => filter.has(c.value)).length;
 
   useEffect(() => {
-    const v = getActiveCategoriesFilter();
-    setFilter(v ? new Set(v) : null);
-  }, []);
+    const v = activeData?.active ?? null;
+    setFilter(v && v.length > 0 ? new Set(v) : null);
+  }, [activeData]);
 
   useLayoutEffect(() => {
     const el = listRef.current;
