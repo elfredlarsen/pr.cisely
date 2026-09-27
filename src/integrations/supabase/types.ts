@@ -67,7 +67,8 @@ export type Database = {
       }
       measurements: {
         Row: {
-          category: string
+          category: string | null
+          category_id: string
           created_at: string
           ended_at: string
           hidden: boolean
@@ -78,7 +79,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          category: string
+          category?: string | null
+          category_id: string
           created_at?: string
           ended_at: string
           hidden?: boolean
@@ -89,7 +91,8 @@ export type Database = {
           user_id: string
         }
         Update: {
-          category?: string
+          category?: string | null
+          category_id?: string
           created_at?: string
           ended_at?: string
           hidden?: boolean
@@ -99,7 +102,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "measurements_category_same_user_fkey"
+            columns: ["category_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id", "user_id"]
+          },
+        ]
       }
       profiles: {
         Row: {

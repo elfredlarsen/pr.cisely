@@ -57,6 +57,13 @@
       "when": 1790526061541,
       "tag": "0007_delete_inactive_users",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790526956400,
+      "tag": "0008_measurements_category_id",
+      "breakpoints": true
     }
   ]
 }
