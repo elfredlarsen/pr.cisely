@@ -26,7 +26,11 @@ export function useActiveCategoriesQuery() {
 
 export function useInvalidateActiveCategories() {
   const qc = useQueryClient();
-  return () => qc.invalidateQueries({ queryKey: ACTIVE_CATEGORIES_QUERY_KEY });
+  return () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: ACTIVE_CATEGORIES_QUERY_KEY }),
+      qc.invalidateQueries({ queryKey: ["categories"] }),
+    ]);
 }
 
 export function useActiveCategoriesFilter(): Category[] | null {
