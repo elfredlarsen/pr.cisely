@@ -74,8 +74,8 @@ function LoginPage() {
         if (error) throw error;
         toast.success("Logget ind");
       } else {
-        if (!keyValid) throw new Error("Du skal bruge et gyldigt link for at oprette en konto.");
-        await signUp({ data: { email, password, key: keyParam } });
+        if (!accessKey.trim()) throw new Error("Indtast adgangsnøglen for at oprette en konto.");
+        await signUp({ data: { email, password, key: accessKey.trim() } });
         // Log straks ind efter oprettelse
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
