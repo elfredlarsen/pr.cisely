@@ -90,6 +90,14 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         return;
       }
       if (finishOpen) return;
+      if (resetOpen) {
+        // Bekræftelsen er åben: kun N bekræfter, alt andet håndteres af dialogen.
+        if (e.key === "n" || e.key === "N") {
+          e.preventDefault();
+          confirmReset();
+        }
+        return;
+      }
       switch (e.key) {
         case " ":
         case "Spacebar":
@@ -108,7 +116,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           break;
       }
     },
-    [status, finishOpen, onStart, onPause, onResume, onReset, onFinish],
+    [status, finishOpen, resetOpen, onStart, onPause, onResume, onReset, confirmReset, onFinish],
   );
 
   useEffect(() => {
