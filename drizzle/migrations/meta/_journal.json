@@ -22,6 +22,13 @@
       "when": 1790523368373,
       "tag": "0002_personal_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790524403903,
+      "tag": "0003_stop_using_roles",
+      "breakpoints": true
     }
   ]
 }
