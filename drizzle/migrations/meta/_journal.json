@@ -36,6 +36,13 @@
       "when": 1790525024420,
       "tag": "0004_deprecate_measurement_hidden",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790525045650,
+      "tag": "0005_retention_default_30",
+      "breakpoints": true
     }
   ]
 }
