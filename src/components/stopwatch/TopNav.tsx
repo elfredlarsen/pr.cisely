@@ -4,8 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { useSupabaseSession } from "@/hooks/use-supabase-session";
-import { useMyRoleInfo } from "@/hooks/use-my-role";
 import { SyncStatus } from "@/components/stopwatch/SyncStatus";
 import {
   AlertDialog,
@@ -35,9 +33,6 @@ const linkActive = "text-foreground";
 export function TopNav() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { status } = useSupabaseSession();
-  const role = useMyRoleInfo(status === "authenticated");
-  const isAdmin = role.data?.isAdmin ?? false;
 
   const handleLogout = async () => {
     try {
@@ -87,21 +82,6 @@ export function TopNav() {
             </Link>
           </li>
         ))}
-        {isAdmin && (
-          <li>
-            <Link
-              to="/admin"
-              className={linkBase}
-              activeProps={{
-                className: `${linkBase} ${linkActive}`,
-                "data-active": "true",
-              }}
-              activeOptions={{ exact: true }}
-            >
-              Admin
-            </Link>
-          </li>
-        )}
       </ul>
 
       <div className="flex items-center gap-2">

@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 
 import { getActiveCategories } from "@/lib/active-categories.functions";
-import { getActiveCategoriesFilter, type Category } from "@/lib/categories";
+import { type Category } from "@/lib/categories";
 import { usePreviewMode } from "@/lib/preview-mode";
 
 export const ACTIVE_CATEGORIES_QUERY_KEY = ["active-categories"] as const;
@@ -18,7 +18,7 @@ export function useActiveCategoriesQuery() {
     queryKey: [...ACTIVE_CATEGORIES_QUERY_KEY, preview ? "preview" : "live"],
     queryFn: () =>
       preview
-        ? Promise.resolve({ active: getActiveCategoriesFilter() })
+        ? Promise.resolve({ active: null })
         : fetcher(),
     staleTime: 60 * 1000,
   });

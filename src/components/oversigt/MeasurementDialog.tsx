@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
-  getLastCategory,
-  setLastCategory,
   type Category,
 } from "@/lib/categories";
 import { useActiveCategoriesFilter } from "@/hooks/use-active-categories";
@@ -134,7 +132,7 @@ export function MeasurementDialog({
         `${pad(Math.floor(endSec / 3600))}:${pad(Math.floor((endSec % 3600) / 60))}:00`,
       );
       setDuration(msToDurationInput((endSec - startSec) * 1000));
-      setCategory(defaultCategory ?? getLastCategory() ?? "");
+      setCategory(defaultCategory ?? lastCategory ?? "");
     }
   }, [open, initial, defaultCategory]);
 
@@ -230,7 +228,7 @@ export function MeasurementDialog({
       setError("Vælg en kategori");
       return;
     }
-    setLastCategory(category);
+    saveLastCategory(category);
     onSave({
       startedAt: setTimeOnDate(baseDate, s).toISOString(),
       endedAt: setTimeOnDate(baseDate, en).toISOString(),
