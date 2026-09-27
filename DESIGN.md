@@ -38,3 +38,9 @@ Typografi
 	- Overskrifter: 600 (semibold)
 	- Brødtekst: 400 (regular)
 	- Tal i timeren: 500 (medium), monospaced (fast-bredde)
+
+Stopur-knapper (hvid tekst):
+	- Start/Fortsæt: #15803d
+	- Pause: #b45309
+	- Afslut: #9333ea
+	- Nulstil: #52525b
