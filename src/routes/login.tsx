@@ -149,6 +149,23 @@ function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {mode === "signup" && (
+            <div className="space-y-1">
+              <Label htmlFor="accessKey">Adgangsnøgle</Label>
+              <Input
+                id="accessKey"
+                type="password"
+                autoComplete="off"
+                required
+                maxLength={512}
+                value={accessKey}
+                onChange={(e) => setAccessKey(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Du skal bruge den adgangsnøgle, du har fået udleveret.
+              </p>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Vent..." : mode === "signin" ? "Log ind" : "Opret konto"}
           </Button>
