@@ -15,6 +15,13 @@
       "when": 1790523074262,
       "tag": "0001_add_profiles_active_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790523368373,
+      "tag": "0002_personal_categories",
+      "breakpoints": true
     }
   ]
 }

@@ -22,6 +22,7 @@ export type Database = {
           label: string
           sort_order: number
           updated_at: string
+          user_id: string
           value: string
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           label: string
           sort_order?: number
           updated_at?: string
+          user_id: string
           value: string
         }
         Update: {
@@ -40,6 +42,25 @@ export type Database = {
           label?: string
           sort_order?: number
           updated_at?: string
+          user_id?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      category_templates: {
+        Row: {
+          label: string
+          sort_order: number
+          value: string
+        }
+        Insert: {
+          label: string
+          sort_order?: number
+          value: string
+        }
+        Update: {
+          label?: string
+          sort_order?: number
           value?: string
         }
         Relationships: []
@@ -87,6 +108,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          last_category: string | null
           retention_days: number | null
           updated_at: string
         }
@@ -96,6 +118,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id: string
+          last_category?: string | null
           retention_days?: number | null
           updated_at?: string
         }
@@ -105,6 +128,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          last_category?: string | null
           retention_days?: number | null
           updated_at?: string
         }

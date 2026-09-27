@@ -8,7 +8,7 @@ import { TopNav } from "@/components/stopwatch/TopNav";
 import { MeasurementsTable } from "@/components/stopwatch/MeasurementsTable";
 import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
 import { Button } from "@/components/ui/button";
-import { getLastCategory } from "@/lib/categories";
+import { useLastCategory } from "@/hooks/use-last-category";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
 
 
@@ -36,6 +36,7 @@ function Index() {
   const [pending, setPending] = useState<{ startedAt: Date; endedAt: Date } | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const { reset: resetStopwatch } = useStopwatch();
+  const lastCategory = useLastCategory();
 
   const handleRequestFinish = (startedAt: Date, endedAt: Date) => {
     setPending({ startedAt, endedAt });
@@ -65,10 +66,10 @@ function Index() {
             startedAt: pending.startedAt.toISOString(),
             endedAt: pending.endedAt.toISOString(),
             ms: pending.endedAt.getTime() - pending.startedAt.getTime(),
-            category: getLastCategory() ?? "",
+            category: lastCategory ?? "",
           }
         : undefined,
-    [pending],
+    [pending, lastCategory],
   );
 
   return (

@@ -81,6 +81,8 @@ export function useCategoryLabel(value: Category | undefined | null): string {
 if (typeof window !== "undefined") {
   try {
     window.localStorage.removeItem("precisely.categoryOrder");
+    window.localStorage.removeItem("precisely.activeCategories");
+    window.localStorage.removeItem("precisely.lastCategory");
   } catch {
     // ignore
   }

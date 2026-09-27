@@ -4,10 +4,10 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { AddCategoryForm, CategoryLabelEditor } from "@/components/indstillinger/CategoryEditing";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { setActiveCategoriesFilter, type Category } from "@/lib/categories";
+import { type Category } from "@/lib/categories";
 import { useCategories, useInvalidateCategoryOrder } from "@/hooks/use-categories";
 import {
   useActiveCategoriesQuery,
@@ -65,7 +65,6 @@ export function CategoriesSection() {
 
     const ordered = visible.map((c) => c.value).filter((v) => updated.has(v));
     const previous = filter;
-    setActiveCategoriesFilter(ordered);
     setFilter(updated);
 
     try {
@@ -150,12 +149,7 @@ export function CategoriesSection() {
                   <ArrowDown className="h-4 w-4" />
                 </Button>
               </div>
-              <Label
-                htmlFor={id}
-                className="flex-1 cursor-pointer text-sm font-normal"
-              >
-                {c.label}
-              </Label>
+              <CategoryLabelEditor row={c} htmlFor={id} />
               <Switch
                 id={id}
                 checked={active}
