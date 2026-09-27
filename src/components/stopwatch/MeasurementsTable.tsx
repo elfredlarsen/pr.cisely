@@ -27,7 +27,7 @@ export function MeasurementsTable({
   onDelete,
   loaded = true,
 }: Props) {
-  const [format, setFormat] = useState<SummaryFormat>("hm");
+  const [format, setFormat] = useState<SummaryFormat>("decimal");
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
