@@ -15,7 +15,6 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
 import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -47,24 +46,17 @@ const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
   path: '/arkiv',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/arkiv': typeof AuthenticatedArkivRoute
   '/indstillinger': typeof AuthenticatedIndstillingerRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/arkiv': typeof AuthenticatedArkivRoute
   '/indstillinger': typeof AuthenticatedIndstillingerRoute
   '/': typeof AuthenticatedIndexRoute
@@ -74,34 +66,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/arkiv': typeof AuthenticatedArkivRoute
   '/_authenticated/indstillinger': typeof AuthenticatedIndstillingerRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/login'
-    | '/reset-password'
-    | '/admin'
-    | '/arkiv'
-    | '/indstillinger'
+  fullPaths: '/' | '/login' | '/reset-password' | '/arkiv' | '/indstillinger'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/reset-password'
-    | '/admin'
-    | '/arkiv'
-    | '/indstillinger'
-    | '/'
+  to: '/login' | '/reset-password' | '/arkiv' | '/indstillinger' | '/'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/reset-password'
-    | '/_authenticated/admin'
     | '/_authenticated/arkiv'
     | '/_authenticated/indstillinger'
     | '/_authenticated/'
@@ -157,25 +135,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedArkivRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
   }
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedArkivRoute: typeof AuthenticatedArkivRoute
   AuthenticatedIndstillingerRoute: typeof AuthenticatedIndstillingerRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedArkivRoute: AuthenticatedArkivRoute,
   AuthenticatedIndstillingerRoute: AuthenticatedIndstillingerRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
