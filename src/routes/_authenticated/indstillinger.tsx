@@ -3,6 +3,7 @@ import { TopNav } from "@/components/stopwatch/TopNav";
 import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordForm";
 import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
 import { CategoriesSection } from "@/components/indstillinger/CategoriesSection";
+import { InviteSection } from "@/components/indstillinger/InviteSection";
 
 export const Route = createFileRoute("/_authenticated/indstillinger")({
   head: () => ({
