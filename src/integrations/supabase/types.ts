@@ -47,7 +47,6 @@ export type Database = {
       measurements: {
         Row: {
           category: string
-          comment: string | null
           created_at: string
           ended_at: string
           hidden: boolean
@@ -59,7 +58,6 @@ export type Database = {
         }
         Insert: {
           category: string
-          comment?: string | null
           created_at?: string
           ended_at: string
           hidden?: boolean
@@ -71,7 +69,6 @@ export type Database = {
         }
         Update: {
           category?: string
-          comment?: string | null
           created_at?: string
           ended_at?: string
           hidden?: boolean
