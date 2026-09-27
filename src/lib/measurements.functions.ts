@@ -9,7 +9,6 @@ export type MeasurementRow = {
   ended_at: string;
   ms: number;
   category: string;
-  hidden: boolean;
 };
 
 function dbError(scope: string, error: { message: string }): never {
@@ -31,7 +30,7 @@ export const listMeasurements = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("measurements")
-      .select("id, started_at, ended_at, ms, category, hidden")
+      .select("id, started_at, ended_at, ms, category")
       .eq("user_id", userId)
       .order("ended_at", { ascending: false })
       .limit(1000);
@@ -68,9 +67,8 @@ export const createMeasurement = createServerFn({ method: "POST" })
         ended_at: data.ended_at,
         ms: data.ms,
         category: data.category,
-        hidden: false,
       })
-      .select("id, started_at, ended_at, ms, category, hidden")
+      .select("id, started_at, ended_at, ms, category")
       .single();
     if (error) dbError("measurements.create", error);
     return row as MeasurementRow;
@@ -83,7 +81,6 @@ const updateSchema = z
     ended_at: isoDate.optional(),
     ms: z.number().int().min(0).max(MAX_MS).optional(),
     category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/).optional(),
-    hidden: z.boolean().optional(),
   })
   .refine(
     (d) =>
@@ -141,24 +138,8 @@ export const removeMeasurementsInRange = createServerFn({ method: "POST" })
       .eq("user_id", userId)
       .gte("ended_at", data.from)
       .lt("ended_at", data.to)
-      .eq("hidden", false);
+      ;
     if (error) dbError("measurements.removeRange", error);
-    return { ok: true };
-  });
-
-export const hideMeasurementsInRange = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => dayBoundsSchema.parse(input))
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-    const { error } = await supabase
-      .from("measurements")
-      .update({ hidden: true })
-      .eq("user_id", userId)
-      .gte("ended_at", data.from)
-      .lt("ended_at", data.to)
-      .eq("hidden", false);
-    if (error) dbError("measurements.hideRange", error);
     return { ok: true };
   });
 

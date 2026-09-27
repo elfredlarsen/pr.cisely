@@ -1,0 +1,1 @@
+COMMENT ON COLUMN public.measurements.hidden IS 'DEPRECATED: hide feature removed';

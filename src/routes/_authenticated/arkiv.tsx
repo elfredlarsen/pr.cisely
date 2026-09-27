@@ -85,14 +85,13 @@ function OversigtPage() {
 
   const dayMeasurements = useMemo(
     () =>
-      measurements.filter((m) => !m.hidden && isSameDay(new Date(m.endedAt), date)),
+      measurements.filter((m) => isSameDay(new Date(m.endedAt), date)),
     [measurements, date],
   );
 
   const datesWithData = useMemo(() => {
     const set = new Map<string, Date>();
     for (const m of measurements) {
-      if (m.hidden) continue;
       const d = new Date(m.endedAt);
       d.setHours(0, 0, 0, 0);
       set.set(d.toISOString(), d);
