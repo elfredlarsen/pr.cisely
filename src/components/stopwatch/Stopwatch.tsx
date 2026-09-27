@@ -37,6 +37,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
     useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
+  const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => {
     if (!clockRef.current) return;
