@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Play, Pause, RotateCcw, Check as Square } from "lucide-react";
+import { Play, Pause, RotateCcw, Check } from "lucide-react";
 import { toast } from "sonner";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { useStopwatch } from "./StopwatchContext";
 import { UndoToast } from "./UndoToast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-lg font-semibold text-timer-foreground shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
@@ -27,6 +37,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
     useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
+  const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => {
     if (!clockRef.current) return;
@@ -48,8 +59,11 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   const onPause = pause;
   const onResume = resume;
   const onReset = () => {
+    setResetOpen(true);
+  };
+  const confirmReset = () => {
+    setResetOpen(false);
     const snapshot = reset();
-    toast.dismiss(UNDO_TOAST_ID);
     toast.custom((t) => <UndoToast id={t} onUndo={() => restore(snapshot)} />, {
       id: UNDO_TOAST_ID,
       duration: Infinity,
@@ -75,6 +89,14 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         return;
       }
       if (finishOpen) return;
+      if (resetOpen) {
+        // Bekræftelsen er åben: kun N bekræfter, alt andet håndteres af dialogen.
+        if (e.key === "n" || e.key === "N") {
+          e.preventDefault();
+          confirmReset();
+        }
+        return;
+      }
       switch (e.key) {
         case " ":
         case "Spacebar":
@@ -93,7 +115,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           break;
       }
     },
-    [status, finishOpen, onStart, onPause, onResume, onReset, onFinish],
+    [status, finishOpen, resetOpen, onStart, onPause, onResume, onReset, confirmReset, onFinish],
   );
 
   useEffect(() => {
@@ -160,7 +182,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Check className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </IconTooltip>
@@ -198,7 +220,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Check className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </IconTooltip>
@@ -218,6 +240,21 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           </div>
         
       </div>
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Nulstil stopur?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Er du sikker på, at du vil nulstille? Stopuret tæller videre, indtil du bekræfter.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset}>Nulstil</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }
