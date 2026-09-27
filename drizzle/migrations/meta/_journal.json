@@ -50,6 +50,13 @@
       "when": 1790525256601,
       "tag": "0006_daily_retention_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790526061541,
+      "tag": "0007_delete_inactive_users",
+      "breakpoints": true
     }
   ]
 }
