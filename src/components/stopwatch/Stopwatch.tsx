@@ -241,6 +241,21 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           </div>
         
       </div>
+
+      <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Nulstil stopur?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Er du sikker på, at du vil nulstille? Stopuret tæller videre, indtil du bekræfter.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuller</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset}>Nulstil</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }
