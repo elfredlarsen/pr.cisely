@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Play, Pause, RotateCcw, Square, FastForward } from "lucide-react";
+import { Play, Pause, RotateCcw, Square } from "lucide-react";
+import { toast } from "sonner";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { useStopwatch } from "./StopwatchContext";
 
 const baseBtn =
-  "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-lg font-semibold shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
+  "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-lg font-semibold text-timer-foreground shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
-const startBtn = `${baseBtn} bg-[#0e7d35] text-white`;
-const finishBtn = `${baseBtn} bg-[#dc2626] text-white`;
-const pauseBtn = `${baseBtn} bg-[#db2777] text-white`;
-const resetBtn = `${baseBtn} bg-[#2563eb] text-white`;
-const resumeBtn = `${baseBtn} bg-[#0e7d35] text-white`;
+const startBtn = `${baseBtn} bg-timer-start`;
+const finishBtn = `${baseBtn} bg-timer-finish`;
+const pauseBtn = `${baseBtn} bg-timer-pause`;
+const resetBtn = `${baseBtn} bg-timer-reset`;
+const resumeBtn = `${baseBtn} bg-timer-start`;
+
+const UNDO_TOAST_ID = "stopwatch-reset-undo";
 
 type Props = {
   onRequestFinish: (startedAt: Date, endedAt: Date) => void;
@@ -19,7 +22,8 @@ type Props = {
 };
 
 export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
-  const { status, displayMs, start, pause, resume, reset, getFinishPayload } = useStopwatch();
+  const { status, displayMs, start, pause, resume, reset, restore, getFinishPayload } =
+    useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
 
@@ -36,10 +40,20 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
     return () => ro.disconnect();
   }, []);
 
-  const onStart = start;
+  const onStart = () => {
+    toast.dismiss(UNDO_TOAST_ID);
+    start();
+  };
   const onPause = pause;
   const onResume = resume;
-  const onReset = reset;
+  const onReset = () => {
+    const snapshot = reset();
+    toast("Stopuret er nulstillet", {
+      id: UNDO_TOAST_ID,
+      duration: 5000,
+      action: { label: "Fortryd", onClick: () => restore(snapshot) },
+    });
+  };
   const onFinish = () => {
     if (finishOpen) return;
     const payload = getFinishPayload();
@@ -75,9 +89,6 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         case "a":
         case "A":
           if (status === "running" || status === "paused") onFinish();
-          break;
-        case "Escape":
-          if (status === "running" || status === "paused") onReset();
           break;
       }
     },
@@ -197,7 +208,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={resumeBtn}
                     aria-keyshortcuts=" "
                   >
-                    <FastForward className="h-7 w-7" aria-hidden="true" />
+                    <Play className="h-7 w-7" aria-hidden="true" />
                     Fortsæt
                   </button>
                 </IconTooltip>

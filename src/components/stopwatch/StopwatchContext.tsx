@@ -9,11 +9,14 @@ type State = {
   startedAtWall: number | null; // Date.now when first started
 };
 
+export type StopwatchSnapshot = State;
+
 type Action =
   | { type: "START"; now: number; wall: number }
   | { type: "PAUSE"; now: number }
   | { type: "RESUME"; now: number }
-  | { type: "RESET" };
+  | { type: "RESET" }
+  | { type: "RESTORE"; snapshot: State };
 
 const initialState: State = {
   status: "idle",
@@ -44,6 +47,10 @@ function reducer(state: State, action: Action): State {
       return { ...state, status: "running", startedAt: action.now };
     case "RESET":
       return initialState;
+    case "RESTORE":
+      // Only restore onto an idle stopwatch so a new timing is never overwritten.
+      if (state.status !== "idle") return state;
+      return action.snapshot;
     default:
       return state;
   }
@@ -62,7 +69,8 @@ type StopwatchContextValue = {
   start: () => void;
   pause: () => void;
   resume: () => void;
-  reset: () => void;
+  reset: () => StopwatchSnapshot;
+  restore: (snapshot: StopwatchSnapshot) => void;
   getFinishPayload: () => { startedAt: Date; endedAt: Date } | null;
 };
 
@@ -94,7 +102,12 @@ export function StopwatchProvider({ children }: { children: ReactNode }) {
     start: () => dispatch({ type: "START", now: performance.now(), wall: Date.now() }),
     pause: () => dispatch({ type: "PAUSE", now: performance.now() }),
     resume: () => dispatch({ type: "RESUME", now: performance.now() }),
-    reset: () => dispatch({ type: "RESET" }),
+    reset: () => {
+      const snapshot = state;
+      dispatch({ type: "RESET" });
+      return snapshot;
+    },
+    restore: (snapshot) => dispatch({ type: "RESTORE", snapshot }),
     getFinishPayload: () => {
       const now = performance.now();
       const finalMs = computeMs(state, now);
