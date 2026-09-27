@@ -1,14 +1,11 @@
-## Problem
-På `/` viser stopuret tre knapper (Nulstil, Afslut, Pause/Fortsæt) når det kører/er pauset. Knapperne wrapper nu til to rækker (Nulstil + Afslut øverst, Pause nederst) i stedet for at stå pænt fordelt på én række under uret.
+# Fjern kommentarer fra registreringer
 
-Årsagen er at knap-rækken bruger `flex-wrap` og `flex-1 basis-0` på hver knap. Når knapperne får for meget min-bredde fra deres indhold (ikon + tekst med `text-xl`), wrapper de.
+## Hvad ændres
+- Feltet "Kommentar (valgfri)" fjernes fra dialogerne "Gem registrering" og "Tilføj registrering".
+- I listerne (forside og oversigt) fjernes pilen "Vis/Skjul kommentar", kommentarikonet og kommentarrækken med "Tilføj kommentar".
+- Eksisterende kommentarer i databasen bliver liggende urørt (ingen data slettes), men vises og redigeres ikke længere.
 
-## Løsning
-I `src/components/stopwatch/Stopwatch.tsx`, knap-gruppen (`role="group"`):
-
-- Skift `flex-wrap` → `flex-nowrap` så de tre knapper altid står på én linje.
-- Behold `flex-1 basis-0 min-w-0` på hver knap, så de deler bredden ligeligt (matcher urets bredde via `clockWidth`).
-- Reducer evt. `gap-3` → `gap-2` og knappens `px-5` → `px-3` for at give plads på smalle viewports.
-- Ingen ændringer til `idle`-tilstanden (kun Start-knap).
-
-Kun præsentation ændres — ingen ændringer i logik, context eller andre filer.
+## Tekniske detaljer
+- `src/components/oversigt/MeasurementDialog.tsx`: fjern `comment`-state, textarea og `comment` i `onSave`-draft.
+- `src/components/measurements/MeasurementsList.tsx`: fjern `commentEdit`, `expandedComments`, toggle-knap, kommentarrække og tilhørende ubrugte imports.
+- `src/hooks/use-measurements.ts` og `src/lib/measurements.functions.ts`: fjern `comment` fra typer, drafts, offline-kø og insert/update-skemaer (kolonnen i databasen bevares, ingen migration).
