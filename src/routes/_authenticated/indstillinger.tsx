@@ -49,6 +49,13 @@ function IndstillingerPage() {
                 <ChangePasswordForm />
               </div>
             </div>
+
+            <div className="mt-8 border-t border-border pt-6">
+              <h3 className="text-center text-sm font-semibold">Inviter en kollega</h3>
+              <div className="mx-auto mt-4 max-w-md">
+                <InviteSection />
+              </div>
+            </div>
           </section>
 
           <section
