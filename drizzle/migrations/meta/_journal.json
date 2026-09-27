@@ -71,6 +71,13 @@
       "when": 1790531064542,
       "tag": "0009_user_fk_cascade",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790538359600,
+      "tag": "0010_drop_profile_email_copy",
+      "breakpoints": true
     }
   ]
 }
