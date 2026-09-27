@@ -1,5 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+/** Kun for indloggede brugere: henter adgangsnøglen, så den kan deles med en kollega. */
+export const getSignupKey = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const key = process.env.SIGNUP_ACCESS_KEY;
+    return { key: key ?? null };
+  });
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;

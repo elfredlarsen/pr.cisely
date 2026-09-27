@@ -3,6 +3,7 @@ import { TopNav } from "@/components/stopwatch/TopNav";
 import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordForm";
 import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
 import { CategoriesSection } from "@/components/indstillinger/CategoriesSection";
+import { InviteSection } from "@/components/indstillinger/InviteSection";
 
 export const Route = createFileRoute("/_authenticated/indstillinger")({
   head: () => ({
@@ -47,6 +48,13 @@ function IndstillingerPage() {
               <h3 className="text-center text-sm font-semibold">Skift adgangskode</h3>
               <div className="mx-auto mt-4 max-w-md">
                 <ChangePasswordForm />
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-border pt-6">
+              <h3 className="text-center text-sm font-semibold">Inviter en kollega</h3>
+              <div className="mx-auto mt-4 max-w-md">
+                <InviteSection />
               </div>
             </div>
           </section>
