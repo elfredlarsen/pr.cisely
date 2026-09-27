@@ -39,8 +39,7 @@ Typografi
 	- Brødtekst: 400 (regular)
 	- Tal i timeren: 500 (medium), monospaced (fast-bredde)
 
-Stopur-knapper (logofarver, mørk tekst #1a1a1a):
-	- Start/Fortsæt: #4ade80
-	- Pause: #f64f59 (koral)
-	- Afslut: #c471ed (lilla)
-	- Nulstil: #888888 (grå)
+Stopur-knapper (hvid tekst og ikon):
+	- Start/Pause/Fortsæt (hovedknap): #9333ea (lilla)
+	- Afslut: #0f766e (petrolgrøn, flueben-ikon)
+	- Nulstil: #64748b (blågrå)
