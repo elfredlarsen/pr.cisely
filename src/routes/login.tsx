@@ -34,12 +34,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { key: signupKey } = useSearch({ from: "/login" });
-  const checkKey = useServerFn(checkSignupKey);
   const signUp = useServerFn(signUpWithKey);
 
-  const [keyValid, setKeyValid] = useState<boolean | null>(
-    signupKey ? null : false
-  );
   const [accessKey, setAccessKey] = useState(signupKey ?? "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
