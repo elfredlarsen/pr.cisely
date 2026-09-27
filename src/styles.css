@@ -72,11 +72,11 @@
   --input: #e6e6ea;
   --ring: #9333ea;
 
-  --timer-start: #15803d;
-  --timer-pause: #b45309;
-  --timer-finish: #9333ea;
-  --timer-reset: #52525b;
-  --timer-foreground: #ffffff;
+  --timer-start: #4ade80;
+  --timer-pause: #f64f59;
+  --timer-finish: #c471ed;
+  --timer-reset: #888888;
+  --timer-foreground: #1a1a1a;
 
   --brand-primary: #c471ed;
   --brand-gradient: linear-gradient(135deg, #f64f59 0%, #c471ed 50%, #12c2e9 100%);
