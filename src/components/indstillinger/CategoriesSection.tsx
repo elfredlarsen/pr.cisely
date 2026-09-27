@@ -57,20 +57,30 @@ export function CategoriesSection() {
     };
   }, [visible.length]);
 
-  const toggle = (value: Category, next: boolean) => {
+  const toggle = async (value: Category, next: boolean) => {
     const current = filter ?? new Set(visible.map((c) => c.value));
     const updated = new Set(current);
     if (next) updated.add(value);
     else updated.delete(value);
 
     const ordered = visible.map((c) => c.value).filter((v) => updated.has(v));
+    const previous = filter;
     setActiveCategoriesFilter(ordered);
     setFilter(updated);
 
-    if (didMountRef.current) {
-      toast.success("Kategorier opdateret");
-    } else {
-      didMountRef.current = true;
+    try {
+      await saveActive({
+        data: { active: ordered.length === visible.length ? null : ordered },
+      });
+      await invalidateActive();
+      if (didMountRef.current) {
+        toast.success("Kategorier opdateret");
+      } else {
+        didMountRef.current = true;
+      }
+    } catch {
+      setFilter(previous);
+      toast.error("Kunne ikke gemme kategorier");
     }
   };
 
