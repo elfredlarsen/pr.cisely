@@ -34,7 +34,6 @@ type Props = {
     endedAt: string;
     ms: number;
     category: Category;
-    comment?: string;
   };
   defaultCategory?: Category;
   onSave: (draft: MeasurementDraft) => void;
@@ -108,7 +107,6 @@ export function MeasurementDialog({
   const [end, setEnd] = useState("09:30:00");
   const [duration, setDuration] = useState("00:30:00");
   const [category, setCategory] = useState<Category>("");
-  const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
   const activeFilter = useActiveCategoriesFilter();
   const { data: allCategories = [] } = useCategories();
@@ -125,7 +123,6 @@ export function MeasurementDialog({
       setEnd(toTimeInput(initial.endedAt));
       setDuration(msToDurationInput(initial.ms));
       setCategory(initial.category || "");
-      setComment(initial.comment ?? "");
     } else {
       const now = new Date();
       const startSec = now.getHours() * 3600 + now.getMinutes() * 60;
@@ -138,7 +135,6 @@ export function MeasurementDialog({
       );
       setDuration(msToDurationInput((endSec - startSec) * 1000));
       setCategory(defaultCategory ?? getLastCategory() ?? "");
-      setComment("");
     }
   }, [open, initial, defaultCategory]);
 
@@ -235,13 +231,11 @@ export function MeasurementDialog({
       return;
     }
     setLastCategory(category);
-    const trimmed = comment.trim();
     onSave({
       startedAt: setTimeOnDate(baseDate, s).toISOString(),
       endedAt: setTimeOnDate(baseDate, en).toISOString(),
       ms: dur,
       category,
-      comment: trimmed !== "" ? trimmed : undefined,
     });
     onOpenChange(false);
   };
@@ -319,18 +313,6 @@ export function MeasurementDialog({
             </Select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="md-comment" className="text-xs font-medium text-muted-foreground">
-              Kommentar (valgfri)
-            </label>
-            <textarea
-              id="md-comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              rows={2}
-              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </div>
 
           {error && (
             <p role="alert" className="text-xs text-destructive">

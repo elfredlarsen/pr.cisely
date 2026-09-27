@@ -1,5 +1,5 @@
 import React, { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Check, ChevronRight, Loader2, MessageSquare, Pencil, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Loader2, Pencil, Trash2, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -104,8 +104,6 @@ export function MeasurementsList({
 
 }: Props) {
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
-  const [commentEdit, setCommentEdit] = useState<{ id: string; value: string } | null>(null);
-  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [pendingCategoryChange, setPendingCategoryChange] = useState<
     { id: string; from: Category; to: Category } | null
   >(null);
@@ -120,14 +118,6 @@ export function MeasurementsList({
     allCategories.find((c) => c.value === value)?.label ?? fallbackCategoryLabel(value);
 
 
-  const toggleCommentExpanded = (id: string) => {
-    setExpandedComments((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
 
   const sortedItems = useMemo(() => {
     const getKey = (m: Measurement) => {
@@ -411,9 +401,6 @@ export function MeasurementsList({
         <TableBody>
           {sortedItems.map((m) => {
             const rowEditing = isRowEditing(m);
-            const editingComment = commentEdit?.id === m.id;
-            const commentExpanded = expandedComments.has(m.id);
-            const showCommentRow = commentExpanded;
             return (
               <React.Fragment key={m.id}>
                 <TableRow
@@ -479,31 +466,6 @@ export function MeasurementsList({
                   </TableCell>
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0">
-                      <IconTooltip label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => toggleCommentExpanded(m.id)}
-                          aria-label={commentExpanded ? "Skjul kommentar" : "Vis kommentar"}
-                          aria-expanded={commentExpanded}
-                          className="relative h-9 w-12 justify-center gap-0.5 px-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                        >
-                          <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                          {m.comment && (
-                            <span
-                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#c471ed]"
-                              aria-hidden="true"
-                            />
-                          )}
-                          <ChevronRight
-                            className={cn(
-                              "h-3 w-3 transition-transform duration-150",
-                              commentExpanded && "rotate-90",
-                            )}
-                            aria-hidden="true"
-                          />
-                        </Button>
-                      </IconTooltip>
                       <AlertDialog>
                         <IconTooltip label="Slet registrering">
                           <AlertDialogTrigger asChild>
@@ -538,81 +500,6 @@ export function MeasurementsList({
                     </div>
                   </TableCell>
                 </TableRow>
-                {showCommentRow && (
-                  <TableRow className="border-border/40 hover:bg-transparent">
-                    <TableCell colSpan={5} className="py-1 pl-3 pr-2 text-xs">
-                      {editingComment ? (
-                        <div className="flex items-center gap-2">
-                          <input
-                            autoFocus
-                            type="text"
-                            value={commentEdit!.value}
-                            onChange={(e) =>
-                              setCommentEdit({ id: m.id, value: e.target.value })
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                const trimmed = commentEdit!.value.trim();
-                                onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
-                                setCommentEdit(null);
-                              } else if (e.key === "Escape") {
-                                e.preventDefault();
-                                setCommentEdit(null);
-                              }
-                            }}
-                            placeholder="Tilføj kommentar"
-                            aria-label="Kommentar"
-                            className="h-8 flex-1 rounded border border-input bg-background px-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          />
-                          <IconTooltip label="Gem" shortcut="Enter">
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="ghost"
-                              aria-label="OK"
-                              onClick={() => {
-                                const trimmed = commentEdit!.value.trim();
-                                onUpdate(m.id, { comment: trimmed === "" ? undefined : trimmed });
-                                setCommentEdit(null);
-                              }}
-                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-foreground"
-                            >
-                              <Check className="h-4 w-4" aria-hidden="true" />
-                            </Button>
-                          </IconTooltip>
-                          <IconTooltip label="Annuller" shortcut="Esc">
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="ghost"
-                              aria-label="Annuller"
-                              onClick={() => setCommentEdit(null)}
-                              className="h-8 w-8 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
-                            >
-                              <X className="h-4 w-4" aria-hidden="true" />
-                            </Button>
-                          </IconTooltip>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setCommentEdit({ id: m.id, value: m.comment ?? "" })}
-                          className={cn(
-                            "group inline-flex min-h-8 w-full items-center gap-1.5 rounded px-1 py-0.5 text-left transition-colors hover:bg-[#c471ed]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            m.comment ? "text-muted-foreground" : "text-muted-foreground/50 italic",
-                          )}
-                        >
-                          <Pencil
-                            className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
-                            aria-hidden="true"
-                          />
-                          <span>{m.comment ?? "Tilføj kommentar"}</span>
-                        </button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                )}
               </React.Fragment>
             );
           })}
