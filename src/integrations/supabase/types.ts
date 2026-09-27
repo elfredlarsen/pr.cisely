@@ -108,31 +108,22 @@ export type Database = {
       }
       profiles: {
         Row: {
-          active_categories: string[] | null
-          category_order: string[] | null
           created_at: string
           id: string
-          last_category: string | null
           last_category_id: string | null
           retention_days: number | null
           updated_at: string
         }
         Insert: {
-          active_categories?: string[] | null
-          category_order?: string[] | null
           created_at?: string
           id: string
-          last_category?: string | null
           last_category_id?: string | null
           retention_days?: number | null
           updated_at?: string
         }
         Update: {
-          active_categories?: string[] | null
-          category_order?: string[] | null
           created_at?: string
           id?: string
-          last_category?: string | null
           last_category_id?: string | null
           retention_days?: number | null
           updated_at?: string
