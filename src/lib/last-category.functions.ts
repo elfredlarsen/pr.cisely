@@ -9,14 +9,22 @@ export const getLastCategory = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("profiles")
-      .select("last_category")
+      .select("last_category_id")
       .eq("id", userId)
       .maybeSingle();
     if (error) {
       console.error("[last-category.get]", error);
       throw new Error("Databasefejl. Prøv igen.");
     }
-    return { last: data?.last_category ?? null };
+    const id = data?.last_category_id;
+    if (!id) return { last: null };
+    const { data: cat } = await supabase
+      .from("categories")
+      .select("value")
+      .eq("id", id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    return { last: cat?.value ?? null };
   });
 
 export const setLastCategory = createServerFn({ method: "POST" })
@@ -26,9 +34,19 @@ export const setLastCategory = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+    const { data: cat, error: catErr } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("value", data.value)
+      .maybeSingle();
+    if (catErr || !cat) {
+      console.error("[last-category.set] category lookup", catErr);
+      throw new Error("Kategorien findes ikke.");
+    }
     const { error } = await supabase
       .from("profiles")
-      .update({ last_category: data.value })
+      .update({ last_category_id: cat.id })
       .eq("id", userId);
     if (error) {
       console.error("[last-category.set]", error);
