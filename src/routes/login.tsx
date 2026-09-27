@@ -40,6 +40,7 @@ function LoginPage() {
   const [keyValid, setKeyValid] = useState<boolean | null>(
     signupKey ? null : false
   );
+  const [accessKey, setAccessKey] = useState(signupKey ?? "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
