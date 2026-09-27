@@ -25,9 +25,11 @@ import {
 import { useMeasurements } from "@/hooks/use-measurements";
 import { getRetentionDays, setRetentionDays } from "@/lib/retention.functions";
 
-type AutoDeleteValue = "30" | "60" | "90" | "180" | "365" | "never";
+type AutoDeleteValue = "7" | "14" | "30" | "60" | "90" | "180" | "365" | "never";
 
 const OPTIONS: { value: AutoDeleteValue; label: string }[] = [
+  { value: "7", label: "7 dage" },
+  { value: "14", label: "14 dage" },
   { value: "30", label: "30 dage" },
   { value: "60", label: "60 dage" },
   { value: "90", label: "90 dage" },
@@ -41,7 +43,7 @@ const RETENTION_KEY = ["retention-days"] as const;
 function daysToValue(days: number | null): AutoDeleteValue {
   if (days === null) return "never";
   const s = String(days);
-  if (s === "30" || s === "60" || s === "90" || s === "180" || s === "365") return s;
+  if (s === "7" || s === "14" || s === "30" || s === "60" || s === "90" || s === "180" || s === "365") return s;
   return "never";
 }
 
