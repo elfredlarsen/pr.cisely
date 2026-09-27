@@ -67,11 +67,9 @@ export type Database = {
       }
       measurements: {
         Row: {
-          category: string | null
           category_id: string
           created_at: string
           ended_at: string
-          hidden: boolean
           id: string
           ms: number
           started_at: string
@@ -79,11 +77,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          category?: string | null
           category_id: string
           created_at?: string
           ended_at: string
-          hidden?: boolean
           id?: string
           ms: number
           started_at: string
@@ -91,11 +87,9 @@ export type Database = {
           user_id: string
         }
         Update: {
-          category?: string | null
           category_id?: string
           created_at?: string
           ended_at?: string
-          hidden?: boolean
           id?: string
           ms?: number
           started_at?: string
