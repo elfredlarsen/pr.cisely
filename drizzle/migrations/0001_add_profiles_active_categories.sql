@@ -1,0 +1,2 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS active_categories text[];
+COMMENT ON COLUMN public.profiles.active_categories IS 'Per-user filter of active categories; NULL means all categories are shown.';

@@ -8,6 +8,13 @@
       "when": 1790520165701,
       "tag": "0000_deprecate_measurement_comment",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790523074262,
+      "tag": "0001_add_profiles_active_categories",
+      "breakpoints": true
     }
   ]
 }
