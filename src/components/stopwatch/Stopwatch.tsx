@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Play, Pause, RotateCcw, Check as Square } from "lucide-react";
+import { Play, Pause, RotateCcw, Check } from "lucide-react";
 import { toast } from "sonner";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { useStopwatch } from "./StopwatchContext";
 import { UndoToast } from "./UndoToast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-lg font-semibold text-timer-foreground shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
