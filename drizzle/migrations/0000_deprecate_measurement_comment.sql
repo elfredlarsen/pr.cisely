@@ -1,0 +1,1 @@
+COMMENT ON COLUMN public.measurements.comment IS 'DEPRECATED: comments removed from app';
