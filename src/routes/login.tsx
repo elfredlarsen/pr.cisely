@@ -49,26 +49,14 @@ function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
 
-  const keyParam = useMemo(() => signupKey ?? "", [signupKey]);
-
-  // Validér signup-nøgle (hvis nogen er angivet i URL'en)
+  // Hvis der ligger en nøgle i URL'en, udfyldes feltet automatisk
   useEffect(() => {
-    if (!keyParam) {
-      setKeyValid(false);
-      return;
+    if (signupKey) {
+      setAccessKey(signupKey);
+      setMode("signup");
     }
-    let cancelled = false;
-    checkKey({ data: { key: keyParam } })
-      .then((res) => {
-        if (!cancelled) setKeyValid(res.valid);
-      })
-      .catch(() => {
-        if (!cancelled) setKeyValid(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [keyParam, checkKey]);
+  }, [signupKey]);
+
 
   // Hvis allerede logget ind, redirect til /
   useEffect(() => {
