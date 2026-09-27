@@ -169,7 +169,7 @@ function LoginPage() {
           </div>
         )}
 
-        {keyValid && (
+        {(
           <div className="mt-4 text-center text-xs text-muted-foreground">
             {mode === "signin" ? (
               <button
