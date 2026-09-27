@@ -36,7 +36,13 @@ function PrivatlivPage() {
         </header>
 
         <Section title="1. Hvem står bag">
-          <p>Dataansvarlig: [Navn] – kontakt: [e-mail]. Skriv til denne adresse med spørgsmål om dine data.</p>
+          <p>
+            Dataansvarlig: Carina Larsen – kontakt:{" "}
+            <a href="mailto:elfredlarsen@gmail.com" className="underline underline-offset-2">
+              elfredlarsen@gmail.com
+            </a>
+            . Skriv til denne adresse med spørgsmål om dine data.
+          </p>
         </Section>
 
         <Section title="2. Hvilke data gemmes">
