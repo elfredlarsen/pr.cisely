@@ -90,9 +90,6 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         case "A":
           if (status === "running" || status === "paused") onFinish();
           break;
-        case "Escape":
-          if (status === "running" || status === "paused") onReset();
-          break;
       }
     },
     [status, finishOpen, onStart, onPause, onResume, onReset, onFinish],
@@ -211,7 +208,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={resumeBtn}
                     aria-keyshortcuts=" "
                   >
-                    <FastForward className="h-7 w-7" aria-hidden="true" />
+                    <Play className="h-7 w-7" aria-hidden="true" />
                     Fortsæt
                   </button>
                 </IconTooltip>
