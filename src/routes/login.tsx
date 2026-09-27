@@ -186,8 +186,7 @@ function LoginPage() {
           </div>
         )}
 
-        {(
-          <div className="mt-4 text-center text-xs text-muted-foreground">
+        <div className="mt-4 text-center text-xs text-muted-foreground">
             {mode === "signin" ? (
               <button
                 type="button"
