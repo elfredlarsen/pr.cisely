@@ -64,7 +64,6 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   const confirmReset = () => {
     setResetOpen(false);
     const snapshot = reset();
-    toast.dismiss(UNDO_TOAST_ID);
     toast.custom((t) => <UndoToast id={t} onUndo={() => restore(snapshot)} />, {
       id: UNDO_TOAST_ID,
       duration: Infinity,
