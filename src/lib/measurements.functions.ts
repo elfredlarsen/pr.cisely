@@ -1,3 +1,5 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -8,8 +10,24 @@ export type MeasurementRow = {
   started_at: string;
   ended_at: string;
   ms: number;
+  category_id: string;
+  /** Kategoriens værdi, slået op via category_id. */
   category: string;
 };
+
+type Sb = SupabaseClient<Database>;
+
+async function categoryIdFor(supabase: Sb, userId: string, value: string): Promise<string> {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("value", value)
+    .maybeSingle();
+  if (error) dbError("measurements.category", error);
+  if (!data) throw new Error("Ukendt kategori");
+  return data.id as string;
+}
 
 function dbError(scope: string, error: { message: string }): never {
   console.error(`[${scope}] DB error:`, error.message);
@@ -28,14 +46,23 @@ export const listMeasurements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<MeasurementRow[]> => {
     const { supabase, userId } = context;
-    const { data, error } = await supabase
-      .from("measurements")
-      .select("id, started_at, ended_at, ms, category")
-      .eq("user_id", userId)
-      .order("ended_at", { ascending: false })
-      .limit(1000);
+    const [{ data, error }, { data: cats, error: catErr }] = await Promise.all([
+      supabase
+        .from("measurements")
+        .select("id, started_at, ended_at, ms, category_id")
+        .eq("user_id", userId)
+        .order("ended_at", { ascending: false })
+        .limit(1000),
+      supabase.from("categories").select("id, value").eq("user_id", userId),
+    ]);
     if (error) dbError("measurements.list", error);
-    return (data ?? []) as MeasurementRow[];
+    if (catErr) dbError("measurements.list", catErr);
+    const byId = new Map((cats ?? []).map((c) => [c.id, c.value]));
+    return (data ?? []).map((r) => ({
+      ...r,
+      ms: Number(r.ms),
+      category: byId.get(r.category_id) ?? "",
+    }));
   });
 
 const createSchema = z
@@ -59,6 +86,7 @@ export const createMeasurement = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => createSchema.parse(input))
   .handler(async ({ data, context }): Promise<MeasurementRow> => {
     const { supabase, userId } = context;
+    const categoryId = await categoryIdFor(supabase, userId, data.category);
     const { data: row, error } = await supabase
       .from("measurements")
       .insert({
@@ -66,12 +94,12 @@ export const createMeasurement = createServerFn({ method: "POST" })
         started_at: data.started_at,
         ended_at: data.ended_at,
         ms: data.ms,
-        category: data.category,
+        category_id: categoryId,
       })
-      .select("id, started_at, ended_at, ms, category")
+      .select("id, started_at, ended_at, ms, category_id")
       .single();
     if (error) dbError("measurements.create", error);
-    return row as MeasurementRow;
+    return { ...row, ms: Number(row.ms), category: data.category };
   });
 
 const updateSchema = z
@@ -95,7 +123,11 @@ export const updateMeasurement = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { id, ...patch } = data;
+    const { id, category, ...rest } = data;
+    const patch: { started_at?: string; ended_at?: string; ms?: number; category_id?: string } = { ...rest };
+    if (category !== undefined) {
+      patch.category_id = await categoryIdFor(supabase, userId, category);
+    }
     if (Object.keys(patch).length === 0) return { ok: true };
     const { error } = await supabase
       .from("measurements")

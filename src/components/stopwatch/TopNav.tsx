@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { SyncStatus } from "@/components/stopwatch/SyncStatus";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -85,7 +84,6 @@ export function TopNav() {
       </ul>
 
       <div className="flex items-center gap-2">
-        <SyncStatus />
         <AlertDialog>
         <AlertDialogTrigger asChild>
 
