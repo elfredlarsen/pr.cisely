@@ -183,7 +183,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Check className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </IconTooltip>
@@ -221,7 +221,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
                     className={finishBtn}
                     aria-keyshortcuts="A"
                   >
-                    <Square className="h-7 w-7" aria-hidden="true" />
+                    <Check className="h-7 w-7" aria-hidden="true" />
                     Afslut
                   </button>
                 </IconTooltip>
