@@ -42,16 +42,15 @@ function Index() {
     setPending({ startedAt, endedAt });
   };
 
-  const handleSave = (draft: MeasurementDraft) => {
-    add(draft);
+  const handleSave = async (draft: MeasurementDraft) => {
+    await add(draft);
     setPending(null);
     resetStopwatch();
     toast.success("Registrering gemt");
   };
 
-  const handleAddSave = (draft: MeasurementDraft) => {
-    add(draft);
-    setAddOpen(false);
+  const handleAddSave = async (draft: MeasurementDraft) => {
+    await add(draft);
     toast.success("Registrering tilføjet");
   };
 

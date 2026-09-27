@@ -147,8 +147,8 @@ function OversigtPage() {
     setDialogOpen(true);
   };
 
-  const handleSave = (draft: MeasurementDraft) => {
-    add(draft);
+  const handleSave = async (draft: MeasurementDraft) => {
+    await add(draft);
     toast.success("Registrering tilføjet");
   };
 

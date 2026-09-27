@@ -65,8 +65,9 @@ export function CategoryLabelEditor({
       await remove({ data: { id: row.id } });
       await qc.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Kategori slettet");
-    } catch {
-      toast.error("Kunne ikke slette kategorien");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      toast.error(msg.startsWith("Kategorien bruges") ? msg : "Kunne ikke slette kategorien");
     } finally {
       setBusy(false);
     }

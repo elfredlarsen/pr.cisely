@@ -35,7 +35,7 @@ type Props = {
     category: Category;
   };
   defaultCategory?: Category;
-  onSave: (draft: MeasurementDraft) => void;
+  onSave: (draft: MeasurementDraft) => void | Promise<void>;
   title?: string;
 };
 
@@ -107,6 +107,7 @@ export function MeasurementDialog({
   const [duration, setDuration] = useState("00:30:00");
   const [category, setCategory] = useState<Category>("");
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const activeFilter = useActiveCategoriesFilter();
   const { data: allCategories = [] } = useCategories();
   const lastCategory = useLastCategory();
@@ -119,6 +120,7 @@ export function MeasurementDialog({
   useEffect(() => {
     if (!open) return;
     setError(null);
+    setSaving(false);
     if (initial) {
       setStart(toTimeInput(initial.startedAt));
       setEnd(toTimeInput(initial.endedAt));
@@ -209,8 +211,9 @@ export function MeasurementDialog({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (saving) return;
     const parsed = schema.safeParse({ start, end, duration });
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Ugyldige felter");
@@ -231,13 +234,25 @@ export function MeasurementDialog({
       setError("Vælg en kategori");
       return;
     }
+    setError(null);
+    setSaving(true);
+    try {
+      await onSave({
+        startedAt: setTimeOnDate(baseDate, s).toISOString(),
+        endedAt: setTimeOnDate(baseDate, en).toISOString(),
+        ms: dur,
+        category,
+      });
+    } catch (err) {
+      console.error("[measurement] save failed:", err);
+      setError(
+        "Registreringen kunne ikke gemmes. Tjek din internetforbindelse og prøv igen.",
+      );
+      setSaving(false);
+      return;
+    }
+    setSaving(false);
     saveLastCategory(category);
-    onSave({
-      startedAt: setTimeOnDate(baseDate, s).toISOString(),
-      endedAt: setTimeOnDate(baseDate, en).toISOString(),
-      ms: dur,
-      category,
-    });
     onOpenChange(false);
   };
 
@@ -330,8 +345,8 @@ export function MeasurementDialog({
             >
               Annuller
             </Button>
-            <Button type="submit" className="min-h-11 px-4 font-semibold">
-              Gem
+            <Button type="submit" disabled={saving} className="min-h-11 px-4 font-semibold">
+              {saving ? "Gemmer…" : "Gem"}
             </Button>
           </DialogFooter>
         </form>

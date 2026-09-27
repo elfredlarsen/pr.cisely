@@ -63,7 +63,12 @@ export const updateCategory = createServerFn({ method: "POST" })
       .update(patch)
       .eq("id", data.id)
       .eq("user_id", userId);
-    if (error) dbError("categories", error);
+    if (error) {
+      if ((error as { code?: string }).code === "23503") {
+        throw new Error("Kategorien bruges af registreringer og kan ikke slettes — skjul den i stedet.");
+      }
+      dbError("categories", error);
+    }
     return { ok: true };
   });
 
@@ -126,6 +131,11 @@ export const deleteCategory = createServerFn({ method: "POST" })
       .delete()
       .eq("id", data.id)
       .eq("user_id", userId);
-    if (error) dbError("categories", error);
+    if (error) {
+      if ((error as { code?: string }).code === "23503") {
+        throw new Error("Kategorien bruges af registreringer og kan ikke slettes — skjul den i stedet.");
+      }
+      dbError("categories", error);
+    }
     return { ok: true };
   });
