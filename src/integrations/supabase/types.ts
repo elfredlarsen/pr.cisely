@@ -113,6 +113,7 @@ export type Database = {
           created_at: string
           id: string
           last_category: string | null
+          last_category_id: string | null
           retention_days: number | null
           updated_at: string
         }
@@ -122,6 +123,7 @@ export type Database = {
           created_at?: string
           id: string
           last_category?: string | null
+          last_category_id?: string | null
           retention_days?: number | null
           updated_at?: string
         }
@@ -131,10 +133,19 @@ export type Database = {
           created_at?: string
           id?: string
           last_category?: string | null
+          last_category_id?: string | null
           retention_days?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_last_category_id_fkey"
+            columns: ["last_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
