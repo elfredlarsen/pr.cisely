@@ -8,7 +8,6 @@ import { usePreviewMode } from "@/lib/preview-mode";
 import {
   createMeasurement,
   deleteMeasurement,
-  hideMeasurementsInRange,
   listMeasurements,
   removeAllMeasurements,
   removeMeasurementsInRange,
@@ -32,7 +31,6 @@ export type Measurement = {
   endedAt: string; // ISO
   ms: number;
   category: Category;
-  hidden: boolean;
   /** True hvis posten endnu kun findes i den lokale offline-kø. */
   pending?: boolean;
 };
@@ -83,7 +81,6 @@ function rowToMeasurement(row: MeasurementRow): Measurement | null {
     endedAt: row.ended_at,
     ms: Number(row.ms),
     category: row.category,
-    hidden: row.hidden,
   };
 }
 
@@ -140,7 +137,6 @@ function usePreviewMeasurements() {
           endedAt: draft.endedAt,
           ms: draft.ms,
           category: draft.category,
-          hidden: false,
         },
         ...prev,
       ]),
@@ -155,35 +151,17 @@ function usePreviewMeasurements() {
     (id: string) => persist((prev) => prev.filter((m) => m.id !== id)),
     [persist],
   );
-  const hide = useCallback(
-    (id: string) =>
-      persist((prev) => prev.map((m) => (m.id === id ? { ...m, hidden: true } : m))),
-    [persist],
-  );
-  const unhide = useCallback(
-    (id: string) =>
-      persist((prev) => prev.map((m) => (m.id === id ? { ...m, hidden: false } : m))),
-    [persist],
-  );
-  const hideAllToday = useCallback(() => {
-    const today = new Date();
-    persist((prev) =>
-      prev.map((m) =>
-        !m.hidden && isSameLocalDay(m.endedAt, today) ? { ...m, hidden: true } : m,
-      ),
-    );
-  }, [persist]);
   const removeByDate = useCallback(
-    (ref: Date) => persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, ref))),
+    (ref: Date) => persist((prev) => prev.filter((m) => !isSameLocalDay(m.endedAt, ref))),
     [persist],
   );
   const removeAllToday = useCallback(() => {
     const today = new Date();
-    persist((prev) => prev.filter((m) => m.hidden || !isSameLocalDay(m.endedAt, today)));
+    persist((prev) => prev.filter((m) => !isSameLocalDay(m.endedAt, today)));
   }, [persist]);
   const removeAll = useCallback(() => persist(() => []), [persist]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, removeByDate, removeAllToday, removeAll };
 }
 
 // ---------------- Supabase-backed implementation ----------------
@@ -195,7 +173,6 @@ function useSupabaseMeasurements(enabled: boolean) {
   const updateFn = useServerFn(updateMeasurement);
   const deleteFn = useServerFn(deleteMeasurement);
   const removeRangeFn = useServerFn(removeMeasurementsInRange);
-  const hideRangeFn = useServerFn(hideMeasurementsInRange);
   const removeAllFn = useServerFn(removeAllMeasurements);
   const applyRetentionFn = useServerFn(applyRetention);
 
@@ -243,7 +220,6 @@ function useSupabaseMeasurements(enabled: boolean) {
           endedAt: q.draft.endedAt,
           ms: q.draft.ms,
           category: q.draft.category,
-          hidden: false,
           pending: true,
         })),
     [queuedDrafts],
@@ -353,7 +329,6 @@ function useSupabaseMeasurements(enabled: boolean) {
           ...(patch.endedAt !== undefined ? { ended_at: patch.endedAt } : {}),
           ...(patch.ms !== undefined ? { ms: patch.ms } : {}),
           ...(patch.category !== undefined ? { category: patch.category } : {}),
-          ...(patch.hidden !== undefined ? { hidden: patch.hidden } : {}),
         },
       }),
     onSuccess: invalidate,
@@ -366,11 +341,6 @@ function useSupabaseMeasurements(enabled: boolean) {
 
   const removeRangeMut = useMutation({
     mutationFn: (bounds: { from: string; to: string }) => removeRangeFn({ data: bounds }),
-    onSuccess: invalidate,
-  });
-
-  const hideRangeMut = useMutation({
-    mutationFn: (bounds: { from: string; to: string }) => hideRangeFn({ data: bounds }),
     onSuccess: invalidate,
   });
 
@@ -418,21 +388,6 @@ function useSupabaseMeasurements(enabled: boolean) {
     },
     [deleteMut],
   );
-  const hide = useCallback(
-    (id: string) => {
-      if (id.startsWith(TEMP_ID_PREFIX)) return;
-      updateMut.mutate({ id, patch: { hidden: true } });
-    },
-    [updateMut],
-  );
-  const unhide = useCallback(
-    (id: string) => {
-      if (id.startsWith(TEMP_ID_PREFIX)) return;
-      updateMut.mutate({ id, patch: { hidden: false } });
-    },
-    [updateMut],
-  );
-  const hideAllToday = useCallback(() => hideRangeMut.mutate(todayBounds()), [hideRangeMut]);
   const removeByDate = useCallback(
     (ref: Date) => removeRangeMut.mutate(dateBounds(ref)),
     [removeRangeMut],
@@ -443,7 +398,7 @@ function useSupabaseMeasurements(enabled: boolean) {
   );
   const removeAll = useCallback(() => removeAllMut.mutate(), [removeAllMut]);
 
-  return { measurements, loaded, add, update, remove, hide, unhide, hideAllToday, removeByDate, removeAllToday, removeAll };
+  return { measurements, loaded, add, update, remove, removeByDate, removeAllToday, removeAll };
 }
 
 
@@ -456,14 +411,11 @@ export function useMeasurements() {
 
   const visibleToday = useMemo(() => {
     const today = new Date();
-    return api.measurements.filter((m) => !m.hidden && isSameLocalDay(m.endedAt, today));
+    return api.measurements.filter((m) => isSameLocalDay(m.endedAt, today));
   }, [api.measurements]);
-
-  const hiddenAll = useMemo(() => api.measurements.filter((m) => m.hidden), [api.measurements]);
 
   return {
     ...api,
     visibleToday,
-    hiddenAll,
   };
 }

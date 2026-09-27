@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ALTER COLUMN retention_days SET DEFAULT 30;
