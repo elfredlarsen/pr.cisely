@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { checkSignupKey, signUpWithKey } from "@/lib/signup.functions";
+import { signUpWithKey } from "@/lib/signup.functions";
 
 const searchSchema = z.object({ key: z.string().optional() });
 
@@ -34,12 +34,9 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { key: signupKey } = useSearch({ from: "/login" });
-  const checkKey = useServerFn(checkSignupKey);
   const signUp = useServerFn(signUpWithKey);
 
-  const [keyValid, setKeyValid] = useState<boolean | null>(
-    signupKey ? null : false
-  );
+  const [accessKey, setAccessKey] = useState(signupKey ?? "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,26 +45,14 @@ function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
 
-  const keyParam = useMemo(() => signupKey ?? "", [signupKey]);
-
-  // Validér signup-nøgle (hvis nogen er angivet i URL'en)
+  // Hvis der ligger en nøgle i URL'en, udfyldes feltet automatisk
   useEffect(() => {
-    if (!keyParam) {
-      setKeyValid(false);
-      return;
+    if (signupKey) {
+      setAccessKey(signupKey);
+      setMode("signup");
     }
-    let cancelled = false;
-    checkKey({ data: { key: keyParam } })
-      .then((res) => {
-        if (!cancelled) setKeyValid(res.valid);
-      })
-      .catch(() => {
-        if (!cancelled) setKeyValid(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [keyParam, checkKey]);
+  }, [signupKey]);
+
 
   // Hvis allerede logget ind, redirect til /
   useEffect(() => {
@@ -89,8 +74,8 @@ function LoginPage() {
         if (error) throw error;
         toast.success("Logget ind");
       } else {
-        if (!keyValid) throw new Error("Du skal bruge et gyldigt link for at oprette en konto.");
-        await signUp({ data: { email, password, key: keyParam } });
+        if (!accessKey.trim()) throw new Error("Indtast adgangsnøglen for at oprette en konto.");
+        await signUp({ data: { email, password, key: accessKey.trim() } });
         // Log straks ind efter oprettelse
         const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
         if (signInErr) throw signInErr;
@@ -164,6 +149,23 @@ function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {mode === "signup" && (
+            <div className="space-y-1">
+              <Label htmlFor="accessKey">Adgangsnøgle</Label>
+              <Input
+                id="accessKey"
+                type="password"
+                autoComplete="off"
+                required
+                maxLength={512}
+                value={accessKey}
+                onChange={(e) => setAccessKey(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Du skal bruge den adgangsnøgle, du har fået udleveret.
+              </p>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Vent..." : mode === "signin" ? "Log ind" : "Opret konto"}
           </Button>
@@ -184,8 +186,7 @@ function LoginPage() {
           </div>
         )}
 
-        {keyValid && (
-          <div className="mt-4 text-center text-xs text-muted-foreground">
+        <div className="mt-4 text-center text-xs text-muted-foreground">
             {mode === "signin" ? (
               <button
                 type="button"
@@ -203,8 +204,7 @@ function LoginPage() {
                 Har du allerede en konto? Log ind
               </button>
             )}
-          </div>
-        )}
+        </div>
 
         <div className="mt-4 text-center text-xs">
           <a href="/privatliv" className="text-muted-foreground underline-offset-2 hover:underline">
