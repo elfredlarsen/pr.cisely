@@ -33,7 +33,6 @@ export type Measurement = {
   ms: number;
   category: Category;
   hidden: boolean;
-  comment?: string;
   /** True hvis posten endnu kun findes i den lokale offline-kø. */
   pending?: boolean;
 };
@@ -44,7 +43,6 @@ export type MeasurementDraft = {
   endedAt: string;
   ms: number;
   category: Category;
-  comment?: string;
 };
 
 const QUERY_KEY = ["measurements"] as const;
@@ -86,7 +84,6 @@ function rowToMeasurement(row: MeasurementRow): Measurement | null {
     ms: Number(row.ms),
     category: row.category,
     hidden: row.hidden,
-    comment: row.comment ?? undefined,
   };
 }
 
@@ -144,7 +141,6 @@ function usePreviewMeasurements() {
           ms: draft.ms,
           category: draft.category,
           hidden: false,
-          comment: draft.comment,
         },
         ...prev,
       ]),
@@ -248,7 +244,6 @@ function useSupabaseMeasurements(enabled: boolean) {
           ms: q.draft.ms,
           category: q.draft.category,
           hidden: false,
-          comment: q.draft.comment,
           pending: true,
         })),
     [queuedDrafts],
@@ -276,7 +271,6 @@ function useSupabaseMeasurements(enabled: boolean) {
             ended_at: item.draft.endedAt,
             ms: item.draft.ms,
             category: item.draft.category,
-            comment: item.draft.comment,
           },
         });
         dequeueDraft(item.tempId);
@@ -360,7 +354,6 @@ function useSupabaseMeasurements(enabled: boolean) {
           ...(patch.ms !== undefined ? { ms: patch.ms } : {}),
           ...(patch.category !== undefined ? { category: patch.category } : {}),
           ...(patch.hidden !== undefined ? { hidden: patch.hidden } : {}),
-          ...(patch.comment !== undefined ? { comment: patch.comment ?? null } : {}),
         },
       }),
     onSuccess: invalidate,

@@ -10,7 +10,6 @@ export type MeasurementRow = {
   ms: number;
   category: string;
   hidden: boolean;
-  comment: string | null;
 };
 
 function dbError(scope: string, error: { message: string }): never {
@@ -32,7 +31,7 @@ export const listMeasurements = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("measurements")
-      .select("id, started_at, ended_at, ms, category, hidden, comment")
+      .select("id, started_at, ended_at, ms, category, hidden")
       .eq("user_id", userId)
       .order("ended_at", { ascending: false })
       .limit(1000);
@@ -46,7 +45,6 @@ const createSchema = z
     ended_at: isoDate,
     ms: z.number().int().min(0).max(MAX_MS),
     category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/),
-    comment: z.string().max(2000).optional(),
   })
   .refine((d) => Date.parse(d.ended_at) >= Date.parse(d.started_at), {
     message: "ended_at skal være efter started_at",
@@ -71,9 +69,8 @@ export const createMeasurement = createServerFn({ method: "POST" })
         ms: data.ms,
         category: data.category,
         hidden: false,
-        comment: data.comment ?? null,
       })
-      .select("id, started_at, ended_at, ms, category, hidden, comment")
+      .select("id, started_at, ended_at, ms, category, hidden")
       .single();
     if (error) dbError("measurements.create", error);
     return row as MeasurementRow;
@@ -87,7 +84,6 @@ const updateSchema = z
     ms: z.number().int().min(0).max(MAX_MS).optional(),
     category: z.string().min(1).max(64).regex(/^[a-z0-9_]+$/).optional(),
     hidden: z.boolean().optional(),
-    comment: z.string().max(2000).nullable().optional(),
   })
   .refine(
     (d) =>
