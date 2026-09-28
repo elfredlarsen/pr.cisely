@@ -139,3 +139,58 @@ export const deleteCategory = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+const setOrderSchema = z.object({
+  order: z.array(z.string().min(1).max(80)).max(200).nullable(),
+});
+
+export const setCategoryOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => setOrderSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    if (!data.order) return { ok: true };
+    const results = await Promise.all(
+      data.order.map((value, i) =>
+        supabase
+          .from("categories")
+          .update({ sort_order: i })
+          .eq("user_id", userId)
+          .eq("value", value),
+      ),
+    );
+    const failed = results.find((r) => r.error);
+    if (failed?.error) dbError("category-order.set", failed.error);
+    return { ok: true };
+  });
+const setActiveSchema = z.object({
+  active: z.array(z.string().min(1).max(80)).max(200).nullable(),
+});
+
+export const setActiveCategories = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => setActiveSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    if (data.active === null) {
+      const { error } = await supabase
+        .from("categories")
+        .update({ hidden: false })
+        .eq("user_id", userId);
+      if (error) dbError("active-categories.set", error);
+      return { ok: true };
+    }
+    const list = data.active;
+    const { error: e1 } = await supabase
+      .from("categories")
+      .update({ hidden: true })
+      .eq("user_id", userId)
+      .not("value", "in", `(${list.map((v) => `"${v.replace(/"/g, "")}"`).join(",")})`);
+    if (e1) dbError("active-categories.set", e1);
+    const { error: e2 } = await supabase
+      .from("categories")
+      .update({ hidden: false })
+      .eq("user_id", userId)
+      .in("value", list);
+    if (e2) dbError("active-categories.set", e2);
+    return { ok: true };
+  });
