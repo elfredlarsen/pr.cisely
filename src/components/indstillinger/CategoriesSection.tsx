@@ -85,7 +85,7 @@ export function CategoriesSection() {
   };
 
   const saveOrder = useServerFn(setCategoryOrderFn);
-  const invalidateOrder = useInvalidateCategoryOrder();
+  const invalidateOrder = useInvalidateCategories();
 
   const move = async (index: number, direction: -1 | 1) => {
     const target = index + direction;
@@ -101,7 +101,7 @@ export function CategoriesSection() {
     }
   };
 
-  if (isLoading || activeLoading) {
+  if (isLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-10 w-full" />
