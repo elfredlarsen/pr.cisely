@@ -1,39 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-
-import { getActiveCategories } from "@/lib/active-categories.functions";
+import { useCategories } from "@/hooks/use-categories";
 import { type Category } from "@/lib/categories";
-import { usePreviewMode } from "@/lib/preview-mode";
 
-export const ACTIVE_CATEGORIES_QUERY_KEY = ["active-categories"] as const;
-
-/**
- * Returnerer per-bruger filter fra databasen (`null` = alle kategorier vises).
- * I preview-tilstand bruges det lokale fallback-filter.
- */
-export function useActiveCategoriesQuery() {
-  const fetcher = useServerFn(getActiveCategories);
-  const preview = usePreviewMode();
-  return useQuery<{ active: string[] | null }>({
-    queryKey: [...ACTIVE_CATEGORIES_QUERY_KEY, preview ? "preview" : "live"],
-    queryFn: () =>
-      preview
-        ? Promise.resolve({ active: null })
-        : fetcher(),
-    staleTime: 60 * 1000,
-  });
-}
-
-export function useInvalidateActiveCategories() {
-  const qc = useQueryClient();
-  return () =>
-    Promise.all([
-      qc.invalidateQueries({ queryKey: ACTIVE_CATEGORIES_QUERY_KEY }),
-      qc.invalidateQueries({ queryKey: ["categories"] }),
-    ]);
-}
-
+/** `null` = alle kategorier er aktive; ellers værdierne for ikke-skjulte kategorier. */
 export function useActiveCategoriesFilter(): Category[] | null {
-  const { data } = useActiveCategoriesQuery();
-  return data?.active ?? null;
+  const { data } = useCategories();
+  const rows = data ?? [];
+  if (!rows.some((r) => r.hidden)) return null;
+  return rows.filter((r) => !r.hidden).map((r) => r.value);
 }

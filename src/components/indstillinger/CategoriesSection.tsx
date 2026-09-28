@@ -8,21 +8,18 @@ import { AddCategoryForm, CategoryLabelEditor } from "@/components/indstillinger
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { type Category } from "@/lib/categories";
-import { useCategories, useInvalidateCategoryOrder } from "@/hooks/use-categories";
+import { useCategories, useInvalidateCategories } from "@/hooks/use-categories";
 import {
-  useActiveCategoriesQuery,
-  useInvalidateActiveCategories,
-} from "@/hooks/use-active-categories";
-import { setCategoryOrder as setCategoryOrderFn } from "@/lib/category-order.functions";
-import { setActiveCategories as setActiveCategoriesFn } from "@/lib/active-categories.functions";
+  setCategoryOrder as setCategoryOrderFn,
+  setActiveCategories as setActiveCategoriesFn,
+} from "@/lib/categories.functions";
 
 export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
   const visible = categories ?? [];
 
-  const { data: activeData, isLoading: activeLoading } = useActiveCategoriesQuery();
   const saveActive = useServerFn(setActiveCategoriesFn);
-  const invalidateActive = useInvalidateActiveCategories();
+  const invalidateActive = useInvalidateCategories();
 
   const [filter, setFilter] = useState<Set<Category> | null>(null);
   const didMountRef = useRef(false);
@@ -37,9 +34,13 @@ export function CategoriesSection() {
     filter === null ? visible.length : visible.filter((c) => filter.has(c.value)).length;
 
   useEffect(() => {
-    const v = activeData?.active ?? null;
-    setFilter(v && v.length > 0 ? new Set(v) : null);
-  }, [activeData]);
+    const rows = categories ?? [];
+    setFilter(
+      rows.some((r) => r.hidden)
+        ? new Set(rows.filter((r) => !r.hidden).map((r) => r.value))
+        : null,
+    );
+  }, [categories]);
 
   useLayoutEffect(() => {
     const el = listRef.current;
@@ -84,7 +85,7 @@ export function CategoriesSection() {
   };
 
   const saveOrder = useServerFn(setCategoryOrderFn);
-  const invalidateOrder = useInvalidateCategoryOrder();
+  const invalidateOrder = useInvalidateCategories();
 
   const move = async (index: number, direction: -1 | 1) => {
     const target = index + direction;
@@ -100,7 +101,7 @@ export function CategoriesSection() {
     }
   };
 
-  if (isLoading || activeLoading) {
+  if (isLoading) {
     return (
       <div className="space-y-2">
         <Skeleton className="h-10 w-full" />
