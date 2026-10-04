@@ -121,7 +121,7 @@ export function DataManagementSection() {
         </p>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex border-t border-border pt-6">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button

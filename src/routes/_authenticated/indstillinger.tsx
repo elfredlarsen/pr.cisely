@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordForm";
@@ -10,98 +11,68 @@ export const Route = createFileRoute("/_authenticated/indstillinger")({
   head: () => ({
     meta: [
       { title: "Indstillinger · pr:cisely" },
-      {
-        name: "description",
-        content: "Administrer din konto og indstillinger i pr:cisely.",
-      },
+      { name: "description", content: "Administrer din konto og indstillinger i pr:cisely." },
       { property: "og:title", content: "Indstillinger · pr:cisely" },
-      {
-        property: "og:description",
-        content: "Administrer din konto og indstillinger i pr:cisely.",
-      },
+      { property: "og:description", content: "Administrer din konto og indstillinger i pr:cisely." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: IndstillingerPage,
 });
 
+function Section({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <section aria-labelledby={id} className="rounded-lg border border-border bg-card p-6">
+      <header className="mb-5">
+        <h2 id={id} className="text-base font-semibold">
+          {title}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      </header>
+      {children}
+    </section>
+  );
+}
+
 function IndstillingerPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
-        <h1 className="sr-only">Indstillinger</h1>
+      <main className="mx-auto w-full max-w-[720px] flex-1 px-4 py-8 sm:px-6">
+        <header className="mb-6">
+          <h1 className="text-2xl font-semibold tracking-tight">Indstillinger</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Konto, kategorier, udseende og dine data.
+          </p>
+        </header>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <section
-            aria-labelledby="konto-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
-          >
-            <header className="mb-6 text-center">
-              <h2 id="konto-heading" className="text-lg font-semibold">
-                Konto
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Administrer din adgangskode og kontooplysninger.
-              </p>
-            </header>
-
-            <div>
-              <h3 className="text-center text-sm font-semibold">Skift adgangskode</h3>
-              <div className="mx-auto mt-4 max-w-md">
-                <ChangePasswordForm />
-              </div>
-            </div>
-
-            <div className="mt-8 border-t border-border pt-6">
-              <h3 className="text-center text-sm font-semibold">Inviter en kollega</h3>
-              <div className="mx-auto mt-4 max-w-md">
-                <InviteSection />
-              </div>
-            </div>
-
-            <div className="mt-8 border-t border-border pt-6">
-              <h3 className="text-center text-sm font-semibold">Udseende</h3>
-              <div className="mx-auto mt-4 max-w-md">
-                <AppearanceSection />
-              </div>
-            </div>
-          </section>
-
-          <section
-            aria-labelledby="kategorier-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
-          >
-            <header className="mb-6 text-center">
-              <h2 id="kategorier-heading" className="text-lg font-semibold">
-                Kategorier
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Vælg hvilke kategorier der vises, når du gemmer en registrering.
-              </p>
-            </header>
-
-            <div className="mx-auto max-w-md">
-              <CategoriesSection />
-            </div>
-          </section>
-
-          <section
-            aria-labelledby="mine-data-heading"
-            className="mx-auto w-full max-w-md rounded-lg border border-border bg-card p-6 lg:max-w-none"
-          >
-            <header className="mb-6 text-center">
-              <h2 id="mine-data-heading" className="text-lg font-semibold">
-                Mine data
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Styr hvordan dine registreringer opbevares og slettes.
-              </p>
-            </header>
-
-            <div className="mx-auto max-w-md">
-              <DataManagementSection />
-            </div>
-          </section>
+        <div className="space-y-6">
+          <Section id="adgangskode-heading" title="Skift adgangskode" description="Vælg en ny adgangskode på mindst 8 tegn.">
+            <ChangePasswordForm />
+          </Section>
+          <Section id="invite-heading" title="Inviter en kollega" description="Del linket, så en kollega kan oprette en konto.">
+            <InviteSection />
+          </Section>
+          <Section id="kategorier-heading" title="Kategorier" description="Vælg hvilke kategorier der vises, når du gemmer en registrering.">
+            <CategoriesSection />
+          </Section>
+          <Section id="udseende-heading" title="Udseende" description="Lyst, mørkt eller det samme som din enhed.">
+            <AppearanceSection />
+          </Section>
+          <Section id="mine-data-heading" title="Mine data" description="Styr hvordan dine registreringer opbevares og slettes.">
+            <DataManagementSection />
+          </Section>
         </div>
       </main>
     </div>
