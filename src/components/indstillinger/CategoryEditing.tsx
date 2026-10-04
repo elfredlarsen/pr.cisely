@@ -131,8 +131,8 @@ export function CategoryLabelEditor({
           <AlertDialogHeader>
             <AlertDialogTitle>Slet kategorien "{row.label}"?</AlertDialogTitle>
             <AlertDialogDescription>
-              Dine gamle registreringer bevares, men viser kategoriens interne navn.
-              Vil du blot skjule den, så slå den fra i stedet.
+              Kun kategorier uden registreringer kan slettes. Bruges kategorien
+              allerede, så slå den fra for at skjule den i stedet.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
