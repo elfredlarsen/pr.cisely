@@ -6,7 +6,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
-      position="top-right"
+      position="bottom-center"
       closeButton
       style={{ width: "280px" } as React.CSSProperties}
       toastOptions={{
