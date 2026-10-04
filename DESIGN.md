@@ -43,3 +43,12 @@ Stopur-knapper (hvid tekst og ikon):
 	- Start/Pause/Fortsæt (hovedknap): #9333ea (lilla)
 	- Afslut: #0f766e (petrolgrøn, flueben-ikon)
 	- Nulstil: #64748b (blågrå)
+
+Mørk tilstand (Lyst / Mørkt / Følg systemet i Indstillinger):
+	- Baggrund:            #0f0f12
+	- Overflader:          #18181c
+	- Tekst primær:        #ededf0
+	- Tekst sekundær:      #a1a1aa (på #0f0f12)   — 7,8:1
+	- Kant:                #2e2e35
+	- Primær accent:       #a855f7 + hvid tekst
+	- Stopur-knapperne beholder samme farver som i lyst tema.

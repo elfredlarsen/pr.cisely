@@ -10,6 +10,7 @@ import { type ErrorComponentProps,
 } from "@tanstack/react-router";
 
 import { Toaster } from "@/components/ui/sonner";
+import { THEME_SCRIPT, useThemeSync } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 // Bemærk: den tidligere `useClearLegacyLocalStorage`-hook er fjernet bevidst.
@@ -136,8 +137,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="da">
+    <html lang="da" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -150,6 +152,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useThemeSync();
 
 
 

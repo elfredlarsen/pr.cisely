@@ -4,6 +4,7 @@ import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordFor
 import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
 import { CategoriesSection } from "@/components/indstillinger/CategoriesSection";
 import { InviteSection } from "@/components/indstillinger/InviteSection";
+import { AppearanceSection } from "@/components/indstillinger/AppearanceSection";
 
 export const Route = createFileRoute("/_authenticated/indstillinger")({
   head: () => ({
@@ -55,6 +56,13 @@ function IndstillingerPage() {
               <h3 className="text-center text-sm font-semibold">Inviter en kollega</h3>
               <div className="mx-auto mt-4 max-w-md">
                 <InviteSection />
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-border pt-6">
+              <h3 className="text-center text-sm font-semibold">Udseende</h3>
+              <div className="mx-auto mt-4 max-w-md">
+                <AppearanceSection />
               </div>
             </div>
           </section>
