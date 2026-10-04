@@ -10,6 +10,7 @@ import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
 import { Button } from "@/components/ui/button";
 import { useLastCategory } from "@/hooks/use-last-category";
 import { useMeasurements, type MeasurementDraft } from "@/hooks/use-measurements";
+import { deleteWithUndo } from "@/lib/delete-with-undo";
 
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -116,7 +117,9 @@ function Index() {
           <MeasurementsTable
             measurements={visibleToday}
             onUpdate={update}
-            onDelete={remove}
+            onDelete={(id) =>
+              deleteWithUndo(visibleToday.find((m) => m.id === id), remove, add)
+            }
             loaded={loaded}
             limit={5}
           />

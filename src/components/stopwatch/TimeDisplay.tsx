@@ -1,4 +1,4 @@
-type Props = { ms: number; running?: boolean };
+type Props = { ms: number; running?: boolean; paused?: boolean };
 
 function pad(n: number, w = 2) {
   return n.toString().padStart(w, "0");
@@ -21,13 +21,13 @@ const digitClass =
 const labelClass =
   "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
 
-export function TimeDisplay({ ms, running = false }: Props) {
+export function TimeDisplay({ ms, paused = false }: Props) {
   const { hours, minutes, seconds } = formatTime(ms);
   return (
     <div
       aria-live="polite"
       aria-atomic="true"
-      className="flex flex-col items-center select-none text-foreground"
+      className={`flex flex-col items-center select-none text-foreground transition-opacity duration-300 ${paused ? "opacity-60" : "opacity-100"}`}
       style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
       <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>

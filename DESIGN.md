@@ -56,3 +56,5 @@ Mørk tilstand (Lyst / Mørkt / Følg systemet i Indstillinger):
 	- Kant:                #2e2e35
 	- Primær accent:       #a855f7 + hvid tekst
 	- Stopur-knapperne beholder samme farver som i lyst tema.
+
+- Enkelt-sletning og kategoriskift i tabeller bekræftes ikke: sletning kan fortrydes i 5 sekunder, kategori kan rettes igen. Sletning af en hel dag eller alt bekræftes stadig.

@@ -115,7 +115,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           ref={clockRef}
           className={`flex w-full justify-center transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}
         >
-          <TimeDisplay ms={displayMs} running={status === "running"} />
+          <TimeDisplay ms={displayMs} running={status === "running"} paused={status === "paused"} />
         </div>
 
         {status === "running" && displayMs >= LONG_RUN_MS && (

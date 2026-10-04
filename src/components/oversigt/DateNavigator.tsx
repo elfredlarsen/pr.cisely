@@ -40,6 +40,11 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
   };
 
   const dataModifier = useMemo(() => datesWithData, [datesWithData]);
+  const now = new Date();
+  const isToday =
+    value.getFullYear() === now.getFullYear() &&
+    value.getMonth() === now.getMonth() &&
+    value.getDate() === now.getDate();
 
   return (
     <div className="flex items-center justify-center gap-2">
@@ -100,6 +105,17 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
           <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </Button>
       </IconTooltip>
+      {!isToday && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onChange(new Date())}
+          className="min-h-9 px-3 text-xs"
+        >
+          I dag
+        </Button>
+      )}
     </div>
   );
 }
