@@ -407,8 +407,8 @@ export function MeasurementsList({
                   data-state={rowEditing ? "selected" : undefined}
                   className={cn(
                     rowEditing
-                      ? "border-border/40 bg-[#c471ed]/15 hover:bg-[#c471ed]/15 data-[state=selected]:bg-[#c471ed]/15"
-                      : "border-border/40 hover:bg-[#c471ed]/10",
+                      ? "border-border/40 bg-brand/15 hover:bg-brand/15 data-[state=selected]:bg-brand/15"
+                      : "border-border/40 hover:bg-brand/10",
                   )}
                 >
 
@@ -431,7 +431,7 @@ export function MeasurementsList({
                       }}
                     >
                       <SelectTrigger
-                        className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-[#c471ed]/40 hover:bg-[#c471ed]/25 hover:text-foreground"
+                        className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-brand/40 hover:bg-brand/25 hover:text-foreground"
                         aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                       >
                         <SelectValue className="truncate" />
@@ -460,7 +460,7 @@ export function MeasurementsList({
                             <Button
                               type="button"
                               variant="ghost"
-                              className="h-9 w-12 px-0 py-0 text-muted-foreground hover:bg-[#c471ed]/25 hover:text-destructive"
+                              className="h-9 w-12 px-0 py-0 text-muted-foreground hover:bg-brand/25 hover:text-destructive"
                               aria-label="Slet registrering"
                             >
                               <Trash2 className="h-4 w-4" aria-hidden="true" />

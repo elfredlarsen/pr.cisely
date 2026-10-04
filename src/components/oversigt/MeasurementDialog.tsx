@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
   Dialog,
@@ -112,6 +112,9 @@ export function MeasurementDialog({
   const { data: allCategories = [] } = useCategories();
   const lastCategory = useLastCategory();
   const saveLastCategory = useSaveLastCategory();
+  // Ref så en sen indlæsning af senest valgte kategori ikke nulstiller felterne midt i redigering.
+  const lastCategoryRef = useRef(lastCategory);
+  lastCategoryRef.current = lastCategory;
   const visibleCategories = allCategories.filter(
     (c) =>
       activeFilter === null || activeFilter.includes(c.value) || c.value === category,
@@ -137,7 +140,7 @@ export function MeasurementDialog({
         `${pad(Math.floor(endSec / 3600))}:${pad(Math.floor((endSec % 3600) / 60))}:00`,
       );
       setDuration(msToDurationInput((endSec - startSec) * 1000));
-      setCategory(defaultCategory ?? lastCategory ?? "");
+      setCategory(defaultCategory ?? lastCategoryRef.current ?? "");
     }
   }, [open, initial, defaultCategory]);
 
