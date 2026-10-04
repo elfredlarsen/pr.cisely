@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, ChevronsDownUp, ChevronsUpDown, Copy, Plus, Trash2 } from "lucide-react";
 import { formatTotal } from "@/components/oversigt/format";
 import { toast } from "sonner";
+import { PageHeader, PAGE_CONTAINER } from "@/components/PageHeader";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { Button } from "@/components/ui/button";
 import {
@@ -202,8 +203,8 @@ function OversigtPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8">
-        <h1 className="sr-only">Oversigt</h1>
+      <main className={PAGE_CONTAINER}>
+        <PageHeader title="Oversigt" description="Dine registreringer dag for dag." />
 
         <DateNavigator
           value={date}

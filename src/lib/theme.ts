@@ -18,6 +18,10 @@ function apply(choice: ThemeChoice) {
     choice === "dark" ||
     (choice === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   document.documentElement.classList.toggle("dark", dark);
+  const color = dark ? "#0f0f12" : "#fafafa";
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+    m.setAttribute("content", color);
+  });
 }
 
 /** Holder <html>-klassen i sync med valget og systemindstillingen. */
