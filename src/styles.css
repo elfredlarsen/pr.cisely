@@ -42,6 +42,8 @@
   --color-timer-finish: var(--timer-finish);
   --color-timer-reset: var(--timer-reset);
   --color-timer-foreground: var(--timer-foreground);
+  --shadow-card: var(--shadow-card);
+  --shadow-glass: var(--shadow-glass);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
@@ -81,8 +83,10 @@
   --timer-reset: #64748b;
   --timer-foreground: #ffffff;
 
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px -8px rgb(0 0 0 / 0.08);
+  --shadow-glass: inset 0 1px 0 rgb(255 255 255 / 0.25), inset 0 -8px 16px -8px rgb(0 0 0 / 0.18), 0 4px 12px -4px rgb(0 0 0 / 0.25);
   --brand-primary: var(--primary);
-  --overlay: rgb(0 0 0 / 0.8);
+  --overlay: rgb(0 0 0 / 0.5);
   color-scheme: light;
 
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
@@ -123,6 +127,7 @@
   --timer-reset: #64748b;
   --timer-foreground: #ffffff;
   --overlay: rgb(0 0 0 / 0.7);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px -8px rgb(0 0 0 / 0.5);
 }
 
 @layer base {

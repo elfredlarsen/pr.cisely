@@ -71,7 +71,7 @@ export function MeasurementsTable({
     >
       <div className="mx-auto flex h-full w-full min-h-0 max-w-3xl flex-col px-4 pb-3 pt-2">
         {!loaded ? (
-          <div className="rounded-lg border border-border bg-card p-3">
+          <div className="rounded-2xl border border-border/70 bg-card shadow-card p-3">
             <div className="space-y-2">
               <Skeleton className="h-7 w-full" />
               <Skeleton className="h-7 w-11/12" />
@@ -79,7 +79,7 @@ export function MeasurementsTable({
             </div>
           </div>
         ) : measurements.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-card px-6 py-10 text-center">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-border/70 bg-card shadow-card px-6 py-10 text-center">
             <Timer className="h-6 w-6 text-muted-foreground/60" aria-hidden="true" />
             <p className="text-sm font-medium text-foreground">
               Ingen registreringer endnu i dag
@@ -92,7 +92,7 @@ export function MeasurementsTable({
           <Collapsible
             open={open}
             onOpenChange={handleOpenChange}
-            className="flex flex-col rounded-lg border border-border bg-card"
+            className="flex flex-col rounded-2xl border border-border/70 bg-card shadow-card"
           >
             <CollapsibleTrigger asChild>
               <button

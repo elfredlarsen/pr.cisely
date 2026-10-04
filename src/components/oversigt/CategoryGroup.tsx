@@ -37,7 +37,7 @@ export function CategoryGroup({
     <Collapsible
       open={open}
       onOpenChange={onOpenChange}
-      className="rounded-lg border border-border bg-card"
+      className="rounded-2xl border border-border/70 bg-card shadow-card"
     >
       <CollapsibleTrigger asChild>
         <button
