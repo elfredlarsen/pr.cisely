@@ -9,22 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivatlivRouteImport } from './routes/privatliv'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivatlivRouteImport } from './routes/privatliv'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
 import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
+import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
 
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivatlivRoute = PrivatlivRouteImport.update({
-  id: '/privatliv',
-  path: '/privatliv',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -32,13 +26,24 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const PrivatlivRoute = PrivatlivRouteImport.update({
+  id: '/privatliv',
+  path: '/privatliv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
+  id: '/arkiv',
+  path: '/arkiv',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedIndstillingerRoute =
@@ -47,11 +52,6 @@ const AuthenticatedIndstillingerRoute =
     path: '/indstillinger',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
-  id: '/arkiv',
-  path: '/arkiv',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -116,18 +116,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privatliv': {
-      id: '/privatliv'
-      path: '/privatliv'
-      fullPath: '/privatliv'
-      preLoaderRoute: typeof PrivatlivRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -137,11 +130,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
+    '/privatliv': {
+      id: '/privatliv'
+      path: '/privatliv'
+      fullPath: '/privatliv'
+      preLoaderRoute: typeof PrivatlivRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -151,18 +151,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/indstillinger': {
-      id: '/_authenticated/indstillinger'
-      path: '/indstillinger'
-      fullPath: '/indstillinger'
-      preLoaderRoute: typeof AuthenticatedIndstillingerRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/arkiv': {
       id: '/_authenticated/arkiv'
       path: '/arkiv'
       fullPath: '/arkiv'
       preLoaderRoute: typeof AuthenticatedArkivRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/indstillinger': {
+      id: '/_authenticated/indstillinger'
+      path: '/indstillinger'
+      fullPath: '/indstillinger'
+      preLoaderRoute: typeof AuthenticatedIndstillingerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
