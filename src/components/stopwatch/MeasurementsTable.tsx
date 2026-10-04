@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, Timer } from "lucide-react";
 import {
   Collapsible,
@@ -16,6 +17,8 @@ type Props = {
   onUpdate: (id: string, patch: Partial<Omit<Measurement, "id">>) => void;
   onDelete: (id: string) => void;
   loaded?: boolean;
+  /** Show at most this many (newest first); total still covers all. */
+  limit?: number;
 };
 
 const FORMAT_KEY = "precisely.summaryFormat";
@@ -26,6 +29,7 @@ export function MeasurementsTable({
   onUpdate,
   onDelete,
   loaded = true,
+  limit,
 }: Props) {
   const [format, setFormat] = useState<SummaryFormat>("decimal");
   const [open, setOpen] = useState(true);
@@ -52,6 +56,13 @@ export function MeasurementsTable({
   };
 
   const total = measurements.reduce((sum, m) => sum + m.ms, 0);
+  const shown = useMemo(() => {
+    if (!limit) return measurements;
+    return [...measurements]
+      .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())
+      .slice(0, limit);
+  }, [measurements, limit]);
+  const hiddenCount = measurements.length - shown.length;
 
   return (
     <section
@@ -111,13 +122,24 @@ export function MeasurementsTable({
             <CollapsibleContent>
               <div className="scrollbar-purple max-h-80 overflow-y-auto border-t border-border px-2 pb-2">
                 <MeasurementsList
-                  items={measurements}
+                  items={shown}
                   onUpdate={onUpdate}
                   onDelete={onDelete}
                   stickyHeader
                   sortable={false}
                 />
               </div>
+              {hiddenCount > 0 && (
+                <p className="border-t border-border px-4 py-2.5 text-center text-xs text-muted-foreground">
+                  Viser {shown.length} af {measurements.length} ·{" "}
+                  <Link
+                    to="/arkiv"
+                    className="font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                  >
+                    Se hele dagen i Oversigt
+                  </Link>
+                </p>
+              )}
             </CollapsibleContent>
           </Collapsible>
         )}

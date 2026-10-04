@@ -107,6 +107,7 @@ function Index() {
             onUpdate={update}
             onDelete={remove}
             loaded={loaded}
+            limit={5}
           />
           <div className="mt-6 flex w-full justify-center">
             <Button
