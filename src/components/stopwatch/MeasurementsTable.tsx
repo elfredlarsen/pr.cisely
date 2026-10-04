@@ -133,7 +133,7 @@ export function MeasurementsTable({
                 <p className="border-t border-border px-4 py-2.5 text-center text-xs text-muted-foreground">
                   Viser {shown.length} af {measurements.length} ·{" "}
                   <Link
-                    to="/arkiv"
+                    to="/oversigt"
                     className="font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                   >
                     Se hele dagen i Oversigt

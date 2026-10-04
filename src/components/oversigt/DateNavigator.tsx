@@ -47,6 +47,7 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
     value.getDate() === now.getDate();
 
   return (
+    <div className="flex flex-col items-center gap-1">
     <div className="flex items-center justify-center gap-2">
       <IconTooltip label="Forrige dag">
         <Button
@@ -105,17 +106,20 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
           <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </Button>
       </IconTooltip>
-      {!isToday && (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onChange(new Date())}
-          className="min-h-9 px-3 text-xs"
-        >
-          I dag
-        </Button>
-      )}
+    </div>
+      <div className="flex min-h-9 items-center justify-center">
+        {!isToday && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onChange(new Date())}
+            className="min-h-9 px-3 text-xs"
+          >
+            I dag
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

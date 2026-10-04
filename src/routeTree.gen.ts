@@ -14,6 +14,7 @@ import { Route as PrivatlivRouteImport } from './routes/privatliv'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedOversigtRouteImport } from './routes/_authenticated/oversigt'
 import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
 import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
 
@@ -41,6 +42,11 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedOversigtRoute = AuthenticatedOversigtRouteImport.update({
+  id: '/oversigt',
+  path: '/oversigt',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedIndstillingerRoute =
   AuthenticatedIndstillingerRouteImport.update({
     id: '/indstillinger',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/arkiv': typeof AuthenticatedArkivRoute
   '/indstillinger': typeof AuthenticatedIndstillingerRoute
+  '/oversigt': typeof AuthenticatedOversigtRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/arkiv': typeof AuthenticatedArkivRoute
   '/indstillinger': typeof AuthenticatedIndstillingerRoute
+  '/oversigt': typeof AuthenticatedOversigtRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/arkiv': typeof AuthenticatedArkivRoute
   '/_authenticated/indstillinger': typeof AuthenticatedIndstillingerRoute
+  '/_authenticated/oversigt': typeof AuthenticatedOversigtRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/arkiv'
     | '/indstillinger'
+    | '/oversigt'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/arkiv'
     | '/indstillinger'
+    | '/oversigt'
     | '/'
   id:
     | '__root__'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/arkiv'
     | '/_authenticated/indstillinger'
+    | '/_authenticated/oversigt'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -151,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/oversigt': {
+      id: '/_authenticated/oversigt'
+      path: '/oversigt'
+      fullPath: '/oversigt'
+      preLoaderRoute: typeof AuthenticatedOversigtRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/indstillinger': {
       id: '/_authenticated/indstillinger'
       path: '/indstillinger'
@@ -171,12 +190,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedArkivRoute: typeof AuthenticatedArkivRoute
   AuthenticatedIndstillingerRoute: typeof AuthenticatedIndstillingerRoute
+  AuthenticatedOversigtRoute: typeof AuthenticatedOversigtRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedArkivRoute: AuthenticatedArkivRoute,
   AuthenticatedIndstillingerRoute: AuthenticatedIndstillingerRoute,
+  AuthenticatedOversigtRoute: AuthenticatedOversigtRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 

@@ -11,7 +11,7 @@ import { openShortcuts } from "@/components/ShortcutsDialog";
 
 const baseItems = [
   { label: "Stopur", to: "/" as const },
-  { label: "Oversigt", to: "/arkiv" as const },
+  { label: "Oversigt", to: "/oversigt" as const },
   { label: "Indstillinger", to: "/indstillinger" as const },
 ];
 
