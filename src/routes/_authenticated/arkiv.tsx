@@ -26,6 +26,7 @@ import { CategoryGroup } from "@/components/oversigt/CategoryGroup";
 import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
 import type { SummaryFormat } from "@/components/oversigt/format";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
+import { deleteWithUndo } from "@/lib/delete-with-undo";
 
 export const Route = createFileRoute("/_authenticated/arkiv")({
   head: () => ({
@@ -195,8 +196,7 @@ function OversigtPage() {
   };
 
   const handleDelete = (id: string) => {
-    remove(id);
-    toast.success("Registrering slettet");
+    deleteWithUndo(measurements.find((m) => m.id === id), remove, add);
   };
 
   return (
@@ -273,6 +273,10 @@ function OversigtPage() {
               <p className="text-sm font-medium text-foreground">
                 Ingen registreringer denne dag
               </p>
+              <Button type="button" variant="outline" onClick={handleAdd} className="min-h-11">
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Tilføj tid for denne dag
+              </Button>
             </div>
           ) : (
             visibleCategories.map((c) => (
