@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader, PAGE_CONTAINER } from "@/components/PageHeader";
 import { TopNav } from "@/components/stopwatch/TopNav";
 import { ChangePasswordForm } from "@/components/indstillinger/ChangePasswordForm";
 import { DataManagementSection } from "@/components/indstillinger/DataManagementSection";
@@ -49,13 +50,8 @@ function IndstillingerPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
-      <main className="mx-auto w-full max-w-[720px] flex-1 px-4 py-8 sm:px-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">Indstillinger</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Konto, kategorier, udseende og dine data.
-          </p>
-        </header>
+      <main className={PAGE_CONTAINER}>
+        <PageHeader title="Indstillinger" description="Konto, kategorier, udseende og dine data." />
 
         <div className="space-y-6">
           <Section id="adgangskode-heading" title="Skift adgangskode" description="Vælg en ny adgangskode på mindst 8 tegn.">

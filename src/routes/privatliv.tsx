@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageHeader, PAGE_CONTAINER } from "@/components/PageHeader";
+import { TopNav } from "@/components/stopwatch/TopNav";
+import { useSupabaseSession } from "@/hooks/use-supabase-session";
 
 const TITLE = "Privatliv og vilkår · pr:cisely";
 const DESC = "Sådan behandler pr:cisely dine data, hvor længe de gemmes, og vilkårene for brug.";
@@ -27,13 +30,25 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function PrivatlivPage() {
+  const { status } = useSupabaseSession();
+  const signedIn = status === "authenticated";
   return (
-    <div className="min-h-screen bg-background px-4 py-10">
-      <article className="mx-auto w-full max-w-2xl space-y-6 rounded-2xl border border-border/70 bg-card shadow-card p-6">
-        <header className="space-y-1">
-          <h1 className="text-2xl font-medium tracking-[-0.5px] text-foreground">Privatliv og vilkår</h1>
-          <p className="text-xs text-muted-foreground">Senest opdateret: 4. oktober 2026</p>
+    <div className="flex min-h-screen flex-col bg-background">
+      {signedIn ? (
+        <TopNav />
+      ) : (
+        <header className="sticky top-0 z-40 flex h-16 items-center border-b border-border/60 bg-background/70 px-4 backdrop-blur-xl sm:px-8">
+          <Link
+            to="/login"
+            className="rounded-lg text-[24px] font-medium leading-none tracking-[-0.9px] text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            pr<span className="text-brand">:</span>cisely
+          </Link>
         </header>
+      )}
+      <main className={PAGE_CONTAINER}>
+      <PageHeader title="Privatliv og vilkår" description="Senest opdateret: 4. oktober 2026" />
+      <article className="w-full space-y-6 rounded-2xl border border-border/70 bg-card shadow-card p-6">
 
         <p className="text-sm leading-relaxed text-muted-foreground">
           pr:cisely er et personligt værktøj til din egen tidsregistrering. Det bruges ikke af arbejdsgivere til at registrere ansattes arbejdstid, og dine data deles ikke med nogen.
@@ -85,11 +100,13 @@ function PrivatlivPage() {
         <Section title="8. Brugervilkår">
           <p>pr:cisely er kun til personlig brug. Adgang gives kun via invitationslink. Appen bruges på eget ansvar og leveres uden garanti for oppetid eller at data ikke går tabt. Vilkårene kan ændres; den gældende version står altid på denne side.</p>
         </Section>
-
-        <Link to="/login" className="inline-block text-sm text-muted-foreground underline-offset-2 hover:underline">
-          Tilbage
-        </Link>
       </article>
+      {!signedIn && (
+        <Link to="/login" className="mt-6 inline-block text-sm text-muted-foreground underline-offset-2 hover:underline">
+          Tilbage til login
+        </Link>
+      )}
+      </main>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { type ErrorComponentProps,
   Scripts,
 } from "@tanstack/react-router";
 
+import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { THEME_SCRIPT, useThemeSync } from "@/lib/theme";
 import appCss from "../styles.css?url";
@@ -24,19 +25,16 @@ import appCss from "../styles.css?url";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-card p-8 text-center shadow-card">
+        <p className="text-6xl font-semibold text-brand">404</p>
+        <h1 className="mt-4 text-xl font-semibold text-foreground">Siden findes ikke</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          Siden, du leder efter, findes ikke eller er flyttet.
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
+          <Button asChild>
+            <Link to="/">Til forsiden</Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -49,29 +47,23 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-card p-8 text-center shadow-card">
+        <h1 className="text-xl font-semibold text-foreground">Noget gik galt</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Siden kunne ikke indlæses. Prøv igen, eller gå til forsiden.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
+            Prøv igen
+          </Button>
+          <Button variant="outline" asChild>
+            <a href="/">Til forsiden</a>
+          </Button>
         </div>
       </div>
     </div>
@@ -91,7 +83,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "theme-color", content: "#0f0f12" },
+      { name: "theme-color", content: "#fafafa", media: "(prefers-color-scheme: light)" },
+      { name: "theme-color", content: "#0f0f12", media: "(prefers-color-scheme: dark)" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
