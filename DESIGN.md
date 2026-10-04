@@ -44,7 +44,7 @@ Stopur-knapper (hvid tekst og ikon):
 	- Start/Fortsæt: #15803d (skovgrøn, Play-ikon)       — 5,0:1
 	- Pause: #1d4ed8 (klar blå, Pause-ikon)               — 6,7:1
 	- Afslut: #9333ea (lilla, flueben-ikon)               — 5,4:1
-	- Nulstil: #64748b (blågrå)
+	- Nulstil: sekundær knap (lys/dæmpet baggrund, kant, mørk tekst, lidt smallere) — underordnet Afslut og Pause/Fortsæt.
 	- Nulstil bekræftes ikke, men kan fortrydes i 5 sekunder ("Fortryd"-besked).
 	  Undtagelse fra bekræftelsesreglen, da ingen gemte data slettes.
 
