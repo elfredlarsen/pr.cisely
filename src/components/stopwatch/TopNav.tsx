@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Keyboard, LogOut } from "lucide-react";
+import { Keyboard, LogOut, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -22,6 +23,9 @@ const linkActive = "text-foreground";
 export function TopNav() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [, setTheme] = useTheme();
+  const toggleTheme = () =>
+    setTheme(document.documentElement.classList.contains("dark") ? "light" : "dark");
 
   const handleLogout = async () => {
     try {
@@ -82,6 +86,16 @@ export function TopNav() {
           className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:hidden"
         >
           <Keyboard className="h-[17px] w-[17px]" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Skift lyst/mørkt tema"
+          title="Skift lyst/mørkt tema"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Sun className="hidden h-[17px] w-[17px] dark:block" aria-hidden="true" />
+          <Moon className="h-[17px] w-[17px] dark:hidden" aria-hidden="true" />
         </button>
         <button
           type="button"

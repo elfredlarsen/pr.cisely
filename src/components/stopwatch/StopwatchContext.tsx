@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 
+export const LONG_RUN_MS = 3 * 60 * 60 * 1000;
+
 type Status = "idle" | "running" | "paused";
 
 type State = {
@@ -16,6 +18,7 @@ type Action =
   | { type: "PAUSE"; now: number }
   | { type: "RESUME"; now: number }
   | { type: "RESET" }
+  | { type: "ADJUST"; deltaMs: number; now: number }
   | { type: "RESTORE"; snapshot: State };
 
 const initialState: State = {
@@ -47,6 +50,16 @@ function reducer(state: State, action: Action): State {
       return { ...state, status: "running", startedAt: action.now };
     case "RESET":
       return initialState;
+    case "ADJUST": {
+      if (state.status === "idle" || state.startedAtWall === null) return state;
+      const current = computeMs(state, action.now);
+      const delta = Math.max(-current, action.deltaMs);
+      return {
+        ...state,
+        elapsed: state.elapsed + delta,
+        startedAtWall: state.startedAtWall - delta,
+      };
+    }
     case "RESTORE":
       // Only restore onto an idle stopwatch so a new timing is never overwritten.
       if (state.status !== "idle") return state;
@@ -70,6 +83,7 @@ type StopwatchContextValue = {
   pause: () => void;
   resume: () => void;
   reset: () => StopwatchSnapshot;
+  adjust: (deltaMs: number) => void;
   restore: (snapshot: StopwatchSnapshot) => void;
   getFinishPayload: () => { startedAt: Date; endedAt: Date } | null;
 };
@@ -110,7 +124,8 @@ export function StopwatchProvider({ children }: { children: ReactNode }) {
     if (baseTitleRef.current === null) baseTitleRef.current = document.title;
     const p = (n: number) => String(n).padStart(2, "0");
     const t = `${p(Math.floor(shownSec / 3600))}:${p(Math.floor((shownSec % 3600) / 60))}:${p(shownSec % 60)}`;
-    document.title = `${state.status === "running" ? "▶" : "⏸"} ${t} · pr:cisely`;
+    const warn = state.status === "running" && shownSec >= LONG_RUN_MS / 1000 ? "⚠ " : "";
+    document.title = `${warn}${state.status === "running" ? "▶" : "⏸"} ${t} · pr:cisely`;
   }, [state.status, shownSec]);
 
   useEffect(
@@ -131,6 +146,7 @@ export function StopwatchProvider({ children }: { children: ReactNode }) {
       dispatch({ type: "RESET" });
       return snapshot;
     },
+    adjust: (deltaMs) => dispatch({ type: "ADJUST", deltaMs, now: performance.now() }),
     restore: (snapshot) => dispatch({ type: "RESTORE", snapshot }),
     getFinishPayload: () => {
       const now = performance.now();

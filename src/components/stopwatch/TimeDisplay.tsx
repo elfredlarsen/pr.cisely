@@ -1,4 +1,4 @@
-type Props = { ms: number };
+type Props = { ms: number; running?: boolean };
 
 function pad(n: number, w = 2) {
   return n.toString().padStart(w, "0");
@@ -21,7 +21,7 @@ const digitClass =
 const labelClass =
   "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
 
-export function TimeDisplay({ ms }: Props) {
+export function TimeDisplay({ ms, running = false }: Props) {
   const { hours, minutes, seconds } = formatTime(ms);
   return (
     <div
@@ -35,12 +35,12 @@ export function TimeDisplay({ ms }: Props) {
           <span className={digitClass}>{hours}</span>
           <span className={`${labelClass} mt-2`}>Timer</span>
         </div>
-        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <span className={`${digitClass} px-2 ${running ? "animate-pulse text-timer-start" : ""}`} aria-hidden="true">:</span>
         <div className="flex flex-col items-center">
           <span className={digitClass}>{minutes}</span>
           <span className={`${labelClass} mt-2`}>Minutter</span>
         </div>
-        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
+        <span className={`${digitClass} px-2 ${running ? "animate-pulse text-timer-start" : ""}`} aria-hidden="true">:</span>
         <div className="flex flex-col items-center">
           <span className={digitClass}>{seconds}</span>
           <span className={`${labelClass} mt-2`}>Sekunder</span>

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Play, Pause, RotateCcw, Check } from "lucide-react";
+import { Play, Pause, RotateCcw, Check, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
-import { useStopwatch } from "./StopwatchContext";
+import { useStopwatch, LONG_RUN_MS } from "./StopwatchContext";
 import { UndoToast } from "./UndoToast";
 
 const baseBtn =
@@ -23,7 +23,7 @@ type Props = {
 };
 
 export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
-  const { status, displayMs, start, pause, resume, reset, restore, getFinishPayload } =
+  const { status, displayMs, start, pause, resume, reset, restore, adjust, getFinishPayload } =
     useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
@@ -115,10 +115,39 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           ref={clockRef}
           className={`flex w-full justify-center transition-opacity duration-200 ${finishOpen ? "opacity-[0.03]" : "opacity-100"}`}
         >
-          <TimeDisplay ms={displayMs} />
+          <TimeDisplay ms={displayMs} running={status === "running"} />
         </div>
 
-        
+        {status === "running" && displayMs >= LONG_RUN_MS && (
+          <div
+            role="status"
+            className="flex items-center gap-2 rounded-lg border border-warning bg-warning/15 px-4 py-2 text-sm text-foreground"
+          >
+            <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+            Stopuret har kørt i over 3 timer. Har du glemt at stoppe det?
+          </div>
+        )}
+
+        {status !== "idle" && (
+          <div role="group" aria-label="Justér tid" className="-mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => adjust(-5 * 60 * 1000)}
+              disabled={displayMs < 1000}
+              className="min-h-11 rounded-lg border border-border px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+            >
+              −5 min
+            </button>
+            <button
+              type="button"
+              onClick={() => adjust(5 * 60 * 1000)}
+              className="min-h-11 rounded-lg border border-border px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              +5 min
+            </button>
+          </div>
+        )}
+
           <div
             role="group"
             aria-label="Stopur-kontroller"
