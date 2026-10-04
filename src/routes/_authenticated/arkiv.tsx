@@ -74,6 +74,31 @@ function OversigtPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"]')) return;
+      const shift = (n: number) =>
+        setDate((prev) => {
+          const d = new Date(prev);
+          d.setDate(d.getDate() + n);
+          return d;
+        });
+      if (e.key === "ArrowLeft") { e.preventDefault(); shift(-1); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); shift(1); }
+      else if (e.key === "t" || e.key === "T") {
+        e.preventDefault();
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        setDate(d);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   const handleFormatChange = (f: SummaryFormat) => {
     setFormat(f);
     try {
@@ -172,6 +197,9 @@ function OversigtPage() {
           }}
           datesWithData={datesWithData}
         />
+        <p className="mt-2 hidden text-center text-xs text-muted-foreground sm:block">
+          Genveje: ← forrige dag · → næste dag · T i dag
+        </p>
 
         <div className="mt-8">
           <DaySummary
