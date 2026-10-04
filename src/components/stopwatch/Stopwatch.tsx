@@ -12,7 +12,8 @@ const baseBtn =
 const startBtn = `${baseBtn} bg-timer-start`;
 const finishBtn = `${baseBtn} bg-timer-finish`;
 const pauseBtn = `${baseBtn} bg-timer-pause`;
-const resetBtn = `${baseBtn} bg-timer-reset`;
+const resetBtn =
+  "inline-flex h-14 min-w-0 flex-[0.7] basis-0 items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-3 py-2.5 text-base font-medium text-secondary-foreground transition-all duration-150 hover:bg-accent hover:text-accent-foreground active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 const resumeBtn = `${baseBtn} bg-timer-start`;
 
 const UNDO_TOAST_ID = "stopwatch-reset-undo";
