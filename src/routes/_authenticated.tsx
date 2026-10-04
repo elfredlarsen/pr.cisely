@@ -4,6 +4,7 @@ import { useSupabaseSession } from "@/hooks/use-supabase-session";
 import { usePreviewMode } from "@/lib/preview-mode";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { StopwatchProvider } from "@/components/stopwatch/StopwatchContext";
+import { ShortcutsDialog } from "@/components/ShortcutsDialog";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -29,6 +30,7 @@ function AuthenticatedLayout() {
     <StopwatchProvider>
       <PreviewBanner />
       <Outlet />
+      <ShortcutsDialog />
     </StopwatchProvider>
   );
 }

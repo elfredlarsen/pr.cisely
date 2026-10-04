@@ -198,7 +198,7 @@ function OversigtPage() {
           datesWithData={datesWithData}
         />
         <p className="mt-2 hidden text-center text-xs text-muted-foreground sm:block">
-          Genveje: ← forrige dag · → næste dag · T i dag
+          Genveje: ← forrige dag · → næste dag · T i dag · ? alle genveje
         </p>
 
         <div className="mt-8">
