@@ -268,7 +268,7 @@ function OversigtPage() {
               <Skeleton className="h-12 w-full rounded-lg" />
             </>
           ) : dayMeasurements.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-card px-6 py-12 text-center">
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/70 bg-card shadow-card px-6 py-12 text-center">
               <CalendarDays className="h-7 w-7 text-muted-foreground/60" aria-hidden="true" />
               <p className="text-sm font-medium text-foreground">
                 Ingen registreringer denne dag

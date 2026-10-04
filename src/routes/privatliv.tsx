@@ -29,7 +29,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function PrivatlivPage() {
   return (
     <div className="min-h-screen bg-background px-4 py-10">
-      <article className="mx-auto w-full max-w-2xl space-y-6 rounded-lg border border-border bg-card p-6">
+      <article className="mx-auto w-full max-w-2xl space-y-6 rounded-2xl border border-border/70 bg-card shadow-card p-6">
         <header className="space-y-1">
           <h1 className="text-2xl font-medium tracking-[-0.5px] text-foreground">Privatliv og vilkår</h1>
           <p className="text-xs text-muted-foreground">Senest opdateret: 4. oktober 2026</p>
