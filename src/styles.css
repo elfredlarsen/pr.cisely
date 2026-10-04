@@ -37,6 +37,8 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-timer-primary: var(--timer-primary);
+  --color-timer-start: var(--timer-start);
+  --color-timer-pause: var(--timer-pause);
   --color-timer-finish: var(--timer-finish);
   --color-timer-reset: var(--timer-reset);
   --color-timer-foreground: var(--timer-foreground);
@@ -73,7 +75,9 @@
   --ring: #9333ea;
 
   --timer-primary: #9333ea;
-  --timer-finish: #0f766e;
+  --timer-start: #15803d;
+  --timer-pause: #b45309;
+  --timer-finish: #9333ea;
   --timer-reset: #64748b;
   --timer-foreground: #ffffff;
 
@@ -113,7 +117,9 @@
   --input: #3a3a42;
   --ring: #c084fc;
   --timer-primary: #9333ea;
-  --timer-finish: #0f766e;
+  --timer-start: #15803d;
+  --timer-pause: #b45309;
+  --timer-finish: #9333ea;
   --timer-reset: #64748b;
   --timer-foreground: #ffffff;
   --overlay: rgb(0 0 0 / 0.7);
