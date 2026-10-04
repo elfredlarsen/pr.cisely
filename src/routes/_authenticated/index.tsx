@@ -97,7 +97,7 @@ function Index() {
               className="min-h-11 px-4 text-muted-foreground hover:text-foreground"
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
-              Glemt at tage tid? Tilføj manuelt
+              Tilføj manuelt
             </Button>
           </div>
         </div>
