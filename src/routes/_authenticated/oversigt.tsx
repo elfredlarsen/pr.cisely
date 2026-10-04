@@ -273,10 +273,6 @@ function OversigtPage() {
               <p className="text-sm font-medium text-foreground">
                 Ingen registreringer denne dag
               </p>
-              <Button type="button" variant="outline" onClick={handleAdd} className="min-h-11">
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                Tilføj tid for denne dag
-              </Button>
             </div>
           ) : (
             visibleCategories.map((c) => (
