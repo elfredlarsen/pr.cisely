@@ -12,11 +12,12 @@ Generelt
 
 Farver
 
-Signaturgradient — kun til dekoration (logo, kolon, hero).
+Signaturgradient (ton-i-ton lilla) — kun til dekoration (logo, kolon, favicon).
 Må ikke bruges på almindelige knapper eller baggrunde:
-	- Korall: #f64f59
-	- Lilla:  #c471ed
-	- Cyan:   #12c2e9
+	- Indigo:  #6366f1
+	- Lilla:   #9333ea (samme som primær accent)
+	- Fuchsia: #d946ef
+Små accenter (aktiv menulinje, rullebjælke) bruger primærfarven.
 
 Flade (UI):
 	- Primær accent (knapper, fokus, aktiv): #9333ea + hvid tekst   — 5,4:1
