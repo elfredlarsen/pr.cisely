@@ -111,10 +111,10 @@ export function DataManagementSection() {
           </SelectContent>
         </Select>
         <p className="text-sm text-muted-foreground">
-          Registreringer ældre end det valgte antal dage slettes automatisk.
+          Vi rydder automatisk op i registreringer, der er ældre end det valgte antal dage.
         </p>
         <p className="text-sm text-muted-foreground">
-          Konti uden login i 2 år slettes automatisk.{" "}
+          Bruger du ikke pr:cisely i 2 år, fjerner vi kontoen for at passe på dine data.{" "}
           <a href="/privatliv" className="underline underline-offset-2 hover:text-foreground">
             Privatliv og vilkår
           </a>

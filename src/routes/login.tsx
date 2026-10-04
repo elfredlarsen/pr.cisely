@@ -123,7 +123,7 @@ function LoginPage() {
           <span>cisely</span>
         </h1>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "Log ind på din konto" : "Opret en ny konto"}
+          {mode === "signin" ? "Velkommen tilbage" : "Kom i gang med pr:cisely"}
         </p>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div className="space-y-1">
@@ -162,7 +162,7 @@ function LoginPage() {
                 onChange={(e) => setAccessKey(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Du skal bruge den adgangsnøgle, du har fået udleveret.
+                Du får nøglen af en kollega, der allerede bruger pr:cisely.
               </p>
             </div>
           )}

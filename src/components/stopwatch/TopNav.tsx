@@ -1,20 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { Keyboard, LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { openShortcuts } from "@/components/ShortcutsDialog";
 
 
 
@@ -84,34 +74,27 @@ export function TopNav() {
       </ul>
 
       <div className="flex items-center gap-2">
-        <AlertDialog>
-        <AlertDialogTrigger asChild>
-
-          <button
-            type="button"
-            aria-label="Log ud"
-            className="group inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-transparent px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:px-2.5"
-          >
-            <LogOut
-              className="h-[15px] w-[15px] opacity-60 transition-opacity group-hover:opacity-100"
-              aria-hidden="true"
-            />
-            <span className="max-[640px]:hidden">Log ud</span>
-          </button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Log ud?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Du bliver sendt til login-siden og skal logge ind igen for at fortsætte.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuller</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout}>Log ud</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-        </AlertDialog>
+        <button
+          type="button"
+          onClick={openShortcuts}
+          aria-label="Tastaturgenveje"
+          title="Tastaturgenveje (?)"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:hidden"
+        >
+          <Keyboard className="h-[17px] w-[17px]" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          aria-label="Log ud"
+          className="group inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-transparent px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:border-border hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:px-2.5"
+        >
+          <LogOut
+            className="h-[15px] w-[15px] opacity-60 transition-opacity group-hover:opacity-100"
+            aria-hidden="true"
+          />
+          <span className="max-[640px]:hidden">Log ud</span>
+        </button>
       </div>
 
     </nav>
