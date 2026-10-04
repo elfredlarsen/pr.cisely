@@ -9,22 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PrivatlivRouteImport } from './routes/privatliv'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PrivatlivRouteImport } from './routes/privatliv'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
-import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
 import { Route as AuthenticatedOversigtRouteImport } from './routes/_authenticated/oversigt'
+import { Route as AuthenticatedIndstillingerRouteImport } from './routes/_authenticated/indstillinger'
+import { Route as AuthenticatedArkivRouteImport } from './routes/_authenticated/arkiv'
 
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivatlivRoute = PrivatlivRouteImport.update({
@@ -32,9 +28,13 @@ const PrivatlivRoute = PrivatlivRouteImport.update({
   path: '/privatliv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -42,9 +42,9 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
-  id: '/arkiv',
-  path: '/arkiv',
+const AuthenticatedOversigtRoute = AuthenticatedOversigtRouteImport.update({
+  id: '/oversigt',
+  path: '/oversigt',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedIndstillingerRoute =
@@ -53,9 +53,9 @@ const AuthenticatedIndstillingerRoute =
     path: '/indstillinger',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedOversigtRoute = AuthenticatedOversigtRouteImport.update({
-  id: '/oversigt',
-  path: '/oversigt',
+const AuthenticatedArkivRoute = AuthenticatedArkivRouteImport.update({
+  id: '/arkiv',
+  path: '/arkiv',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -128,18 +128,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privatliv': {
@@ -149,11 +142,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivatlivRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -163,11 +163,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/arkiv': {
-      id: '/_authenticated/arkiv'
-      path: '/arkiv'
-      fullPath: '/arkiv'
-      preLoaderRoute: typeof AuthenticatedArkivRouteImport
+    '/_authenticated/oversigt': {
+      id: '/_authenticated/oversigt'
+      path: '/oversigt'
+      fullPath: '/oversigt'
+      preLoaderRoute: typeof AuthenticatedOversigtRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/indstillinger': {
@@ -177,11 +177,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndstillingerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/oversigt': {
-      id: '/_authenticated/oversigt'
-      path: '/oversigt'
-      fullPath: '/oversigt'
-      preLoaderRoute: typeof AuthenticatedOversigtRouteImport
+    '/_authenticated/arkiv': {
+      id: '/_authenticated/arkiv'
+      path: '/arkiv'
+      fullPath: '/arkiv'
+      preLoaderRoute: typeof AuthenticatedArkivRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
