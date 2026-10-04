@@ -44,7 +44,7 @@ export function TopNav() {
   return (
     <nav
       aria-label="Hovednavigation"
-      className="sticky top-0 z-40 grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center gap-2 border-b border-border/60 bg-background/90 px-8 backdrop-blur-md max-[640px]:px-3"
+      className="sticky top-0 z-40 grid h-16 w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 border-b border-border/60 bg-background/90 px-8 backdrop-blur-md max-[640px]:px-3"
     >
       <Link
         to="/"
