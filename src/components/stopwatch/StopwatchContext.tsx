@@ -96,6 +96,30 @@ export function StopwatchProvider({ children }: { children: ReactNode }) {
     };
   }, [state]);
 
+  // Løbende tid i browserfanen (opdateres kun når sekundet skifter).
+  const shownSec = Math.floor(displayMs / 1000);
+  const baseTitleRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (state.status === "idle") {
+      if (baseTitleRef.current !== null) {
+        document.title = baseTitleRef.current;
+        baseTitleRef.current = null;
+      }
+      return;
+    }
+    if (baseTitleRef.current === null) baseTitleRef.current = document.title;
+    const p = (n: number) => String(n).padStart(2, "0");
+    const t = `${p(Math.floor(shownSec / 3600))}:${p(Math.floor((shownSec % 3600) / 60))}:${p(shownSec % 60)}`;
+    document.title = `${state.status === "running" ? "▶" : "⏸"} ${t} · pr:cisely`;
+  }, [state.status, shownSec]);
+
+  useEffect(
+    () => () => {
+      if (baseTitleRef.current !== null) document.title = baseTitleRef.current;
+    },
+    [],
+  );
+
   const value: StopwatchContextValue = {
     status: state.status,
     displayMs,
