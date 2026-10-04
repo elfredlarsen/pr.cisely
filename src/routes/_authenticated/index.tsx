@@ -89,6 +89,17 @@ function Index() {
             onRequestFinish={handleRequestFinish}
             finishOpen={pending !== null}
           />
+          <div className="-mt-4 flex justify-center pb-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setAddOpen(true)}
+              className="min-h-11 px-4 text-muted-foreground hover:text-foreground"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Glemt at tage tid? Tilføj manuelt
+            </Button>
+          </div>
         </div>
         <MeasurementDialog
           open={pending !== null}
@@ -109,16 +120,6 @@ function Index() {
             loaded={loaded}
             limit={5}
           />
-          <div className="mt-6 flex w-full justify-center">
-            <Button
-              type="button"
-              onClick={() => setAddOpen(true)}
-              className="min-h-11 px-5 font-semibold"
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              Tilføj registrering
-            </Button>
-          </div>
         </div>
       </main>
 
