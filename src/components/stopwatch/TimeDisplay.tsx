@@ -35,12 +35,12 @@ export function TimeDisplay({ ms, running = false }: Props) {
           <span className={digitClass}>{hours}</span>
           <span className={`${labelClass} mt-2`}>Timer</span>
         </div>
-        <span className={`${digitClass} px-2 ${running ? "animate-pulse text-timer-start" : ""}`} aria-hidden="true">:</span>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
         <div className="flex flex-col items-center">
           <span className={digitClass}>{minutes}</span>
           <span className={`${labelClass} mt-2`}>Minutter</span>
         </div>
-        <span className={`${digitClass} px-2 ${running ? "animate-pulse text-timer-start" : ""}`} aria-hidden="true">:</span>
+        <span className={`${digitClass} px-2`} aria-hidden="true">:</span>
         <div className="flex flex-col items-center">
           <span className={digitClass}>{seconds}</span>
           <span className={`${labelClass} mt-2`}>Sekunder</span>
