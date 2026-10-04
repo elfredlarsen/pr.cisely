@@ -45,6 +45,8 @@ Stopur-knapper (hvid tekst og ikon):
 	- Pause: #b45309 (rav, Pause-ikon)                    — 5,0:1
 	- Afslut: #9333ea (lilla, flueben-ikon)               — 5,4:1
 	- Nulstil: #64748b (blågrå)
+	- Nulstil bekræftes ikke, men kan fortrydes i 5 sekunder ("Fortryd"-besked).
+	  Undtagelse fra bekræftelsesreglen, da ingen gemte data slettes.
 
 Mørk tilstand (Lyst / Mørkt / Følg systemet i Indstillinger):
 	- Baggrund:            #0f0f12
