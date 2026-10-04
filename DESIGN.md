@@ -41,8 +41,9 @@ Typografi
 	- Tal i timeren: 500 (medium), monospaced (fast-bredde)
 
 Stopur-knapper (hvid tekst og ikon):
-	- Start/Pause/Fortsæt (hovedknap): #9333ea (lilla)
-	- Afslut: #0f766e (petrolgrøn, flueben-ikon)
+	- Start/Fortsæt: #15803d (skovgrøn, Play-ikon)       — 5,0:1
+	- Pause: #b45309 (rav, Pause-ikon)                    — 5,0:1
+	- Afslut: #9333ea (lilla, flueben-ikon)               — 5,4:1
 	- Nulstil: #64748b (blågrå)
 
 Mørk tilstand (Lyst / Mørkt / Følg systemet i Indstillinger):

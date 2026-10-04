@@ -19,11 +19,11 @@ import {
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2.5 rounded-lg px-3 py-2.5 text-lg font-semibold text-timer-foreground shadow-sm ring-offset-2 ring-offset-background transition-all duration-150 hover:shadow-md hover:brightness-110 active:scale-[0.98] active:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed";
 
-const startBtn = `${baseBtn} bg-timer-primary`;
+const startBtn = `${baseBtn} bg-timer-start`;
 const finishBtn = `${baseBtn} bg-timer-finish`;
-const pauseBtn = `${baseBtn} bg-timer-primary`;
+const pauseBtn = `${baseBtn} bg-timer-pause`;
 const resetBtn = `${baseBtn} bg-timer-reset`;
-const resumeBtn = `${baseBtn} bg-timer-primary`;
+const resumeBtn = `${baseBtn} bg-timer-start`;
 
 const UNDO_TOAST_ID = "stopwatch-reset-undo";
 
