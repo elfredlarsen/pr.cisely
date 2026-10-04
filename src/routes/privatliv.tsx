@@ -32,8 +32,12 @@ function PrivatlivPage() {
       <article className="mx-auto w-full max-w-2xl space-y-6 rounded-lg border border-border bg-card p-6">
         <header className="space-y-1">
           <h1 className="text-2xl font-medium tracking-[-0.5px] text-foreground">Privatliv og vilkår</h1>
-          <p className="text-xs text-muted-foreground">Senest opdateret: 27. september 2026</p>
+          <p className="text-xs text-muted-foreground">Senest opdateret: 4. oktober 2026</p>
         </header>
+
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          pr:cisely er et personligt værktøj til din egen tidsregistrering. Det bruges ikke af arbejdsgivere til at registrere ansattes arbejdstid, og dine data deles ikke med nogen.
+        </p>
 
         <Section title="1. Hvem står bag">
           <p>
@@ -47,27 +51,39 @@ function PrivatlivPage() {
 
         <Section title="2. Hvilke data gemmes">
           <p>Din e-mail, din adgangskode (krypteret – vi kan ikke se den), dine registreringer (tider og kategorier), dine egne kategorier og dine indstillinger.</p>
+          <p>Vi gemmer ikke IP-adresser, placering eller fritekstnoter.</p>
         </Section>
 
         <Section title="3. Formål">
           <p>Data bruges kun til at få appen til at virke for dig. Vi viser ingen reklamer, sælger ikke data og bruger ingen sporing.</p>
         </Section>
 
-        <Section title="4. Hvor data ligger">
-          <p>Data opbevares hos appens hosting- og databaseudbyder. Kun du kan se dine egne data.</p>
+        <Section title="4. Retsgrundlag">
+          <p>Vi behandler dine data for at levere den tjeneste, du selv har bedt om (aftale, jf. GDPR art. 6, stk. 1, litra b).</p>
         </Section>
 
-        <Section title="5. Hvor længe gemmes data">
+        <Section title="5. Hvor data ligger">
+          <p>Data opbevares hos appens hosting- og databaseudbyder inden for EU/EØS eller med tilsvarende beskyttelse. Kun du kan se dine egne data.</p>
+          <p>Der bruges ingen cookies til sporing – kun det nødvendige for at holde dig logget ind.</p>
+        </Section>
+
+        <Section title="6. Hvor længe gemmes data">
           <p>Registreringer slettes automatisk efter den periode, du selv vælger under Indstillinger (standard 30 dage).</p>
           <p className="font-medium text-foreground">Konti, hvor der ikke er logget ind i 2 år, slettes automatisk sammen med alle tilhørende data. Der sendes ingen varsel inden sletningen.</p>
         </Section>
 
-        <Section title="6. Dine rettigheder">
-          <p>Du har ret til indsigt i, rettelse af og sletning af dine data. Du kan selv slette al historik under Indstillinger, eller kontakte os for at få slettet din konto. Du kan klage til Datatilsynet (datatilsynet.dk).</p>
+        <Section title="7. Dine rettigheder">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Indsigt og kopi af dine data: skriv til kontaktmailen.</li>
+            <li>Sletning af historik: gør det selv under Indstillinger.</li>
+            <li>Sletning af hele kontoen: skriv til kontaktmailen.</li>
+            <li>Vi svarer inden for 30 dage.</li>
+            <li>Du kan klage til Datatilsynet (datatilsynet.dk).</li>
+          </ul>
         </Section>
 
-        <Section title="7. Brugervilkår">
-          <p>Adgang gives kun via invitationslink. Appen bruges på eget ansvar og leveres uden garanti for oppetid eller at data ikke går tabt. Vilkårene kan ændres; den gældende version står altid på denne side.</p>
+        <Section title="8. Brugervilkår">
+          <p>pr:cisely er kun til personlig brug. Adgang gives kun via invitationslink. Appen bruges på eget ansvar og leveres uden garanti for oppetid eller at data ikke går tabt. Vilkårene kan ændres; den gældende version står altid på denne side.</p>
         </Section>
 
         <Link to="/login" className="inline-block text-sm text-muted-foreground underline-offset-2 hover:underline">
