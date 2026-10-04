@@ -16,15 +16,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
@@ -104,9 +95,6 @@ export function MeasurementsList({
 
 }: Props) {
   const [rowEdit, setRowEdit] = useState<RowEdit | null>(null);
-  const [pendingCategoryChange, setPendingCategoryChange] = useState<
-    { id: string; from: Category; to: Category } | null
-  >(null);
   const [sort, setSort] = useState<{ field: SortField; dir: SortDir }>({
     field: "start",
     dir: sortable ? "asc" : "desc",
@@ -364,12 +352,6 @@ export function MeasurementsList({
     );
   };
 
-  const pendingFromLabel = pendingCategoryChange
-    ? categoryLabel(pendingCategoryChange.from)
-    : "";
-  const pendingToLabel = pendingCategoryChange
-    ? categoryLabel(pendingCategoryChange.to)
-    : "";
 
   return (
     <>
@@ -422,11 +404,8 @@ export function MeasurementsList({
                       onValueChange={(v) => {
                         const next = v as Category;
                         if (next !== m.category) {
-                          setPendingCategoryChange({
-                            id: m.id,
-                            from: m.category,
-                            to: next,
-                          });
+                          onUpdate(m.id, { category: next });
+                          toast.success(`Kategori ændret til ${categoryLabel(next)}`);
                         }
                       }}
                     >
@@ -454,37 +433,17 @@ export function MeasurementsList({
                   </TableCell>
                   <TableCell className="py-1 text-right">
                     <div className="flex items-center justify-end gap-0">
-                      <AlertDialog>
-                        <IconTooltip label="Slet registrering">
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              className="h-9 w-12 px-0 py-0 text-muted-foreground hover:bg-brand/25 hover:text-destructive"
-                              aria-label="Slet registrering"
-                            >
-                              <Trash2 className="h-4 w-4" aria-hidden="true" />
-                            </Button>
-                          </AlertDialogTrigger>
-                        </IconTooltip>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Slet registrering?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Registreringen slettes permanent og kan ikke gendannes.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Annuller</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => onDelete(m.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Slet
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <IconTooltip label="Slet registrering">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => onDelete(m.id)}
+                          className="h-9 w-12 px-0 py-0 text-muted-foreground hover:bg-brand/25 hover:text-destructive"
+                          aria-label="Slet registrering"
+                        >
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      </IconTooltip>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -494,37 +453,6 @@ export function MeasurementsList({
         </TableBody>
       </Table>
 
-      <AlertDialog
-        open={pendingCategoryChange !== null}
-        onOpenChange={(o) => {
-          if (!o) setPendingCategoryChange(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Skift kategori?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Fra <strong>{pendingFromLabel}</strong> til <strong>{pendingToLabel}</strong>.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuller</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (pendingCategoryChange) {
-                  const patch: Partial<Omit<Measurement, "id">> = {
-                    category: pendingCategoryChange.to,
-                  };
-                  onUpdate(pendingCategoryChange.id, patch);
-                }
-                setPendingCategoryChange(null);
-              }}
-            >
-              Skift
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }
