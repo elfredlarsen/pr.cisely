@@ -1,7 +1,7 @@
 # Fjern sideoverskrifter og tydeligere menu
 
 ## Hvad ændres
-1. **Overskrifterne "Oversigt" og "Indstillinger" fjernes visuelt**, så indholdet rykker op mod menulinjen. Skærmlæsere hører dem stadig. Privatlivssiden beholder sin synlige overskrift (den er ikke i menuen).
+1. **Overskrifterne "Oversigt" og "Indstillinger" fjernes visuelt**, så indholdet rykker op mod menulinjen. Skærmlæsere hører dem stadig. Stopursiden har allerede en usynlig overskrift for skærmlæsere og beholder den uændret. Privatlivssiden beholder sin synlige overskrift (den er ikke i menuen).
 2. **Menupunkterne bliver større og tydeligere:**
    - Større tekst (16 px i stedet for 14 px) og lidt federe.
    - Større klikflade (44 px høj) og mere afstand mellem punkterne.
