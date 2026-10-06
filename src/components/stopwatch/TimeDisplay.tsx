@@ -17,7 +17,7 @@ function formatTime(ms: number) {
 }
 
 const digitClass =
-  "text-[clamp(3.75rem,14.5vw,10.5rem)] leading-none tracking-tight";
+  "text-[clamp(3.25rem,18vw,10.5rem)] leading-none tracking-tight";
 const labelClass =
   "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
 
