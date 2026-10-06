@@ -28,6 +28,7 @@ import { MeasurementDialog } from "@/components/oversigt/MeasurementDialog";
 import type { SummaryFormat } from "@/components/oversigt/format";
 import type { MeasurementDraft } from "@/hooks/use-measurements";
 import { deleteWithUndo } from "@/lib/delete-with-undo";
+import { useMtimeEntered } from "@/hooks/use-mtime-entered";
 
 export const Route = createFileRoute("/_authenticated/oversigt")({
   head: () => ({
@@ -145,6 +146,7 @@ function OversigtPage() {
   }, [dayMeasurements]);
 
   const { data: categoriesData = [] } = useCategories();
+  const mtime = useMtimeEntered(date);
   const visibleCategories = useMemo(
     () => categoriesData.filter((c) => (byCategory.get(c.value)?.length ?? 0) > 0),
     [categoriesData, byCategory],
@@ -286,6 +288,8 @@ function OversigtPage() {
                 onOpenChange={(o) => setCategoryOpen(c.value, o)}
                 onUpdate={update}
                 onDelete={handleDelete}
+                entered={mtime.entered.has(c.value)}
+                onEnteredChange={(v) => mtime.toggle(c.value, v)}
               />
             ))
           )}

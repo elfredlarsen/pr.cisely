@@ -10,6 +10,15 @@ erDiagram
   categories ||--o{ measurements : "kategoriserer"
   categories |o--o{ profiles : "senest valgt"
   category_templates |o..o{ categories : "kopieres ved oprettelse"
+  auth_users ||--o{ mtime_entries : "afkrydser"
+  categories ||--o{ mtime_entries : "indtastet i mTime"
+
+  mtime_entries {
+    uuid user_id PK, FK "ON DELETE CASCADE"
+    date day PK
+    uuid category_id PK, FK "ON DELETE CASCADE"
+    timestamptz created_at
+  }
 
   auth_users {
     uuid id PK
