@@ -3,7 +3,7 @@
 ## Hvad ændres
 
 1. **Ny rækkefølge** i Indstillinger: Kategorier, Inviter en kollega, Skift adgangskode, Udseende og Mine data.
-2. **Tilføj kategori:** Nederst i Kategorier-kortet kommer et felt "Ny kategori" med knappen "Tilføj". Det er nok at trykke Enter.
+2. **Tilføj kategori:** Øverst i Kategorier-kortet kommer et felt "Ny kategori" med knappen "Tilføj". Det er nok at trykke Enter.
    - Den nye kategori lægges nederst på listen og er slået til med det samme, så den kan vælges, når du gemmer en registrering.
    - Hvis navnet er tomt, får du en besked. Det samme gælder, hvis navnet allerede findes, hvis du ikke tager eller lægger mellemrum med i sammenligningen og ikke skelner mellem store og små bogstaver. Navnet må højst være 80 tegn.
    - Når kategorien er tilføjet, vises en kort bekræftelse ("Kategori tilføjet"). Feltet tømmes, så du kan tilføje den næste.
