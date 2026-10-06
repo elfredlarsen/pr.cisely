@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  createCategory,
   deleteCategory,
   updateCategory,
   type CategoryRow,
@@ -147,47 +146,5 @@ export function CategoryLabelEditor({
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  );
-}
-
-export function AddCategoryForm() {
-  const [label, setLabel] = useState("");
-  const [saving, setSaving] = useState(false);
-  const qc = useQueryClient();
-  const create = useServerFn(createCategory);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = label.trim();
-    if (!trimmed) return;
-    setSaving(true);
-    try {
-      await create({ data: { label: trimmed } });
-      await qc.invalidateQueries({ queryKey: ["categories"] });
-      setLabel("");
-      toast.success("Kategori tilføjet");
-    } catch {
-      toast.error("Kunne ikke tilføje kategorien");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="mt-4 flex items-center gap-2">
-      <Input
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        placeholder="Navn på ny kategori"
-        maxLength={80}
-        disabled={saving}
-        aria-label="Navn på ny kategori"
-        className="h-9 flex-1"
-      />
-      <Button type="submit" size="sm" disabled={saving || !label.trim()}>
-        <Plus className="mr-1 h-4 w-4" />
-        Tilføj
-      </Button>
-    </form>
   );
 }

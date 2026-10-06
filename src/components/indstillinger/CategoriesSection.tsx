@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 
 import { Button } from "@/components/ui/button";
-import { AddCategoryForm, CategoryLabelEditor } from "@/components/indstillinger/CategoryEditing";
+import { CategoryLabelEditor } from "@/components/indstillinger/CategoryEditing";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { type Category } from "@/lib/categories";
