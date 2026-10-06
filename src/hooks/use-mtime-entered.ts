@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { listMtimeEntered, setMtimeEntered } from "@/lib/mtime.functions";
 import { usePreviewMode } from "@/lib/preview-mode";
 
-export function dayKey(d: Date): string {
+function dayKey(d: Date): string {
   const p = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
