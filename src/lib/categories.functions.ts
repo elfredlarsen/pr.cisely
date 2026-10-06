@@ -31,6 +31,50 @@ export const listCategories = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/æ/g, "ae")
+    .replace(/ø/g, "oe")
+    .replace(/å/g, "aa")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+const createSchema = z.object({ label: z.string().trim().min(1).max(80) });
+
+export const createCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => createSchema.parse(input))
+  .handler(async ({ data, context }): Promise<CategoryRow> => {
+    const { supabase, userId } = context;
+    const label = data.label;
+
+    const { data: existing, error: exErr } = await supabase
+      .from("categories")
+      .select("value, label, sort_order")
+      .eq("user_id", userId);
+    if (exErr) dbError("categories.create", exErr);
+    const rows = existing ?? [];
+    if (rows.some((r) => r.label.trim().toLowerCase() === label.toLowerCase())) {
+      throw new Error(`Kategorien "${label}" findes allerede.`);
+    }
+
+    const base = slugify(label) || "kategori";
+    const taken = new Set(rows.map((r) => r.value));
+    let value = base;
+    for (let i = 2; taken.has(value); i++) value = `${base}_${i}`;
+    const sort_order = rows.reduce((m, r) => Math.max(m, r.sort_order), -1) + 1;
+
+    const { data: inserted, error } = await supabase
+      .from("categories")
+      .insert({ value, label, sort_order, hidden: false, user_id: userId })
+      .select("id, value, label, sort_order, hidden")
+      .single();
+    if (error) dbError("categories.create", error);
+    return inserted as CategoryRow;
+  });
+
 const updateSchema = z.object({
   id: z.string().uuid(),
   label: z.string().min(1).max(80).optional(),
