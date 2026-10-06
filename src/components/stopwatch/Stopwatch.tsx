@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { TimeDisplay } from "./TimeDisplay";
 import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { useStopwatch, LONG_RUN_MS } from "./StopwatchContext";
-import { UndoToast } from "./UndoToast";
 
 const baseBtn =
   "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2 rounded-xl px-3 text-base font-semibold text-timer-foreground shadow-glass ring-offset-background transition-all duration-150 hover:brightness-110 active:scale-[0.97] active:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-30 sm:text-lg";
@@ -76,18 +75,17 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   const onReset = () => {
     const snapshot = reset();
     announce("Stopur nulstillet");
-    toast.custom(
-      (t) => (
-        <UndoToast
-          id={t}
-          onUndo={() => {
-            restore(snapshot);
-            announce("Nulstilling fortrudt");
-          }}
-        />
-      ),
-      { id: UNDO_TOAST_ID, duration: Infinity },
-    );
+    toast("Stopuret er nulstillet", {
+      id: UNDO_TOAST_ID,
+      duration: 5000,
+      action: {
+        label: "Fortryd",
+        onClick: () => {
+          restore(snapshot);
+          announce("Nulstilling fortrudt");
+        },
+      },
+    });
   };
   const onFinish = () => {
     if (finishOpen) return;

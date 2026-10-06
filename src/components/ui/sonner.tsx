@@ -10,24 +10,22 @@ const Toaster = ({ ...props }: ToasterProps) => {
       offset={{ top: 76, right: 16 }}
       mobileOffset={{ top: 72, right: 12, left: 12 }}
       closeButton
-      style={{ width: "280px" } as React.CSSProperties}
+      style={{ width: "340px" } as React.CSSProperties}
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:p-2 group-[.toaster]:text-xs group-[.toaster]:min-h-0",
-          success:
-            "group-[.toaster]:!bg-success group-[.toaster]:!text-success-foreground group-[.toaster]:!border-success",
-          error:
-            "group-[.toaster]:!bg-destructive group-[.toaster]:!text-destructive-foreground group-[.toaster]:!border-destructive",
-          warning:
-            "group-[.toaster]:!bg-warning group-[.toaster]:!text-warning-foreground group-[.toaster]:!border-warning",
-          info:
-            "group-[.toaster]:!bg-info group-[.toaster]:!text-info-foreground group-[.toaster]:!border-info",
-          description: "group-[.toast]:!text-current group-[.toast]:opacity-80 group-[.toast]:text-xs",
-          actionButton: "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+            "group toast group-[.toaster]:!rounded-xl group-[.toaster]:!border group-[.toaster]:!border-border/70 group-[.toaster]:!bg-popover group-[.toaster]:!text-popover-foreground group-[.toaster]:!shadow-card group-[.toaster]:!px-4 group-[.toaster]:!py-3 group-[.toaster]:!text-sm group-[.toaster]:!gap-3",
+          title: "group-[.toast]:!font-medium",
+          description: "group-[.toast]:!text-muted-foreground group-[.toast]:text-xs",
+          success: "[&_[data-icon]]:!text-success",
+          error: "[&_[data-icon]]:!text-destructive",
+          warning: "[&_[data-icon]]:!text-warning",
+          info: "[&_[data-icon]]:!text-info",
+          actionButton:
+            "group-[.toast]:!h-auto group-[.toast]:!rounded-lg group-[.toast]:!bg-primary group-[.toast]:!px-3 group-[.toast]:!py-1.5 group-[.toast]:!text-xs group-[.toast]:!font-semibold group-[.toast]:!text-primary-foreground",
           cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
           closeButton:
-            "group-[.toast]:!bg-transparent group-[.toast]:!text-current group-[.toast]:!border-current/30",
+            "group-[.toast]:!bg-popover group-[.toast]:!text-muted-foreground group-[.toast]:!border-border",
         },
       }}
       {...props}
