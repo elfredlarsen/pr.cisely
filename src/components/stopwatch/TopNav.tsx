@@ -1,32 +1,33 @@
+import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Keyboard, LogOut, Moon, Sun } from "lucide-react";
+import { Keyboard, LogOut, Moon, MoreHorizontal, Settings, Sun } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { openShortcuts } from "@/components/ShortcutsDialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-
-
-const baseItems = [
+const tabs = [
   { label: "Stopur", to: "/" as const },
   { label: "Oversigt", to: "/oversigt" as const },
-  { label: "Indstillinger", to: "/indstillinger" as const },
 ];
 
-const linkBase =
-  "nav-link inline-flex min-h-11 items-center rounded-lg px-5 text-base font-semibold text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
-const linkActive = "text-foreground bg-primary/10 hover:bg-primary/15";
+const tabBase = `inline-flex min-h-10 min-w-[96px] items-center justify-center rounded-lg px-4 text-[15px] font-medium text-muted-foreground transition-all hover:text-foreground max-[400px]:min-w-[80px] max-[400px]:px-3 ${focusRing}`;
+const tabActive = "bg-background font-semibold text-foreground shadow-sm hover:text-foreground";
 
-const iconBtn =
-  "inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const menuItem = `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-foreground/5 ${focusRing}`;
 
 export function TopNav() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [, setTheme] = useTheme();
+  const [open, setOpen] = useState(false);
+
   const toggleTheme = () =>
     setTheme(document.documentElement.classList.contains("dark") ? "light" : "dark");
 
@@ -44,12 +45,12 @@ export function TopNav() {
   return (
     <nav
       aria-label="Hovednavigation"
-      className="sticky top-0 z-40 grid h-16 w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 border-b border-border/60 bg-background/70 px-8 backdrop-blur-xl backdrop-saturate-150 max-[640px]:px-3"
+      className="sticky top-0 z-40 grid h-16 w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 border-b border-border/60 bg-background/70 px-6 backdrop-blur-xl backdrop-saturate-150 max-[640px]:px-3"
     >
       <Link
         to="/"
         aria-label="pr:cisely – til forsiden"
-        className="inline-flex select-none items-center justify-self-start rounded-lg text-[26px] font-medium leading-none tracking-[-0.9px] text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background max-[640px]:text-[20px]"
+        className={`inline-flex select-none items-center justify-self-start rounded-lg text-[24px] font-medium leading-none tracking-[-0.9px] text-foreground max-[640px]:text-[20px] ${focusRing}`}
       >
         <span>pr</span>
         <span
@@ -59,19 +60,16 @@ export function TopNav() {
         >
           :
         </span>
-        <span className="max-[480px]:hidden">cisely</span>
+        <span className="max-[520px]:hidden">cisely</span>
       </Link>
 
-      <ul className="flex items-center gap-1">
-        {baseItems.map(({ label, to }) => (
+      <ul className="flex items-center gap-1 rounded-xl border border-border/50 bg-muted/70 p-1">
+        {tabs.map(({ label, to }) => (
           <li key={label}>
             <Link
               to={to}
-              className={`${linkBase} max-[640px]:px-2 max-[640px]:text-xs`}
-              activeProps={{
-                className: `${linkBase} ${linkActive} max-[640px]:px-2 max-[640px]:text-xs`,
-                "data-active": "true",
-              }}
+              className={tabBase}
+              activeProps={{ className: `${tabBase} ${tabActive}`, "aria-current": "page" }}
               activeOptions={{ exact: true }}
             >
               {label}
@@ -80,39 +78,53 @@ export function TopNav() {
         ))}
       </ul>
 
-      <div className="flex items-center gap-1 justify-self-end">
-        <button
-          type="button"
-          onClick={openShortcuts}
-          aria-label="Tastaturgenveje"
-          title="Tastaturgenveje (?)"
-          className={`${iconBtn} max-[640px]:hidden`}
-        >
-          <Keyboard className="h-[17px] w-[17px]" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label="Skift lyst/mørkt tema"
-          title="Skift lyst/mørkt tema"
-          className={iconBtn}
-        >
-          <Sun className="hidden h-[17px] w-[17px] dark:block" aria-hidden="true" />
-          <Moon className="h-[17px] w-[17px] dark:hidden" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={handleLogout}
-          aria-label="Log ud"
-          title="Log ud"
-          className={`${iconBtn} w-auto gap-1.5 px-3 text-sm font-medium max-[640px]:w-9 max-[640px]:px-0`}
-        >
-          <LogOut className="h-[16px] w-[16px]" aria-hidden="true" />
-          <span className="max-[640px]:hidden">Log ud</span>
-        </button>
+      <div className="justify-self-end">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger
+            aria-label="Flere valg"
+            title="Flere valg"
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/60 text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground data-[state=open]:bg-foreground/5 data-[state=open]:text-foreground ${focusRing}`}
+          >
+            <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
+          </PopoverTrigger>
+          <PopoverContent align="end" sideOffset={8} className="w-60 rounded-xl p-1.5">
+            <Link to="/indstillinger" className={menuItem} onClick={() => setOpen(false)}>
+              <Settings className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              Indstillinger
+            </Link>
+            <button
+              type="button"
+              className={menuItem}
+              onClick={() => {
+                setOpen(false);
+                openShortcuts();
+              }}
+            >
+              <Keyboard className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              Tastaturgenveje
+              <kbd className="ml-auto rounded border border-border px-1.5 text-xs text-muted-foreground">?</kbd>
+            </button>
+            <button type="button" className={menuItem} onClick={toggleTheme}>
+              <Sun className="hidden h-4 w-4 text-muted-foreground dark:block" aria-hidden="true" />
+              <Moon className="h-4 w-4 text-muted-foreground dark:hidden" aria-hidden="true" />
+              <span className="dark:hidden">Mørkt tema</span>
+              <span className="hidden dark:inline">Lyst tema</span>
+            </button>
+            <div className="my-1 h-px bg-border" role="separator" />
+            <button
+              type="button"
+              className={`${menuItem} text-destructive hover:bg-destructive/10`}
+              onClick={() => {
+                setOpen(false);
+                handleLogout();
+              }}
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Log ud
+            </button>
+          </PopoverContent>
+        </Popover>
       </div>
-
     </nav>
-
   );
 }
