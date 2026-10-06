@@ -10,6 +10,9 @@ Generelt
 	- Klikbare elementer ændrer sig visuelt ved hover.
 	- Afrundede hjørner på inputfelter og knapper.
 
+Tilgængelighed
+	- Reduceret bevægelse (prefers-reduced-motion) understøttes: animationer og overgange afkortes til næsten 0, men dialoger og beskeder forbliver synlige.
+
 Farver
 
 Signaturgradient (ton-i-ton lilla) — kun til dekoration (logo, kolon, favicon).
