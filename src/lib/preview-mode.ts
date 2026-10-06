@@ -49,7 +49,7 @@ function isTrustedEmbed(): boolean {
   }
 }
 
-export function isPreviewMode(): boolean {
+function isPreviewMode(): boolean {
   if (typeof window === "undefined") return false;
   // Activate from URL on first read, but only inside a trusted editor embed
   try {

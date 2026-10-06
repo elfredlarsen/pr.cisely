@@ -19,16 +19,6 @@ function timingSafeEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
-export const checkSignupKey = createServerFn({ method: "POST" })
-  .inputValidator((input) =>
-    z.object({ key: z.string().max(512) }).parse(input)
-  )
-  .handler(async ({ data }) => {
-    const expected = process.env.SIGNUP_ACCESS_KEY;
-    if (!expected) return { valid: false };
-    return { valid: timingSafeEqual(data.key, expected) };
-  });
-
 export const signUpWithKey = createServerFn({ method: "POST" })
   .inputValidator((input) =>
     z

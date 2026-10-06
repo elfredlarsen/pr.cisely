@@ -4,7 +4,7 @@ function pad(n: number, w = 2) {
   return n.toString().padStart(w, "0");
 }
 
-export function formatTime(ms: number) {
+function formatTime(ms: number) {
   const totalSeconds = Math.floor(ms / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
