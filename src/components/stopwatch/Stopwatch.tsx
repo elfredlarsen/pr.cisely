@@ -6,13 +6,13 @@ import { IconTooltip } from "@/components/ui/icon-tooltip";
 import { useStopwatch, LONG_RUN_MS } from "./StopwatchContext";
 
 const baseBtn =
-  "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2 rounded-xl px-3 text-base font-semibold text-timer-foreground shadow-glass ring-offset-background transition-all duration-150 hover:brightness-110 active:scale-[0.97] active:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-30 sm:text-lg";
+  "inline-flex h-14 min-w-0 [&>svg]:shrink-0 flex-1 basis-0 items-center justify-center gap-2 rounded-xl px-3 text-base font-semibold text-timer-foreground shadow-glass ring-offset-background transition-all duration-150 hover:brightness-110 active:scale-[0.97] active:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-30 sm:text-lg";
 
 const startBtn = `${baseBtn} bg-timer-start`;
 const finishBtn = `${baseBtn} bg-timer-finish`;
 const pauseBtn = `${baseBtn} bg-timer-pause`;
 const resetBtn =
-  "inline-flex h-14 min-w-0 flex-1 basis-0 items-center justify-center gap-2 rounded-xl border border-border/70 bg-secondary/80 px-3 text-base font-medium text-secondary-foreground shadow-card backdrop-blur-sm transition-all duration-150 hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-30 sm:text-lg";
+  "inline-flex h-14 min-w-0 [&>svg]:shrink-0 flex-1 basis-0 items-center justify-center gap-2 rounded-xl border border-border/70 bg-secondary/80 px-3 text-base font-medium text-secondary-foreground shadow-card backdrop-blur-sm transition-all duration-150 hover:bg-accent active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-30 sm:text-lg";
 const resumeBtn = startBtn;
 
 const UNDO_TOAST_ID = "stopwatch-reset-undo";
@@ -165,26 +165,26 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         <div
           role="group"
           aria-label="Stopur-kontroller"
-          style={clockWidth ? { width: clockWidth, maxWidth: "100%" } : undefined}
-          className="flex w-full flex-nowrap items-center gap-2.5"
+          style={clockWidth ? { width: clockWidth, minWidth: "min(100%, 400px)", maxWidth: "100%" } : undefined}
+          className="flex w-full flex-nowrap items-center gap-2 sm:gap-2.5"
         >
           <IconTooltip label="Nulstil" shortcut="N">
             <button type="button" onClick={onReset} disabled={status === "idle"} className={resetBtn} aria-keyshortcuts="N">
               <RotateCcw className="h-5 w-5" aria-hidden="true" />
-              Nulstil
+              <span className="max-[359px]:sr-only">Nulstil</span>
             </button>
           </IconTooltip>
           <IconTooltip label="Afslut" shortcut="A">
             <button type="button" onClick={onFinish} disabled={status === "idle"} className={finishBtn} aria-keyshortcuts="A">
               <Check className="h-5 w-5" aria-hidden="true" />
-              Afslut
+              <span className="max-[359px]:sr-only">Afslut</span>
             </button>
           </IconTooltip>
           {status === "idle" && (
           <IconTooltip label="Start" shortcut="Mellemrum">
             <button type="button" onClick={onStart} className={startBtn} aria-keyshortcuts=" ">
               <Play className="h-5 w-5" aria-hidden="true" />
-              Start
+              <span className="max-[359px]:sr-only">Start</span>
             </button>
           </IconTooltip>
           )}
@@ -192,7 +192,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           <IconTooltip label="Pause" shortcut="Mellemrum">
             <button type="button" onClick={onPause} className={pauseBtn} aria-keyshortcuts=" ">
               <Pause className="h-5 w-5" aria-hidden="true" />
-              Pause
+              <span className="max-[359px]:sr-only">Pause</span>
             </button>
           </IconTooltip>
           )}
@@ -200,7 +200,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
           <IconTooltip label="Fortsæt" shortcut="Mellemrum">
             <button type="button" onClick={onResume} className={resumeBtn} aria-keyshortcuts=" ">
               <Play className="h-5 w-5" aria-hidden="true" />
-              Fortsæt
+              <span className="max-[359px]:sr-only">Fortsæt</span>
             </button>
           </IconTooltip>
           )}

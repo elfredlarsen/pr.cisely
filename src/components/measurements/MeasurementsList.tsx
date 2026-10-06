@@ -354,24 +354,24 @@ export function MeasurementsList({
 
   return (
     <>
-      <Table className="w-full table-fixed">
-        <TableHeader className={stickyHeader ? "sticky top-0 z-10 bg-card" : undefined}>
-          <TableRow className="border-border/50" {...headerRowProps}>
-            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+      <Table className="w-full table-fixed max-sm:block">
+        <TableHeader className={cn("max-sm:block", stickyHeader && "sticky top-0 z-10 bg-card")}>
+          <TableRow className="border-border/50 max-sm:grid max-sm:grid-cols-3" {...headerRowProps}>
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("start", "Start") : <span className="px-1">Start</span>}
             </TableHead>
-            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("end", "Slut") : <span className="px-1">Slut</span>}
             </TableHead>
-            <TableHead className="h-10 w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               {sortable ? renderSortHeader("duration", "Varighed") : <span className="px-1">Varighed</span>}
             </TableHead>
-            <TableHead className="h-10 w-auto py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-auto py-2 max-sm:hidden text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
               Kategori
             </TableHead>
             <TableHead
               className={cn(
-                "h-10 py-2 text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70",
+                "h-10 py-2 max-sm:hidden text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70",
                 actionsColWidthClass,
               )}
             >
@@ -379,7 +379,7 @@ export function MeasurementsList({
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className="max-sm:block">
           {sortedItems.map((m) => {
             const rowEditing = isRowEditing(m);
             return (
@@ -387,6 +387,7 @@ export function MeasurementsList({
                 <TableRow
                   data-state={rowEditing ? "selected" : undefined}
                   className={cn(
+                    "max-sm:grid max-sm:grid-cols-[1fr_1fr_1fr] max-sm:items-center max-sm:py-1",
                     rowEditing
                       ? "border-border/40 bg-brand/15 hover:bg-brand/15 data-[state=selected]:bg-brand/15"
                       : "border-border/40 hover:bg-brand/10",
@@ -397,7 +398,7 @@ export function MeasurementsList({
 
                   <TableCell className="py-1 text-xs">{renderTimeCell(m, "end")}</TableCell>
                   <TableCell className="py-1 text-xs">{renderDurationCell(m)}</TableCell>
-                  <TableCell className="py-1 text-xs">
+                  <TableCell className="py-1 text-xs max-sm:col-span-2">
                     <Select
                       value={m.category}
                       onValueChange={(v) => {
@@ -409,7 +410,7 @@ export function MeasurementsList({
                       }}
                     >
                       <SelectTrigger
-                        className="h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-brand/40 hover:bg-brand/25 hover:text-foreground"
+                        className="h-9 sm:h-7 w-full min-w-0 border-transparent bg-transparent text-xs font-medium text-foreground/80 transition-colors hover:border-brand/40 hover:bg-brand/25 hover:text-foreground"
                         aria-label={`Kategori for registrering, nu ${categoryLabel(m.category)}`}
                       >
                         <SelectValue className="truncate" />
@@ -430,14 +431,14 @@ export function MeasurementsList({
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell className="py-1 text-right">
+                  <TableCell className="py-1 text-right max-sm:col-span-1">
                     <div className="flex items-center justify-end gap-0">
                       <IconTooltip label="Slet registrering">
                         <Button
                           type="button"
                           variant="ghost"
                           onClick={() => onDelete(m.id)}
-                          className="h-9 w-12 px-0 py-0 text-muted-foreground hover:bg-brand/25 hover:text-destructive"
+                          className="h-11 w-12 px-0 py-0 sm:h-9 text-muted-foreground hover:bg-brand/25 hover:text-destructive"
                           aria-label="Slet registrering"
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />

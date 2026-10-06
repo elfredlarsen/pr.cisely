@@ -314,7 +314,7 @@ export function MeasurementDialog({
             </div>
           </div>
 
-          <div role="group" aria-label="Justér varighed" className="flex flex-wrap gap-2">
+          <div role="group" aria-label="Justér varighed" className="grid grid-cols-4 gap-2">
             {[-5, -1, 1, 5].map((min) => {
               const cur = parseDuration(duration) ?? 0;
               const disabled = min < 0 && cur <= -min * 60000;
@@ -326,7 +326,7 @@ export function MeasurementDialog({
                   size="sm"
                   disabled={disabled}
                   onClick={() => handleDuration(msToDurationInput(cur + min * 60000))}
-                  className="min-h-9 flex-1 tabular-nums"
+                  className="min-h-11 min-w-0 px-1 tabular-nums sm:min-h-9"
                 >
                   {min > 0 ? `+${min}` : `−${-min}`} min
                 </Button>

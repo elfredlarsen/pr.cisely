@@ -107,7 +107,7 @@ export function DateNavigator({ value, onChange, datesWithData }: Props) {
         </Button>
       </IconTooltip>
     </div>
-      <div className="flex min-h-9 items-center justify-center">
+      <div className="flex items-center justify-center sm:min-h-9">
         {!isToday && (
           <Button
             type="button"
