@@ -17,15 +17,6 @@ export type CategoryRow = {
   hidden: boolean;
 };
 
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/æ/g, "ae")
-    .replace(/ø/g, "oe")
-    .replace(/å/g, "aa")
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-}
 
 export const listCategories = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
