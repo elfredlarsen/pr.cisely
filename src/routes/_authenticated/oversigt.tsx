@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, ChevronsDownUp, ChevronsUpDown, Copy, Plus, Trash2 } from "lucide-react";
-import { formatTotal } from "@/components/oversigt/format";
+import { CalendarDays, ChevronsDownUp, ChevronsUpDown, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, PAGE_CONTAINER } from "@/components/PageHeader";
 import { TopNav } from "@/components/stopwatch/TopNav";
@@ -152,21 +151,6 @@ function OversigtPage() {
     [categoriesData, byCategory],
   );
 
-  const copyDay = async () => {
-    const day = date.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "short" });
-    const lines = [`pr:cisely — ${day.charAt(0).toUpperCase()}${day.slice(1)}`];
-    for (const c of visibleCategories) {
-      const sum = (byCategory.get(c.value) ?? []).reduce((a, m) => a + m.ms, 0);
-      lines.push(`• ${c.label}: ${formatTotal(sum, format)}`);
-    }
-    lines.push(`I alt: ${formatTotal(totalMs, format)}`);
-    try {
-      await navigator.clipboard.writeText(lines.join("\n"));
-      toast.success("Dagens tider er kopieret");
-    } catch {
-      toast.error("Kunne ikke kopiere");
-    }
-  };
 
   const allOpen =
     visibleCategories.length > 0 &&
@@ -228,18 +212,6 @@ function OversigtPage() {
             onFormatChange={handleFormatChange}
             leftSlot={
               <>
-                {visibleCategories.length > 0 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={copyDay}
-                    className="min-h-9 px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
-                  >
-                    <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-                    Kopiér dagens tider
-                  </Button>
-                )}
                 {visibleCategories.length > 0 && (
                   <Button
                     type="button"
