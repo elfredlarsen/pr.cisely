@@ -24,7 +24,7 @@ type Props = {
 };
 
 export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
-  const { status, displayMs, start, pause, resume, reset, restore, adjust, getFinishPayload } =
+  const { status, displayMs, start, pause, resume, reset, restore, getFinishPayload } =
     useStopwatch();
   const clockRef = useRef<HTMLDivElement | null>(null);
   const [clockWidth, setClockWidth] = useState<number | null>(null);
@@ -172,30 +172,6 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
             </button>
           </IconTooltip>
           )}
-        </div>
-
-        <div
-          role="group"
-          aria-label="Justér tid"
-          aria-hidden={status === "idle" || undefined}
-          className={`flex items-center gap-2 ${status === "idle" ? "invisible" : ""}`}
-        >
-          <button
-            type="button"
-            onClick={() => adjust(-5 * 60 * 1000)}
-            disabled={status === "idle" || displayMs < 1000}
-            className="min-h-11 rounded-lg border border-border px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-          >
-            −5 min
-          </button>
-          <button
-            type="button"
-            onClick={() => adjust(5 * 60 * 1000)}
-            disabled={status === "idle"}
-            className="min-h-11 rounded-lg border border-border px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            +5 min
-          </button>
         </div>
       </div>
 
