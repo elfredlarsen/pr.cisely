@@ -206,7 +206,7 @@ function OversigtPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
       <main className={PAGE_CONTAINER}>
-        <PageHeader title="Oversigt" description="Dine registreringer dag for dag." />
+        <PageHeader title="Oversigt" srOnly />
 
         <DateNavigator
           value={date}

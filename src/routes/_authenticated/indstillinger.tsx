@@ -51,7 +51,7 @@ function IndstillingerPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <TopNav />
       <main className={PAGE_CONTAINER}>
-        <PageHeader title="Indstillinger" description="Konto, kategorier, udseende og dine data." />
+        <PageHeader title="Indstillinger" srOnly />
 
         <div className="space-y-6">
           <Section id="adgangskode-heading" title="Skift adgangskode" description="Vælg en ny adgangskode på mindst 8 tegn.">
