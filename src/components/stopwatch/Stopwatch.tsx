@@ -42,18 +42,52 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
     return () => ro.disconnect();
   }, []);
 
+  const [announcement, setAnnouncement] = useState("");
+  const announce = (msg: string) => {
+    // Clear first so repeating the same message is announced again.
+    setAnnouncement("");
+    window.setTimeout(() => setAnnouncement(msg), 50);
+  };
+  const spokenTime = (ms: number) => {
+    const total = Math.floor(ms / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    const parts: string[] = [];
+    if (h) parts.push(`${h} ${h === 1 ? "time" : "timer"}`);
+    if (m) parts.push(`${m} ${m === 1 ? "minut" : "minutter"}`);
+    if (s || parts.length === 0) parts.push(`${s} ${s === 1 ? "sekund" : "sekunder"}`);
+    return parts.length > 1 ? `${parts.slice(0, -1).join(", ")} og ${parts[parts.length - 1]}` : parts[0];
+  };
+
   const onStart = () => {
     toast.dismiss(UNDO_TOAST_ID);
     start();
+    announce("Stopur startet");
   };
-  const onPause = pause;
-  const onResume = resume;
+  const onPause = () => {
+    pause();
+    announce(`Stopur sat på pause ved ${spokenTime(displayMs)}`);
+  };
+  const onResume = () => {
+    resume();
+    announce("Stopur genoptaget");
+  };
   const onReset = () => {
     const snapshot = reset();
-    toast.custom((t) => <UndoToast id={t} onUndo={() => restore(snapshot)} />, {
-      id: UNDO_TOAST_ID,
-      duration: Infinity,
-    });
+    announce("Stopur nulstillet");
+    toast.custom(
+      (t) => (
+        <UndoToast
+          id={t}
+          onUndo={() => {
+            restore(snapshot);
+            announce("Nulstilling fortrudt");
+          }}
+        />
+      ),
+      { id: UNDO_TOAST_ID, duration: Infinity },
+    );
   };
   const onFinish = () => {
     if (finishOpen) return;
@@ -175,6 +209,9 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         </div>
       </div>
 
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {announcement}
+      </div>
     </section>
   );
 }
