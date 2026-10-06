@@ -6,12 +6,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
-      position="top-right"
-      offset={{ top: 76, right: 16 }}
-      mobileOffset={{ top: 72, right: 12, left: 12 }}
+      position="bottom-center"
+      offset={{ bottom: 24 }}
+      mobileOffset={{ bottom: "calc(16px + env(safe-area-inset-bottom))", left: 12, right: 12 }}
       closeButton
       style={{ width: "340px" } as React.CSSProperties}
       toastOptions={{
+        duration: 3000,
         classNames: {
           toast:
             "group toast group-[.toaster]:!rounded-xl group-[.toaster]:!border group-[.toaster]:!border-border/70 group-[.toaster]:!bg-popover group-[.toaster]:!text-popover-foreground group-[.toaster]:!shadow-card group-[.toaster]:!px-4 group-[.toaster]:!py-3 group-[.toaster]:!text-sm group-[.toaster]:!gap-3",
