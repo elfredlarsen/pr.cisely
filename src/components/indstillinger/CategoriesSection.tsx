@@ -43,7 +43,7 @@ function AddCategoryForm() {
   };
 
   return (
-    <form onSubmit={submit} className="mb-4 flex gap-2">
+    <form onSubmit={submit} className="mt-4 flex gap-2">
       <label htmlFor="ny-kategori" className="sr-only">Ny kategori</label>
       <Input
         id="ny-kategori"
@@ -159,7 +159,6 @@ export function CategoriesSection() {
 
   return (
     <div>
-    <AddCategoryForm />
     <div className="relative">
       <ul
         ref={listRef}
@@ -223,6 +222,7 @@ export function CategoriesSection() {
         />
       )}
     </div>
+    <AddCategoryForm />
     </div>
   );
 }
