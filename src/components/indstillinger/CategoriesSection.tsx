@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CategoryLabelEditor } from "@/components/indstillinger/CategoryEditing";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +13,52 @@ import { useCategories, useInvalidateCategories } from "@/hooks/use-categories";
 import {
   setCategoryOrder as setCategoryOrderFn,
   setActiveCategories as setActiveCategoriesFn,
+  createCategory as createCategoryFn,
 } from "@/lib/categories.functions";
+
+function AddCategoryForm() {
+  const create = useServerFn(createCategoryFn);
+  const invalidate = useInvalidateCategories();
+  const [label, setLabel] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = label.trim();
+    if (!name) {
+      toast.error("Skriv et navn til kategorien.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await create({ data: { label: name } });
+      await invalidate();
+      setLabel("");
+      toast.success("Kategori tilføjet");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Kunne ikke tilføje kategori.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mb-4 flex gap-2">
+      <label htmlFor="ny-kategori" className="sr-only">Ny kategori</label>
+      <Input
+        id="ny-kategori"
+        value={label}
+        onChange={(e) => setLabel(e.target.value)}
+        placeholder="Ny kategori"
+        maxLength={80}
+        className="min-h-11 flex-1"
+      />
+      <Button type="submit" disabled={busy} className="min-h-11 px-5 font-semibold">
+        Tilføj
+      </Button>
+    </form>
+  );
+}
 
 export function CategoriesSection() {
   const { data: categories, isLoading } = useCategories();
@@ -112,6 +158,8 @@ export function CategoriesSection() {
   }
 
   return (
+    <div>
+    <AddCategoryForm />
     <div className="relative">
       <ul
         ref={listRef}
@@ -174,6 +222,7 @@ export function CategoriesSection() {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-md bg-gradient-to-t from-card to-transparent"
         />
       )}
+    </div>
     </div>
   );
 }

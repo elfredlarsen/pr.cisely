@@ -54,14 +54,14 @@ function IndstillingerPage() {
         <PageHeader title="Indstillinger" srOnly />
 
         <div className="space-y-6">
-          <Section id="adgangskode-heading" title="Skift adgangskode" description="Vælg en ny adgangskode på mindst 8 tegn.">
-            <ChangePasswordForm />
+          <Section id="kategorier-heading" title="Kategorier" description="Vælg hvilke kategorier der vises, når du gemmer en registrering.">
+            <CategoriesSection />
           </Section>
           <Section id="invite-heading" title="Inviter en kollega" description="Del linket, så en kollega kan oprette en konto.">
             <InviteSection />
           </Section>
-          <Section id="kategorier-heading" title="Kategorier" description="Vælg hvilke kategorier der vises, når du gemmer en registrering.">
-            <CategoriesSection />
+          <Section id="adgangskode-heading" title="Skift adgangskode" description="Vælg en ny adgangskode på mindst 8 tegn.">
+            <ChangePasswordForm />
           </Section>
           <Section id="udseende-heading" title="Udseende" description="Lyst, mørkt eller det samme som din enhed.">
             <AppearanceSection />
