@@ -39,9 +39,6 @@ function NotFoundComponent() {
             <Link to="/oversigt">Oversigt</Link>
           </Button>
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">
-          Tip: Den tidligere side "Arkiv" hedder nu "Oversigt".
-        </p>
       </div>
     </div>
   );
