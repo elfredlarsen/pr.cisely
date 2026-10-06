@@ -40,7 +40,7 @@ function NotFoundComponent() {
           </Button>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
-          Siden <Link to="/arkiv" className="sr-only">-</Link>"Arkiv" hedder nu "Oversigt".
+          Tip: Den tidligere side "Arkiv" hedder nu "Oversigt".
         </p>
       </div>
     </div>
