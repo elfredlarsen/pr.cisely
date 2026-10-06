@@ -29,13 +29,19 @@ function NotFoundComponent() {
         <p className="text-6xl font-semibold text-brand">404</p>
         <h1 className="mt-4 text-xl font-semibold text-foreground">Siden findes ikke</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Siden, du leder efter, findes ikke eller er flyttet.
+          Linket er måske gammelt eller skrevet forkert. Dine registreringer er i sikkerhed — vælg, hvor du vil hen:
         </p>
-        <div className="mt-6">
-          <Button asChild>
-            <Link to="/">Til forsiden</Link>
+        <div className="mt-6 grid gap-2 sm:grid-cols-2">
+          <Button asChild size="lg">
+            <Link to="/">Stopur</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/oversigt">Oversigt</Link>
           </Button>
         </div>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Tip: Den tidligere side "Arkiv" hedder nu "Oversigt".
+        </p>
       </div>
     </div>
   );

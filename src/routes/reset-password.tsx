@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -83,9 +83,15 @@ function ResetPasswordPage() {
         </p>
 
         {!ready ? (
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Klik på linket i mailen for at fortsætte.
-          </p>
+          <div className="mt-6 space-y-3 text-center text-sm text-muted-foreground">
+            <p>Klik på linket i mailen for at fortsætte.</p>
+            <Link
+              to="/login"
+              className="inline-block rounded-md font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              ← Gå til login for at bestille et link
+            </Link>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-1">
