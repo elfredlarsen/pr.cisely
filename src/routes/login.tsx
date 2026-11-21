@@ -112,7 +112,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-2xl border border-border/70 bg-card shadow-card p-6">
         <h1 className="text-center text-2xl font-medium tracking-[-0.5px] text-foreground">
           <span>pr</span>
@@ -252,6 +252,6 @@ function LoginPage() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </main>
   );
 }
