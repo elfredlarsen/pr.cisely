@@ -25,12 +25,12 @@ export function TimeDisplay({ ms, paused = false }: Props) {
   const { hours, minutes, seconds } = formatTime(ms);
   return (
     <div
-      aria-live="polite"
-      aria-atomic="true"
+      role="timer"
+      aria-label={`${Number(hours)} timer, ${Number(minutes)} minutter, ${Number(seconds)} sekunder`}
       className={`flex flex-col items-center select-none text-foreground transition-opacity duration-300 ${paused ? "opacity-60" : "opacity-100"}`}
       style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif", fontVariantNumeric: "tabular-nums" }}
     >
-      <div className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
+      <div aria-hidden="true" className="flex items-baseline justify-center" style={{ fontWeight: 500 }}>
         <div className="flex flex-col items-center">
           <span className={digitClass}>{hours}</span>
           <span className={`${labelClass} mt-2`}>Timer</span>
@@ -46,9 +46,6 @@ export function TimeDisplay({ ms, paused = false }: Props) {
           <span className={`${labelClass} mt-2`}>Sekunder</span>
         </div>
       </div>
-      <span className="sr-only">
-        {hours} timer, {minutes} minutter, {seconds} sekunder
-      </span>
     </div>
   );
 }

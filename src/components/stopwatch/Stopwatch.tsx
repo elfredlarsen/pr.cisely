@@ -62,19 +62,19 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   const onStart = () => {
     toast.dismiss(UNDO_TOAST_ID);
     start();
-    announce("Stopur startet");
+    announce("Måling startet");
   };
   const onPause = () => {
     pause();
-    announce(`Stopur sat på pause ved ${spokenTime(displayMs)}`);
+    announce("Måling sat på pause");
   };
   const onResume = () => {
     resume();
-    announce("Stopur genoptaget");
+    announce("Måling genoptaget");
   };
   const onReset = () => {
     const snapshot = reset();
-    announce("Stopur nulstillet");
+    announce("Måling nulstillet");
     toast("Stopuret er nulstillet", {
       id: UNDO_TOAST_ID,
       duration: 5000,
@@ -94,6 +94,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
       reset();
       return;
     }
+    announce(`Måling afsluttet: ${spokenTime(payload.endedAt.getTime() - payload.startedAt.getTime())}`);
     onRequestFinish(payload.startedAt, payload.endedAt);
   };
 
@@ -134,6 +135,7 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
   }, [handleKeyDown]);
 
   return (
+    <>
     <section
       aria-labelledby="stopur-overskrift"
       aria-hidden={finishOpen || undefined}
@@ -207,9 +209,10 @@ export function Stopwatch({ onRequestFinish, finishOpen = false }: Props) {
         </div>
       </div>
 
-      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
-        {announcement}
-      </div>
     </section>
+    <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+      {announcement}
+    </div>
+    </>
   );
 }
