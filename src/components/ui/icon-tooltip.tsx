@@ -32,7 +32,7 @@ export function IconTooltip({
         >
           <span>{label}</span>
           {shortcut && (
-            <kbd className="rounded border border-border/30 bg-muted/40 px-1 py-0 font-mono text-[10px] text-muted-foreground/70">
+            <kbd className="rounded border border-border/30 bg-muted/40 px-1 py-0 font-mono text-[10px] text-muted-foreground">
               {shortcut}
             </kbd>
           )}

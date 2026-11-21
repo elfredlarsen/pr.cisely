@@ -334,7 +334,7 @@ export function MeasurementsList({
         aria-sort={ariaSort}
         className={cn(
           "inline-flex h-7 items-center gap-1 rounded px-1 text-[11px] font-normal uppercase tracking-wider transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          active ? "text-foreground" : "text-muted-foreground/70",
+          active ? "text-foreground" : "text-muted-foreground",
         )}
       >
         <span>{label}</span>
@@ -357,21 +357,21 @@ export function MeasurementsList({
       <Table className="w-full table-fixed max-sm:block">
         <TableHeader className={cn("max-sm:block", stickyHeader && "sticky top-0 z-10 bg-card")}>
           <TableRow className="border-border/50 max-sm:grid max-sm:grid-cols-3" {...headerRowProps}>
-            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
               {sortable ? renderSortHeader("start", "Start") : <span className="px-1">Start</span>}
             </TableHead>
-            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
               {sortable ? renderSortHeader("end", "Slut") : <span className="px-1">Slut</span>}
             </TableHead>
-            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 sm:w-[7rem] py-2 text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
               {sortable ? renderSortHeader("duration", "Varighed") : <span className="px-1">Varighed</span>}
             </TableHead>
-            <TableHead className="h-10 w-auto py-2 max-sm:hidden text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70">
+            <TableHead className="h-10 w-auto py-2 max-sm:hidden text-[11px] font-normal uppercase tracking-wider text-muted-foreground">
               Kategori
             </TableHead>
             <TableHead
               className={cn(
-                "h-10 py-2 max-sm:hidden text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70",
+                "h-10 py-2 max-sm:hidden text-right text-[11px] font-normal uppercase tracking-wider text-muted-foreground",
                 actionsColWidthClass,
               )}
             >

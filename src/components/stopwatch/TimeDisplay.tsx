@@ -19,7 +19,7 @@ function formatTime(ms: number) {
 const digitClass =
   "text-[clamp(3.25rem,18vw,10.5rem)] leading-none tracking-tight";
 const labelClass =
-  "text-[11px] font-normal uppercase tracking-wider text-muted-foreground/70";
+  "text-[11px] font-normal uppercase tracking-wider text-muted-foreground";
 
 export function TimeDisplay({ ms, paused = false }: Props) {
   const { hours, minutes, seconds } = formatTime(ms);
