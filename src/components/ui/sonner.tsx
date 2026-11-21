@@ -10,9 +10,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       offset={{ bottom: 24 }}
       mobileOffset={{ bottom: "calc(16px + env(safe-area-inset-bottom))", left: 12, right: 12 }}
       closeButton
+      containerAriaLabel="Beskeder"
       style={{ width: "340px" } as React.CSSProperties}
       toastOptions={{
         duration: 3000,
+        closeButtonAriaLabel: "Luk besked",
         classNames: {
           toast:
             "group toast group-[.toaster]:!rounded-xl group-[.toaster]:!border group-[.toaster]:!border-border/70 group-[.toaster]:!bg-popover group-[.toaster]:!text-popover-foreground group-[.toaster]:!shadow-card group-[.toaster]:!px-4 group-[.toaster]:!py-3 group-[.toaster]:!text-sm group-[.toaster]:!gap-3",
