@@ -91,7 +91,7 @@ function PrivatlivPage() {
           <ul className="list-disc space-y-1 pl-5">
             <li>Indsigt og kopi af dine data: skriv til kontaktmailen.</li>
             <li>Sletning af historik: gør det selv under Indstillinger.</li>
-            <li>Sletning af hele kontoen: skriv til kontaktmailen.</li>
+            <li>Sletning af hele kontoen: gør det selv under Indstillinger med "Slet min konto".</li>
             <li>Vi svarer inden for 30 dage.</li>
             <li>Du kan klage til Datatilsynet (datatilsynet.dk).</li>
           </ul>

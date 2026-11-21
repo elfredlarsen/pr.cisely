@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { deleteMyAccount } from "@/lib/account.functions";
 import {
   Select,
   SelectContent,
@@ -84,6 +89,29 @@ export function DataManagementSection() {
     mutation.mutate(valueToDays(next));
   };
 
+  const navigate = useNavigate();
+  const deleteAccountFn = useServerFn(deleteMyAccount);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const canDeleteAccount = confirmText.trim().toLowerCase() === "slet" && !deleting;
+
+  const handleDeleteAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canDeleteAccount) return;
+    setDeleting(true);
+    try {
+      await deleteAccountFn();
+      await qc.cancelQueries();
+      qc.clear();
+      await supabase.auth.signOut().catch(() => {});
+      navigate({ to: "/login", search: { deleted: 1 }, replace: true });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Kontoen kunne ikke slettes. Prøv igen.");
+      setDeleting(false);
+    }
+  };
+
   const handleDeleteAll = () => {
     removeAll();
     toast.success("Al historik slettet");
@@ -148,6 +176,53 @@ export function DataManagementSection() {
                 Slet alt
               </AlertDialogAction>
             </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      <div className="space-y-3 border-t border-border pt-6">
+        <p className="text-sm text-muted-foreground">
+          Slet din konto og alle dine data permanent.
+        </p>
+        <AlertDialog
+          open={accountOpen}
+          onOpenChange={(o) => {
+            if (deleting) return;
+            setAccountOpen(o);
+            if (!o) setConfirmText("");
+          }}
+        >
+          <AlertDialogTrigger asChild>
+            <Button type="button" variant="destructive" className="min-h-11 px-5 font-semibold">
+              Slet min konto
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Slet din konto?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Alle dine registreringer, kategorier og selve kontoen slettes permanent. Det kan ikke fortrydes.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="delete-account-confirm">Skriv "slet" for at bekræfte</Label>
+                <Input
+                  id="delete-account-confirm"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  autoComplete="off"
+                  autoFocus
+                  disabled={deleting}
+                />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel type="button" disabled={deleting}>Annuller</AlertDialogCancel>
+                <Button type="submit" variant="destructive" disabled={!canDeleteAccount} className="font-semibold">
+                  {deleting ? "Sletter…" : "Slet konto"}
+                </Button>
+              </AlertDialogFooter>
+            </form>
           </AlertDialogContent>
         </AlertDialog>
       </div>

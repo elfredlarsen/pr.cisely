@@ -174,6 +174,7 @@ export type Database = {
     Functions: {
       apply_retention_all: { Args: never; Returns: number }
       delete_inactive_users: { Args: never; Returns: number }
+      delete_my_account: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

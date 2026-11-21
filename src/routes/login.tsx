@@ -18,7 +18,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { signUpWithKey } from "@/lib/signup.functions";
 
-const searchSchema = z.object({ key: z.string().optional() });
+const searchSchema = z.object({ key: z.string().optional(), deleted: z.coerce.number().optional() });
 
 export const Route = createFileRoute("/login")({
   validateSearch: searchSchema,
@@ -33,7 +33,10 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { key: signupKey } = useSearch({ from: "/login" });
+  const { key: signupKey, deleted } = useSearch({ from: "/login" });
+  useEffect(() => {
+    if (deleted === 1) toast.success("Din konto er slettet");
+  }, [deleted]);
   const signUp = useServerFn(signUpWithKey);
 
   const [accessKey, setAccessKey] = useState(signupKey ?? "");
