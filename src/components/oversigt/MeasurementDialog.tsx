@@ -343,13 +343,8 @@ export function MeasurementDialog({
                 <SelectValue placeholder="Vælg kategori" />
               </SelectTrigger>
               <SelectContent>
-                {visibleCategories.map((c, i) => (
+                {visibleCategories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
-                    {i < 9 && (
-                      <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded border border-border text-[11px] tabular-nums text-muted-foreground" aria-hidden="true">
-                        {i + 1}
-                      </span>
-                    )}
                     {c.label}
                   </SelectItem>
                 ))}
